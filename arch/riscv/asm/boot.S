@@ -5,7 +5,7 @@ _start:
     # li      a0, '3'
     # ecall
     la      sp, _boot_stack_top
-    la      s0, main
+    la      s0, boot_main
     jalr    s0
 
 # Set Boot Stack

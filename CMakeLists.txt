@@ -21,8 +21,8 @@ set(CMAKE_CXX_COMPILER riscv64-unknown-linux-gnu-g++)
 
 # Set compile options
 set(CMAKE_ASM_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany")
-set(CMAKE_C_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -O2 -mcmodel=medany")
-set(CMAKE_CXX_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -O2 -mcmodel=medany")
+set(CMAKE_C_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -O1 -mcmodel=medany")
+set(CMAKE_CXX_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -O1 -mcmodel=medany")
 set(CMAKE_EXE_LINKER_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany -T ${LINKER_FILE}")
 
 # For vscode
@@ -39,7 +39,13 @@ list(FILTER C_SOURCES EXCLUDE REGEX "build/*")
 list(FILTER CPP_SOURCES EXCLUDE REGEX "build/*")
 
 # Set include folders
-include_directories(includes arch/riscv/includes)
+include_directories(
+    includes 
+    arch/riscv/includes 
+    libs/smoldtb 
+    libs/memory
+    libs/std_impl
+)
 
 # add_executable(byteos ${C_SOURCES} ${ASM_SOURCES})
 message(STATUS "C_SOURCE_FILES: ${C_SOURCES}")
