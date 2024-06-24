@@ -33,14 +33,17 @@ add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 # find all source files
 file(GLOB_RECURSE ASM_SOURCES "${CMAKE_SOURCE_DIR}/*.S")
 file(GLOB_RECURSE C_SOURCES "${CMAKE_SOURCE_DIR}/*.c")
+file(GLOB_RECURSE CPP_SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
+list(FILTER ASM_SOURCES EXCLUDE REGEX "build/*")
 list(FILTER C_SOURCES EXCLUDE REGEX "build/*")
+list(FILTER CPP_SOURCES EXCLUDE REGEX "build/*")
 
 # Set include folders
 include_directories(includes arch/riscv/includes)
 
 # add_executable(byteos ${C_SOURCES} ${ASM_SOURCES})
 message(STATUS "C_SOURCE_FILES: ${C_SOURCES}")
-add_executable(byteos ${ASM_SOURCES} ${C_SOURCES})
+add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES})
 # No Stdlib and ignore stdlib headers
 target_compile_options(byteos PRIVATE -nostdlib -Wno-builtin-declaration-mismatch)
 
