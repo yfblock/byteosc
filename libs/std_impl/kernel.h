@@ -1,5 +1,7 @@
 #ifndef __KERNEL_H__
 #define __KERNEL_H__
+#include <stddef.h>
+#include <stdint.h>
 
 enum log_level_t {
     LOG_LEVEL_TRACE = 0,
