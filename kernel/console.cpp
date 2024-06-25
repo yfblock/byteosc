@@ -16,7 +16,7 @@ void print_node(dtb_node* node, size_t indent)
     
     dtb_node_stat stat;
     dtb_stat_node(node, &stat);
-    printf("%s[+] %s: %u siblings, %x children, %x properties.\r\n", indent_buff, 
+    printf("%s[+] %s: %d siblings, %d children, %x properties.\r\n", indent_buff, 
         stat.name, stat.sibling_count, stat.child_count, stat.prop_count);
 
     for (size_t i = 0; i < stat.prop_count; i++)
@@ -27,8 +27,7 @@ void print_node(dtb_node* node, size_t indent)
         //NOTE: DO NOT DO THIS! This is a hack for testing purposes for I can make print pretty
         //trees and check all properties are read correctly. There's a reason these structs are
         //opaque to calling code, and their underlying definitions can change at any time.
-        const char* name = *(const char**)prop;
-        printf("%s  | %s\r\n", indent_buff, name);
+        printf("%s  | %s: %x\r\n", indent_buff, prop->name, prop->first_cell);
     }
 
     dtb_node* child = dtb_get_child(node);
@@ -49,12 +48,13 @@ int main(size_t hart_id, uintptr_t dtb) {
 
     dtb_node* root = dtb_find("/");
     printf("root ptr: 0x%x\n", root);
+
     while (root != NULL)
     {
-        printf("Node");
-        print_node(root, 0);
+        // print_node(root, 0);
         root = dtb_get_sibling(root);
     }
+    log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");
 
     while(true) {}
 }

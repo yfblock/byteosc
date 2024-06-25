@@ -43,36 +43,6 @@ struct fdt_property
     uint32_t name_offset;
 };
 
-/* The tree is represented in horizontal slices, where all child nodes are represented
- * in a singly-linked list. Only a pointer to the first child is stored in the parent, and
- * the list is build using the node->sibling pointer.
- * For reference the pointer building the tree are:
- * - parent: go up one level
- * - sibling: the next node on this level. To access the previous node, access the parent and then
- *            the child pointer and iterate to just before the target.
- * - child: the first child node.
- */
-struct dtb_node_t
-{
-    dtb_node* parent;
-    dtb_node* sibling;
-    dtb_node* child;
-    dtb_prop* props;
-
-    const char* name;
-    uint8_t addr_cells;
-    uint8_t size_cells;
-};
-
-/* Similar to nodes, properties are stored a singly linked list. */
-struct dtb_prop_t
-{
-    const char* name;
-    const uint32_t* first_cell;
-    size_t length;
-    dtb_prop* next;
-};
-
 struct dtb_state
 {
     const uint32_t* cells;
