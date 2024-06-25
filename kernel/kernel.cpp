@@ -4,14 +4,6 @@
 #include <kernel.h>
 #include <string.h>
 
-void clear_bss() {
-    // extern "C" {
-    //     void *_sbss;
-    //     void *_ebss;
-    // }
-    // memset(_sbss, 0, (size_t)_ebss - (size_t)_sbss);
-}
-
 void print_node(dtb_node* node, size_t indent)
 {
     const size_t indent_scale = 2;
@@ -48,7 +40,6 @@ void print_node(dtb_node* node, size_t indent)
 }
 
 int main(size_t hart_id, uintptr_t dtb) {
-    clear_bss();
     puts((char *)"Enter Real main function\n");
     printf("Hello %s%c\n", "World", '!');
     printf("root ptr: 0x%x\n", dtb);
@@ -56,7 +47,7 @@ int main(size_t hart_id, uintptr_t dtb) {
     char str[50];
     memset(str, '$', 10);
     puts((char *)str);
-    puts("root\n");
+    puts((char *)"root\n");
 
     dtb_init(dtb, dtb_ops {
         .on_error = [](const char *str) -> void { puts((char *)str); }

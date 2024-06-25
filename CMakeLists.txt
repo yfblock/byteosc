@@ -22,7 +22,7 @@ set(CMAKE_CXX_COMPILER riscv64-unknown-linux-gnu-g++)
 # Set compile options
 set(CMAKE_ASM_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany")
 set(CMAKE_C_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -O2 -mcmodel=medany")
-set(CMAKE_CXX_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -O2 -mcmodel=medany")
+set(CMAKE_CXX_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -Wno-main -O2 -mcmodel=medany")
 set(CMAKE_EXE_LINKER_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany -T ${LINKER_FILE}")
 
 # For vscode
@@ -45,6 +45,7 @@ include_directories(
     libs/smoldtb 
     libs/memory
     libs/std_impl
+    libs/buddy_alloc
 )
 
 # add_executable(byteos ${C_SOURCES} ${ASM_SOURCES})

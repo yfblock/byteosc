@@ -1,3 +1,4 @@
+#include <arch.h>
 #include <console.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -15,17 +16,6 @@ __always_inline void ecall(size_t EID, size_t arg0) {
 
 void console_putchar(char c) {
     ecall(0x1, c);
-}
-
-// reimplement new
-void* operator new[](size_t size) {
-    static int buffer[3];
-    return buffer;
-}
-
-// reimplement delete
-void operator delete(void *ptr, size_t size) {
-    
 }
 
 extern "C" void boot_main(size_t hart_id, uintptr_t dtb) {

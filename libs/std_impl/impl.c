@@ -6,7 +6,7 @@
 /// @return The length of the string s.
 size_t strlen (const char *s) {
     register size_t len = 0;
-    register uintptr_t buffer = s;
+    register uintptr_t buffer = (uintptr_t)s;
     for(;*(char *)buffer != '\0'; buffer++)len++;
     return len;
 }
@@ -17,7 +17,7 @@ size_t strlen (const char *s) {
 /// @param n The size of the memory range will be set.
 /// @return The original address of the memory range. equals to param s
 void *memset (void *s, int c, size_t n) {
-    register uintptr_t buffer = (char *)s;
+    register uintptr_t buffer = (uintptr_t)s;
     for(;n-- > 0;buffer++) *(char *)buffer = (char)c;
     return s;
 }
