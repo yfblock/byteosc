@@ -1,17 +1,21 @@
 #include <buddy_alloc.h>
+#include <kernel.h>
 
-typedef struct _BuddyLinked
-{
+/// Define BuddyLinked Node
+typedef struct _BuddyLinked BuddyLinked;
+struct _BuddyLinked {
     BuddyLinked *next;
-}BuddyLinked;
+};
 
 /// Support 8 << MAX_BUDDY_HEADER_BITS SIZE,
-static BuddyLinked buddy_header[MAX_BUDDY_HEADER_BITS] = { 0 };
+static BuddyLinked buddy_header[MAX_BUDDY_HEADER_BITS] = {0};
 
 __always_inline size_t buddy_header_index(size_t size) {
     size_t index = 0;
-    // End when l >= size, so l is the min size available when satisfying the size limit
-    for(size_t l = 8;l < size;l <<= 2) index++;
+    // End when l >= size, so l is the min size available when satisfying the
+    // size limit
+    for(size_t l = 8; l < size; l <<= 1)
+        index++;
     return index;
 }
 
@@ -39,11 +43,11 @@ __always_inline void add_node(size_t index, uintptr_t addr) {
 /// @param size The size of the memory block
 void mem_add(uintptr_t addr, size_t size) {
     uintptr_t end = addr + size;
-    // align to 8 bytes
-    addr &= ~0x7;
+    // align to 8 bytes.
+    addr = (addr + 7) & ~0x7;
     end &= ~0x7;
     // add to the buddy header list
-    for(size_t index = 0;addr < end;index++) {
+    for(size_t index = 0; addr < end; index++) {
         size_t bit_and = 8 << index;
         if((addr & bit_and) != 0) {
             add_node(index, addr);
@@ -57,24 +61,25 @@ void mem_add(uintptr_t addr, size_t size) {
 }
 
 // reimplement new
-void* operator new[](size_t size) {
+void *operator new[](size_t size) {
     auto index = buddy_header_index(size);
-    size_t avaiable = 2 << (3 + index);
-
+    debug("init index: %d", index);
     // alloc buddy node
-    // TODO: alloc from upper level when the current level buddy is empty
     auto node = buddy_header[index].next;
+    // find the first available buddy node
+    while(node == nullptr) {
+        node = buddy_header[++index].next;
+    }
     buddy_header[index].next = node->next;
     uintptr_t addr = (uintptr_t)node;
+    size_t avaiable = 8 << index;
 
     // add the last bytes to the buddy.
-    if(avaiable != size) 
+    if(avaiable != size)
         mem_add(addr + size, avaiable - size);
 
     return (void *)addr;
 }
 
 // reimplement delete
-void operator delete(void *ptr, size_t size) {
-    
-}
+void operator delete(void *ptr, size_t size) {}

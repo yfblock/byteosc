@@ -1,8 +1,8 @@
-#include <stdarg.h>
+#include <arch.h>
 #include <kernel.h>
+#include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <arch.h>
 
 void print_number(size_t hex) {
     uint8_t buffer[32];
@@ -34,37 +34,47 @@ void print_hex(size_t hex) {
     }
 }
 
-void printf (const char *__restrict fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    for(;*fmt!='\0';fmt++) {
-        if(*fmt=='%') {
+void puts(char *str) {
+    for(; *str != '\0'; str++)
+        console_putchar(*str);
+}
+
+void vprintf(const char *fmt, va_list args) {
+    for(; *fmt != '\0'; fmt++) {
+        if(*fmt == '%') {
             fmt++;
             switch(*fmt) {
-                case 'c':
-                    console_putchar(va_arg(args, int));
-                    break;
-                case 's':
-                    printf(va_arg(args, char *));
-                    break;
-                case '%':
-                    console_putchar('%');
-                    break;
-                case 'd':
-                    print_number(va_arg(args, size_t));
-                    break;
-                case 'x':
-                    print_hex(va_arg(args, size_t));
-                    break;
-                default:
-                    break;
+            case 'c':
+                console_putchar(va_arg(args, int));
+                break;
+            case 's':
+                puts(va_arg(args, char *));
+                break;
+            case '%':
+                console_putchar('%');
+                break;
+            case 'd':
+                print_number(va_arg(args, size_t));
+                break;
+            case 'x':
+                print_hex(va_arg(args, size_t));
+                break;
+            default:
+                break;
             }
         } else {
             console_putchar(*fmt);
         }
     }
+}
+
+__attribute__((__format__(__printf__, 1, 2))) int
+printf(const char *__restrict fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vprintf(fmt, args);
     va_end(args);
+    return 0;
 }
 
 void log(enum log_level_t level, const char *__restrict __fmt, ...) {
@@ -72,9 +82,15 @@ void log(enum log_level_t level, const char *__restrict __fmt, ...) {
         return;
     }
     const char *LOG_LEVEL_NAME[] = {"TRACE", "DEBUG", "INFO", "WARN", "ERROR"};
-    printf("[%s] ", LOG_LEVEL_NAME[level]);
+    // ANSI escape codes.
+    // https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+    const uint8_t color_code[] = {90, 32, 34, 93, 31};
+    printf("\033[%dm[%s] ", color_code[level], LOG_LEVEL_NAME[level]);
 
+    // Pass va_list to vprintf.
     va_list args;
     va_start(args, __fmt);
-    printf(__fmt, args);
+    vprintf(__fmt, args);
+    va_end(args);
+    puts((char *)"\033[0m");
 }

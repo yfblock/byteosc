@@ -14,6 +14,7 @@ set(CMAKE_SYSTEM_PROCESSOR riscv64)
 
 # Use c11 standard
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_ASM_COMPILER riscv64-unknown-linux-gnu-gcc)
 set(CMAKE_C_COMPILER riscv64-unknown-linux-gnu-gcc)
@@ -27,6 +28,8 @@ set(CMAKE_EXE_LINKER_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany -T ${LINK
 
 # For vscode
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
+
+include(config.cmake)
 
 # set_source_files_properties(*.asm PROPERTIES LANGUAGE ASM)
 

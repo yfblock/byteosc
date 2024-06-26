@@ -15,5 +15,5 @@
 //     );
 // }
 void console_putchar(char c);
-
+void shutdown();
 #endif
