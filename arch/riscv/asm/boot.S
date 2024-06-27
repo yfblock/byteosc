@@ -1,3 +1,4 @@
+#include <define.h>
 .section .text
 .global _start
 _start:
@@ -21,19 +22,10 @@ _start:
     la      s0, boot_main
     jalr    s0
 
-# .global memset
-# memset:
-#     add     a2, a0, a2
-# 0:
-#     bge     a0, a2, 1f
-#     sb      a1, 0(a0)
-#     addi    a0, a0, 1
-#     j       0b
-# 1:
-#     ret
-
-
 # Set Boot Stack
+.section .bss
+.global _boot_stack
+.global _boot_stack_top
 _boot_stack:
-    .space 4096 * 40
+    .space BOOT_STACK_SIZE
 _boot_stack_top:

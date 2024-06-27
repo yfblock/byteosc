@@ -1,4 +1,5 @@
 #include "smoldtb.h"
+#include <console.h>
 
 #define FDT_MAGIC 0xD00DFEED
 #define FDT_BEGIN_NODE 1

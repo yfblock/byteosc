@@ -1,7 +1,8 @@
 #include <arch.h>
 #include <buddy_alloc.h>
+#include <common.h>
 #include <console.h>
-#include <kernel.h>
+#include <percpu.h>
 #include <smoldtb.h>
 #include <string.h>
 
@@ -43,6 +44,9 @@ void test_heap() {
 
     // test heap alloc 1
     char *test_alloc = new char[0x201];
+
+    assert(test_alloc != nullptr);
+
     memset(test_alloc, 3, sizeof(test_alloc));
     debug("test ptr: 0x%x   size: 0x%x", test_alloc, sizeof(test_alloc));
     for(int i = 0; i < 10; i++) {
@@ -51,6 +55,10 @@ void test_heap() {
 
     // test heap alloc 2
     char *test_alloc1 = new char[0x200];
+
+    assert(test_alloc != nullptr);
+    assert((uintptr_t)test_alloc1 % 0x200 == 0);
+
     memset(test_alloc1, 4, sizeof(test_alloc1));
     debug("test ptr: 0x%x   size: 0x%x", test_alloc1, sizeof(test_alloc1));
     for(int i = 0; i < 10; i++) {
@@ -58,8 +66,8 @@ void test_heap() {
     }
 }
 
-/// @brief Heap allocator, heap
-static uint8_t heap[0x200000] = {0};
+// percpu int test_int = 0;
+percpu_define(int, test_int, 4000);
 
 int main(size_t hart_id, uintptr_t dtb) {
     // Print Banner
@@ -73,11 +81,19 @@ int main(size_t hart_id, uintptr_t dtb) {
     printf(CONCAT(R"(        |___/                        )", "\n"));
     printf("\n");
 
-    info("DTB ADDR: %x", dtb);
+    // Ensure boot hart is 0
+    assert(hart_id == 0);
+    // Ensure has dtb
+    assert(dtb != 0);
+
+    info("percpu pointer: 0x%x", percpu_pointer());
+
+    info("DTB ADDR: 0x%x", dtb);
     info("C++ Standard: %s", STR(__cplusplus));
+    info("Size of boot stack: 0x%x", boot_stack_size());
     // Add heap memory to allocator
-    mem_add((uintptr_t)&heap, 0x200000);
-    debug("add heap 0x%x 0x%x", &heap, 0x200000);
+    mem_add((uintptr_t)&heap, HEAP_SIZE);
+    debug("add heap 0x%x 0x%x", &heap, HEAP_SIZE);
 
     // test Heap allocator
     test_heap();

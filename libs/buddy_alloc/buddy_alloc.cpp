@@ -1,15 +1,28 @@
 #include <buddy_alloc.h>
-#include <kernel.h>
+#include <common.h>
+#include <console.h>
 
-/// Define BuddyLinked Node
+/* Heap allocator, heap */
+uint8_t heap[HEAP_SIZE] = {0};
+
+/* Define BuddyLinked Node Type */
 typedef struct _BuddyLinked BuddyLinked;
+/* Define BuddyLinked Node Real Struct */
 struct _BuddyLinked {
     BuddyLinked *next;
 };
 
-/// Support 8 << MAX_BUDDY_HEADER_BITS SIZE,
+/* Compile Assertion */
+compile_assert(BuddyLinkedAssert, sizeof(BuddyLinked) == sizeof(uintptr_t));
+
+/* Support 8 << MAX_BUDDY_HEADER_BITS SIZE, */
 static BuddyLinked buddy_header[MAX_BUDDY_HEADER_BITS] = {0};
 
+/**
+ * Get the index level through the allocation size.
+ * @param size The size of the allocation
+ * @return The index level, 0 is 8 bytes, 1 is 16 bytes...
+ */
 __always_inline size_t buddy_header_index(size_t size) {
     size_t index = 0;
     // End when l >= size, so l is the min size available when satisfying the
@@ -19,10 +32,12 @@ __always_inline size_t buddy_header_index(size_t size) {
     return index;
 }
 
-/// @brief Add a buddy node to the header list
-/// @param index buddy header index
-/// @param addr the memory block will be added
-/// @return void
+/**
+ * Add a buddy node to the header list
+ * @param index buddy header index
+ * @param addr the memory block will be added
+ * @return void
+ */
 __always_inline void add_node(size_t index, uintptr_t addr) {
     BuddyLinked *node = (BuddyLinked *)addr;
     // if(buddy_header[index].next == nullptr) {
@@ -38,9 +53,11 @@ __always_inline void add_node(size_t index, uintptr_t addr) {
     link->next = node;
 }
 
-/// @brief Add memory to buddy header list
-/// @param addr The address of the memory block
-/// @param size The size of the memory block
+/**
+ * Add memory to buddy header list
+ * @param addr The address of the memory block
+ * @param size The size of the memory block
+ */
 void mem_add(uintptr_t addr, size_t size) {
     uintptr_t end = addr + size;
     // align to 8 bytes.
@@ -60,7 +77,11 @@ void mem_add(uintptr_t addr, size_t size) {
     }
 }
 
-// reimplement new
+/**
+ * reimplement new
+ * @param size The size of the memory block will be allocated
+ * @return The address of the memory block
+ */
 void *operator new[](size_t size) {
     auto index = buddy_header_index(size);
     debug("init index: %d", index);
@@ -81,5 +102,5 @@ void *operator new[](size_t size) {
     return (void *)addr;
 }
 
-// reimplement delete
+/* reimplement delete */
 void operator delete(void *ptr, size_t size) {}

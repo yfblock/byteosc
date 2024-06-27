@@ -39,6 +39,11 @@ SECTIONS
         _edata = .;
     }
 
+    .percpu ALIGN(4K): {
+        _percpu_start = .;
+        *(.percpu .percpu.*)
+    }
+
     .bss ALIGN(4K): {
         *(.bss.stack)
         _sbss = .;
