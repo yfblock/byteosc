@@ -12,8 +12,10 @@ struct _BuddyLinked {
     BuddyLinked *next;
 };
 
-/* Compile Assertion */
-compile_assert(BuddyLinkedAssert, sizeof(BuddyLinked) == sizeof(uintptr_t));
+/* Static assert or Compiler assert */
+static_assert(
+    sizeof(BuddyLinked) == sizeof(intptr_t),
+    "sizeof(BuddyLinkedAssert) Must be same as the sizeof(uintptr_t)");
 
 /* Support 8 << MAX_BUDDY_HEADER_BITS SIZE, */
 static BuddyLinked buddy_header[MAX_BUDDY_HEADER_BITS] = {0};
@@ -77,12 +79,7 @@ void mem_add(uintptr_t addr, size_t size) {
     }
 }
 
-/**
- * reimplement new
- * @param size The size of the memory block will be allocated
- * @return The address of the memory block
- */
-void *operator new[](size_t size) {
+void *malloc(size_t size) {
     auto index = buddy_header_index(size);
     debug("init index: %d", index);
     // alloc buddy node
@@ -101,6 +98,22 @@ void *operator new[](size_t size) {
 
     return (void *)addr;
 }
+
+/**
+ * reimplement new
+ * @param size The size of the memory block will be allocated
+ * @return The address of the memory block
+ */
+void *operator new[](size_t size) {
+    return malloc(size);
+}
+
+/**
+ * Release the memory block
+ * @param ptr The start address of the memory block
+ * @param size The size of the memory block
+ */
+void free(void *ptr, size_t size) {}
 
 /* reimplement delete */
 void operator delete(void *ptr, size_t size) {}

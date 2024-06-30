@@ -103,15 +103,17 @@ int main(size_t hart_id, uintptr_t dtb) {
     puts((char *)str);
     puts((char *)"root\n");
 
-    dtb_init(dtb, dtb_ops{.on_error = [](const char *str) -> void {
-                 puts((char *)str);
-             }});
+    dtb_init(dtb, dtb_ops{.malloc = malloc,
+                          .free = free,
+                          .on_error = [](const char *str) -> void {
+                              puts((char *)str);
+                          }});
 
     dtb_node *root = dtb_find("/");
     printf("root ptr: 0x%x\n", root);
 
     while(root != NULL) {
-        // print_node(root, 0);
+        print_node(root, 0);
         root = dtb_get_sibling(root);
     }
     log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");

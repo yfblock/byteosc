@@ -21,7 +21,4 @@
 #define STR(x) STR_HELPER(x)
 #define CONCAT(x, y) x y
 
-#define compile_assert(name, expr)                                             \
-    typedef int __assert_failed_##name[(expr) ? 1 : -1];
-
 #endif

@@ -1,5 +1,4 @@
 #pragma once
-#define SMOLDTB_STATIC_BUFFER_SIZE 0x10000
 #include <stddef.h>
 #include <stdint.h>
 

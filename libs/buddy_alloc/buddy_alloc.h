@@ -12,6 +12,9 @@
 
 extern uint8_t heap[HEAP_SIZE];
 
+void *malloc(size_t size);
+void free(void *ptr, size_t size);
+
 void mem_add(uintptr_t addr, size_t size);
 
 #endif
