@@ -1,5 +1,4 @@
-#ifndef __PERCPU_H__
-#define __PERCPU_H__
+#pragma once
 
 #define percpu __attribute__((section(".percpu")))
 
@@ -13,5 +12,3 @@
         static percpu T define = value;                                        \
         return &define;                                                        \
     }
-
-#endif

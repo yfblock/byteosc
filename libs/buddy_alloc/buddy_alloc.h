@@ -1,5 +1,4 @@
-#ifndef __BUDDY_ALLOC_H__
-#define __BUDDY_ALLOC_H__
+#pragma once
 
 #ifndef HEAP_SIZE
 #define HEAP_SIZE 0x200000
@@ -16,5 +15,3 @@ void *malloc(size_t size);
 void free(void *ptr, size_t size);
 
 void mem_add(uintptr_t addr, size_t size);
-
-#endif

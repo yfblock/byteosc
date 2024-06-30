@@ -3,3 +3,4 @@
 /.idea/
 /.cache/
 /qemu.log
+/cmake-build-debug/

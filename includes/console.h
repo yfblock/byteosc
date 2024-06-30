@@ -1,5 +1,4 @@
-#ifndef __CONSOLE_H__
-#define __CONSOLE_H__
+#pragma once
 
 #include <arch.h>
 // Put string to the console.
@@ -25,6 +24,4 @@ log(enum log_level_t level, const char *__restrict __fmt, ...);
 
 #ifndef CONFIG_LOG_LEVEL
 #define CONFIG_LOG_LEVEL LOG_LEVEL_DEBUG
-#endif
-
 #endif

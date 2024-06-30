@@ -1,5 +1,4 @@
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -20,5 +19,3 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 #define CONCAT(x, y) x y
-
-#endif
