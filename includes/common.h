@@ -19,3 +19,6 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 #define CONCAT(x, y) x y
+
+#define NEWLINE(x) CONCAT(x, "\n")
+#define CPP_VERSION_STR STR(__cplusplus)

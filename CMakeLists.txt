@@ -21,10 +21,28 @@ set(CMAKE_C_COMPILER riscv64-unknown-linux-gnu-gcc)
 set(CMAKE_CXX_COMPILER riscv64-unknown-linux-gnu-g++)
 
 # Set compile options
-set(CMAKE_ASM_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany")
-set(CMAKE_C_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -O2 -mcmodel=medany")
-set(CMAKE_CXX_FLAGS "-march=rv64imac -mabi=lp64 -nostdlib -Wno-main -O2 -mcmodel=medany")
-set(CMAKE_EXE_LINKER_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany -T ${LINKER_FILE}")
+# set(CMAKE_ASM_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany")
+set(CMAKE_C_FLAGS "-nostdlib -O2")
+set(CMAKE_CXX_FLAGS "-Wno-main -nostdlib -O2")
+set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_FILE} ")
+
+add_compile_options(
+    #-------------------------------------------
+    # Compile Options for Warnings
+    #-------------------------------------------
+    # -Wall
+    -Werror
+    # -Wmissing-declarations
+    -Wundef
+    -Wpointer-arith
+    -Wno-nonnull
+    #-------------------------------------------
+    # Compile Options for Machine
+    #-------------------------------------------
+    -march=rv64imac 
+    -mabi=lp64 
+    -mcmodel=medany
+)
 
 # For vscode
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
@@ -55,7 +73,12 @@ include_directories(
 message(STATUS "C_SOURCE_FILES: ${C_SOURCES}")
 add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES})
 # No Stdlib and ignore stdlib headers
-target_compile_options(byteos PRIVATE -nostdlib -Wno-builtin-declaration-mismatch)
+target_compile_options(
+    byteos 
+    PRIVATE 
+    -nostdlib 
+    -Wno-builtin-declaration-mismatch
+)
 
 add_custom_target(run
     COMMAND qemu-system-${CMAKE_SYSTEM_PROCESSOR}

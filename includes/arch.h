@@ -7,3 +7,5 @@ void console_putchar(char c);
 void shutdown();
 size_t boot_stack_size();
 uintptr_t percpu_pointer();
+
+#define naked __attribute__((naked))

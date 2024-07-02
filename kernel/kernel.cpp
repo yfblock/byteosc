@@ -30,7 +30,11 @@ void print_node(dtb_node *node, size_t indent) {
         // make print pretty trees and check all properties are read correctly.
         // There's a reason these structs are opaque to calling code, and their
         // underlying definitions can change at any time.
-        printf("%s  | %s: %x\r\n", indent_buff, prop->name, prop->first_cell);
+        printf("%s  | %s: %x", indent_buff, prop->name, prop->first_cell);
+        // for(int i = 0;i < prop->length;i+=sizeof(*prop->first_cell)) {
+        //     printf(" %x", *(prop->first_cell + i/sizeof(*prop->first_cell)));
+        // }
+        printf("\r\n");
     }
 
     dtb_node *child = dtb_get_child(node);
@@ -48,10 +52,6 @@ void test_heap() {
     assert(test_alloc != nullptr);
 
     memset(test_alloc, 3, sizeof(test_alloc));
-    debug("test ptr: 0x%x   size: 0x%x", test_alloc, sizeof(test_alloc));
-    for(int i = 0; i < 10; i++) {
-        debug("root %x: %x", i, test_alloc[i]);
-    }
 
     // test heap alloc 2
     char *test_alloc1 = new char[0x200];
@@ -60,10 +60,6 @@ void test_heap() {
     assert((uintptr_t)test_alloc1 % 0x200 == 0);
 
     memset(test_alloc1, 4, sizeof(test_alloc1));
-    debug("test ptr: 0x%x   size: 0x%x", test_alloc1, sizeof(test_alloc1));
-    for(int i = 0; i < 10; i++) {
-        debug("root %d: %d", i, test_alloc1[i]);
-    }
 }
 
 // percpu int test_int = 0;
@@ -71,14 +67,14 @@ percpu_define(int, test_int, 4000);
 
 int main(size_t hart_id, uintptr_t dtb) {
     // Print Banner
-    printf(CONCAT(R"(  ____        _        ____   _____  )", "\n"));
-    printf(CONCAT(R"( |  _ \      | |      / __ \ / ____| )", "\n"));
-    printf(CONCAT(R"( | |_) |_   _| |_ ___| |  | | (___   )", "\n"));
-    printf(CONCAT(R"( |  _ <| | | | __/ _ \ |  | |\___ \  )", "\n"));
-    printf(CONCAT(R"( | |_) | |_| | ||  __/ |__| |____) | )", "\n"));
-    printf(CONCAT(R"( |____/ \__, |\__\___|\____/|_____/  )", "\n"));
-    printf(CONCAT(R"(         __/ |         C++ Version   )", "\n"));
-    printf(CONCAT(R"(        |___/                        )", "\n"));
+    printf(NEWLINE(R"(  ____        _        ____   _____  )"));
+    printf(NEWLINE(R"( |  _ \      | |      / __ \ / ____| )"));
+    printf(NEWLINE(R"( | |_) |_   _| |_ ___| |  | | (___   )"));
+    printf(NEWLINE(R"( |  _ <| | | | __/ _ \ |  | |\___ \  )"));
+    printf(NEWLINE(R"( | |_) | |_| | ||  __/ |__| |____) | )"));
+    printf(NEWLINE(R"( |____/ \__, |\__\___|\____/|_____/  )"));
+    printf(NEWLINE(R"(         __/ |         C++ Version   )"));
+    printf(NEWLINE(R"(        |___/                        )"));
     printf("\n");
 
     // Ensure boot hart is 0
@@ -89,7 +85,7 @@ int main(size_t hart_id, uintptr_t dtb) {
     info("percpu pointer: 0x%x", percpu_pointer());
 
     info("DTB ADDR: 0x%x", dtb);
-    info("C++ Standard: %s", STR(__cplusplus));
+    info("C++ Standard: %s", CPP_VERSION_STR);
     info("Size of boot stack: 0x%x", boot_stack_size());
     // Add heap memory to allocator
     mem_add((uintptr_t)&heap, HEAP_SIZE);
@@ -112,9 +108,19 @@ int main(size_t hart_id, uintptr_t dtb) {
     dtb_node *root = dtb_find("/");
     printf("root ptr: 0x%x\n", root);
 
-    while(root != NULL) {
-        print_node(root, 0);
-        root = dtb_get_sibling(root);
+    // while(root != NULL) {
+    //     print_node(root, 0);
+    //     root = dtb_get_sibling(root);
+    // }
+    dtb_node *mnode = dtb_find("/memory");
+    if(mnode != nullptr) {
+        print_node(mnode, 0);
+        dtb_prop *prop = dtb_get_prop(mnode, 0);
+        dtb_pair mrange = {.a = 2, .b = 2};
+        dtb_read_prop_pairs(prop, mrange, &mrange);
+        printf("Memory Range: 0x%x - 0x%x\n", mrange.a, mrange.a + mrange.b);
+        // TOOD: Add Memory Range to Frame Allocator.
     }
+
     log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");
 }

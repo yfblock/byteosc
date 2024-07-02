@@ -5,10 +5,11 @@ _start:
     # li      a7, 0x1
     # li      a0, '3'
     # ecall
-
+    # STORE ARGUMENTS
     mv      s0, a0
     mv      s1, a1
 
+    # CLEAR BSS SECTION
     la      a0, _sbss
     li      a1, 0
     la      a2, _ebss
@@ -16,9 +17,12 @@ _start:
 
     jal     memset
 
+    # LOAD BOOT STACK
+    la      sp, _boot_stack_top
+    
+    #       JUMP TO MAIN ENTRY
     mv      a0, s0
     mv      a1, s1
-    la      sp, _boot_stack_top
     la      s0, boot_main
     jalr    s0
 

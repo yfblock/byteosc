@@ -9,11 +9,8 @@ SECTIONS
 {
     /* Load the kernel at this address: "." means the current address */
     . = BASE_ADDRESS;
-    start = .;
-
     .text ALIGN(4K): AT(__ENTRY_ADDR) {
         stext = .;
-        *(.text.entry)
         *(.text .text.*)
         etext = .;
     }

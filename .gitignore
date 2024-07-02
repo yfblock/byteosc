@@ -4,3 +4,4 @@
 /.cache/
 /qemu.log
 /cmake-build-debug/
+virt.out

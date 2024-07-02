@@ -13,6 +13,10 @@ format:
 	@$(CLANG_FORMAT) -i $(ALL_FILES)
 	@echo "All files have been formatted."
 
+fdt:
+	@qemu-system-riscv64 -M 128m -machine virt,dumpdtb=virt.out
+	fdtdump virt.out
+
 show-files:
 	@echo "Source files: $(SRC_FILES)"
 	@echo "Header files: $(HEADER_FILES)"
@@ -22,7 +26,7 @@ clean: all
 	ninja -C build clean
 
 run:
-	qemu-system-riscv64 \
+	@qemu-system-riscv64 \
 		-machine virt \
 		-kernel build/byteos \
 		-nographic \
