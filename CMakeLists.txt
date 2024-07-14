@@ -5,20 +5,25 @@ project(ByteOS C ASM CXX)
 message(STATUS "==========================")
 message(STATUS "     Compiling ByteOS     ")
 message(STATUS "==========================")
+#----------------------------------------------------------------
+# Set Kernel Options 
+#----------------------------------------------------------------
+set(ToolChainPrefix )
+set(KernelArch aarch64)
 
 # Declare Variables
 set(LINKER_SCRIPT_DIR "${PROJECT_SOURCE_DIR}/linker")
-set(LINKER_FILE "${LINKER_SCRIPT_DIR}/linker-general.ld")
+set(LINKER_FILE "${LINKER_SCRIPT_DIR}/linker-${KernelArch}.ld")
 
-set(CMAKE_SYSTEM_PROCESSOR riscv64)
+set(CMAKE_SYSTEM_PROCESSOR ${KernelArch})
 
 # Use c11 standard
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_ASM_COMPILER riscv64-unknown-linux-gnu-gcc)
-set(CMAKE_C_COMPILER riscv64-unknown-linux-gnu-gcc)
-set(CMAKE_CXX_COMPILER riscv64-unknown-linux-gnu-g++)
+set(CMAKE_ASM_COMPILER ${ToolChainPrefix}gcc)
+set(CMAKE_C_COMPILER ${ToolChainPrefix}gcc)
+set(CMAKE_CXX_COMPILER ${ToolChainPrefix}g++)
 
 # Set compile options
 # set(CMAKE_ASM_FLAGS "-march=rv64imac -mabi=lp64 -mcmodel=medany")
@@ -39,9 +44,12 @@ add_compile_options(
     #-------------------------------------------
     # Compile Options for Machine
     #-------------------------------------------
-    -march=rv64gc
+    # -march=rv64gc
     -mabi=lp64 
-    -mcmodel=medany
+    # -mcmodel=medany
+
+    # Aarch64 options
+    -mgeneral-regs-only
 )
 
 # For vscode
@@ -58,11 +66,14 @@ file(GLOB_RECURSE CPP_SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
 list(FILTER ASM_SOURCES EXCLUDE REGEX "build/*")
 list(FILTER C_SOURCES EXCLUDE REGEX "build/*")
 list(FILTER CPP_SOURCES EXCLUDE REGEX "build/*")
+list(FILTER ASM_SOURCES EXCLUDE REGEX "arch/riscv64/*")
+list(FILTER C_SOURCES EXCLUDE REGEX "arch/riscv64/*")
+list(FILTER CPP_SOURCES EXCLUDE REGEX "arch/riscv64/*")
 
 # Set include folders
 include_directories(
     includes 
-    arch/riscv/includes
+    arch/${KernelArch}/includes
     drivers/includes
     libs/smoldtb 
     libs/memory

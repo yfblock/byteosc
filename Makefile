@@ -5,6 +5,8 @@ ALL_FILES := $(SRC_FILES) $(HEADER_FILES)
 
 CLANG_FORMAT := clang-format
 
+ARCH := aarch64
+
 all:
 	ninja -C build 
 
@@ -14,7 +16,7 @@ fmt:
 	@echo "All files have been formatted."
 
 fdt:
-	@qemu-system-riscv64 -M 128m -machine virt,dumpdtb=virt.out
+	@qemu-system-$(ARCH) -M 128m -machine virt,dumpdtb=virt.out
 	fdtdump virt.out
 
 show-files:
@@ -26,8 +28,9 @@ clean: all
 	ninja -C build clean
 
 run:
-	@qemu-system-riscv64 \
+	qemu-system-$(ARCH) \
 		-machine virt \
+		-cpu cortex-a53 \
 		-kernel build/byteos \
 		-nographic \
 		-D qemu.log \

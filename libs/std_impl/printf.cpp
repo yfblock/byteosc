@@ -68,8 +68,7 @@ void vprintf(const char *fmt, va_list args) {
     }
 }
 
-__attribute__((__format__(__printf__, 1, 2))) int
-printf(const char *__restrict fmt, ...) {
+int printf(const char *__restrict fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vprintf(fmt, args);

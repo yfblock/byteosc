@@ -19,11 +19,3 @@ extern "C" void boot_main(size_t hart_id, uintptr_t dtb) {
     puts((char *)"Run End. Shutdown...\n");
     shutdown();
 }
-
-/**
- * Get Boot Stack Size
- * @return The size of the boot stack
- */
-size_t boot_stack_size() {
-    return (uintptr_t)&_boot_stack_top - (uintptr_t)&_boot_stack;
-}

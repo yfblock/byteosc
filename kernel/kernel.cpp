@@ -82,6 +82,9 @@ int main(size_t hart_id, uintptr_t dtb) {
     printf(NEWLINE(R"(        |___/                        )"));
     printf("\n");
 
+    debug("Hart ID: %d", hart_id);
+    debug("dtb address: 0x%x", dtb);
+
     // Ensure boot hart is 0
     assert(hart_id == 0);
     // Ensure has dtb
