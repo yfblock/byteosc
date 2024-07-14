@@ -79,9 +79,13 @@ void mem_add(uintptr_t addr, size_t size) {
     }
 }
 
+/**
+ * alloc size of a memory block, aligned to 8 bytes
+ * @param size The size of the memory block
+ * @return The start address of the memory block
+ */
 void *malloc(size_t size) {
     auto index = buddy_header_index(size);
-    debug("init index: %d", index);
     // alloc buddy node
     auto node = buddy_header[index].next;
     // find the first available buddy node
@@ -113,7 +117,26 @@ void *operator new[](size_t size) {
  * @param ptr The start address of the memory block
  * @param size The size of the memory block
  */
-void free(void *ptr, size_t size) {}
+void free(void *ptr, size_t size) {
+    auto index = buddy_header_index(size);
+    // Ensure that ptr is aligned size.
+    assert((uintptr_t)ptr % size == 0);
+    // Free memory node
+    // auto node = (BuddyLinked *)ptr;
+    // node->next = buddy_header[index].next;
+    // buddy_header[index].next = node;
+
+    // // merge buddy node
+    // while(index > 0) {
+    //     index--;
+    //     auto left = (BuddyLinked *)((uintptr_t)node - (8 << index));
+    //     auto right = (BuddyLinked *)((uintptr_t)node + (8 << index));
+    //     if(left->next == node && right->next == node) {
+    //         node->next = nullptr;
+    //         mem_add((uintptr_t)node, 8 << (index + 1));
+    //     }
+    // }
+}
 
 /* reimplement delete */
 void operator delete(void *ptr, size_t size) {}

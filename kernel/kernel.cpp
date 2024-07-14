@@ -65,6 +65,11 @@ void test_heap() {
 // percpu int test_int = 0;
 percpu_define(int, test_int, 4000);
 
+/// CTOR Test
+CTOR void test_ctor() {
+    debug("constructor: %s", __PRETTY_FUNCTION__);
+}
+
 int main(size_t hart_id, uintptr_t dtb) {
     // Print Banner
     printf(NEWLINE(R"(  ____        _        ____   _____  )"));
@@ -94,19 +99,14 @@ int main(size_t hart_id, uintptr_t dtb) {
     // test Heap allocator
     test_heap();
 
-    char str[50];
-    memset(str, '$', 10);
-    puts((char *)str);
-    puts((char *)"root\n");
-
     dtb_init(dtb, dtb_ops{.malloc = malloc,
                           .free = free,
                           .on_error = [](const char *str) -> void {
                               puts((char *)str);
                           }});
 
-    dtb_node *root = dtb_find("/");
-    printf("root ptr: 0x%x\n", root);
+    // dtb_node *root = dtb_find("/");
+    // printf("root ptr: 0x%x\n", root);
 
     // while(root != NULL) {
     //     print_node(root, 0);
@@ -121,6 +121,16 @@ int main(size_t hart_id, uintptr_t dtb) {
         printf("Memory Range: 0x%x - 0x%x\n", mrange.a, mrange.a + mrange.b);
         // TOOD: Add Memory Range to Frame Allocator.
     }
+
+    // iterator the init_array.
+    for_each_init(func) {
+        debug("Initial constructors");
+        // (*func)();
+        func[0]();
+    }
+
+    void uart_drv_putchar(char c);
+    uart_drv_putchar('3');
 
     log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");
 }

@@ -39,7 +39,7 @@ add_compile_options(
     #-------------------------------------------
     # Compile Options for Machine
     #-------------------------------------------
-    -march=rv64imac 
+    -march=rv64gc
     -mabi=lp64 
     -mcmodel=medany
 )
@@ -62,7 +62,8 @@ list(FILTER CPP_SOURCES EXCLUDE REGEX "build/*")
 # Set include folders
 include_directories(
     includes 
-    arch/riscv/includes 
+    arch/riscv/includes
+    drivers/includes
     libs/smoldtb 
     libs/memory
     libs/std_impl

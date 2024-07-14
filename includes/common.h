@@ -22,3 +22,15 @@
 
 #define NEWLINE(x) CONCAT(x, "\n")
 #define CPP_VERSION_STR STR(__cplusplus)
+
+#define BIT(x) (1 << (x))
+
+// TODO: use [[gnu::constructor]] instead of __attribute__((constructor))
+#define CTOR __attribute__((constructor))
+typedef void (*init_func)();
+extern init_func __start_init_array[];
+extern init_func __stop_init_array[];
+
+// TODO: implement the CTOR_ITER and use it.
+#define for_each_init(iter)                                                    \
+    for(init_func *iter = __start_init_array; iter != __stop_init_array; iter++)

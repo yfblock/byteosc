@@ -9,7 +9,7 @@ all:
 	ninja -C build 
 
 # format all code *.cpp *.h
-format:
+fmt:
 	@$(CLANG_FORMAT) -i $(ALL_FILES)
 	@echo "All files have been formatted."
 
@@ -33,4 +33,7 @@ run:
 		-D qemu.log \
 		-d in_asm,int,pcall,cpu_reset,guest_errors
 
-.PHONY: all format show-files clean run
+cmake:
+	cmake -B build -S . -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=on
+
+.PHONY: all fmt show-files clean run cmake
