@@ -1,10 +1,11 @@
 #pragma once
 
+#include <arch.h>
 #include <stddef.h>
 #include <stdint.h>
 
-extern "C" uintptr_t _boot_stack;
-extern "C" uintptr_t _boot_stack_top;
+EXTERN uintptr_t _boot_stack;
+EXTERN uintptr_t _boot_stack_top;
 void trap_entry();
 
 #define CSRW(reg, value)                                                       \

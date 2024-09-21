@@ -1,3 +1,5 @@
+#include <aarch64.h>
+#include <msr.h>
 #include <arch.h>
 #include <assert.h>
 #include <console.h>
@@ -19,8 +21,9 @@ void console_putchar(char c) {
  * arch specific initialization. Enter the main() after initialization
  * @param hart_id The id of the current hart
  * @param dtb The pointer of the device tree binary.
+ * 
  */
-extern "C" void boot_main(size_t hart_id, uintptr_t dtb) {
+EXTERN void boot_main(size_t hart_id, uintptr_t dtb) {
     puts((char *)"Entering Kernel...\n");
     debug("hart_id: %d  dtb: 0x%x\n", hart_id, dtb);
     // Write the handler of the boot function.
@@ -29,4 +32,23 @@ extern "C" void boot_main(size_t hart_id, uintptr_t dtb) {
     main(hart_id, dtb);
     puts((char *)"Run End. Shutdown...\n");
     shutdown();
+}
+
+/**
+ * Jump to EL1 from EL2
+ */
+EXTERN void drop_to_el1() {
+    write_sp_el0(0);
+    write_spsel(SP_ELx);
+    CurrentEL_Reg el = current_el();
+    debug("Current EL: %d", el.raw);
+    debug("Current EL: %d", el.el);
+    debug("Current EL: %d", el.reserved2);
+    debug("Current EL: %d", el.reserved);
+
+    // Ensure the Exception Level before droping is 1.
+    assert(el.el == 1);
+    
+
+    return;
 }

@@ -8,7 +8,7 @@ message(STATUS "==========================")
 #----------------------------------------------------------------
 # Set Kernel Options 
 #----------------------------------------------------------------
-set(ToolChainPrefix )
+set(ToolChainPrefix aarch64-linux-gnu-)
 set(KernelArch aarch64)
 
 # Declare Variables

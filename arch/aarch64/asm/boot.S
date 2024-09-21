@@ -12,6 +12,8 @@ _start:
     adrp    x8, _boot_stack_top
     mov     sp, x8
 
+    bl     drop_to_el1
+
     # Call Main Function
     mov     x0, x19
     mov     x1, x20

@@ -10,7 +10,7 @@
  * @param hart_id The id of the current hart
  * @param dtb The pointer of the device tree binary.
  */
-extern "C" void boot_main(size_t hart_id, uintptr_t dtb) {
+EXTERN void boot_main(size_t hart_id, uintptr_t dtb) {
     puts((char *)"Entering Kernel...\n");
     // Write the handler of the boot function.
     write_stvec(trap_entry);

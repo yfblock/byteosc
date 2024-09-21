@@ -1,15 +1,13 @@
 OUTPUT_ARCH(aarch64)
 ENTRY(_start)
 
-/* BASE_ADDRESS = 0xffffffc080200000; */
-BASE_ADDRESS = 0x40080000;
-__ENTRY_ADDR = 0x40080000;
+BASE_ADDRESS = 0x40080000;;
 
 SECTIONS
 {
     /* Load the kernel at this address: "." means the current address */
     . = BASE_ADDRESS;
-    .text ALIGN(4K): AT(__ENTRY_ADDR) {
+    .text ALIGN(4K) : {
         stext = .;
         *(.text .text.*)
         etext = .;
