@@ -53,7 +53,7 @@ gdb_server:
 
 debug: build
 	@tmux new-session -d \
-	"make gdb_server && echo '按任意键继续' && read -n 1" && \
+	"ninja -C build run && echo '按任意键继续' && read -n 1" && \
 	tmux split-window -h "gdb build/byteos -ex 'target remote localhost:1234' -ex 'disp /16i $pc' " && \
 	tmux -2 attach-session -d
 

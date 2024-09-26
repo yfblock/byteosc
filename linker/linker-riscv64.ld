@@ -3,13 +3,12 @@ ENTRY(_start)
 
 /* BASE_ADDRESS = 0xffffffc080200000; */
 BASE_ADDRESS = 0x80200000;
-__ENTRY_ADDR = 0x80200000;
 
 SECTIONS
 {
     /* Load the kernel at this address: "." means the current address */
     . = BASE_ADDRESS;
-    .text ALIGN(4K): AT(__ENTRY_ADDR) {
+    .text ALIGN(4K):  {
         stext = .;
         *(.text .text.*)
         etext = .;
@@ -21,10 +20,6 @@ SECTIONS
         __stop_init_array = .;
     }
 
-    .sigtrx ALIGN(4K): {
-        *(.sigtrx .sigtrx.*)
-    }
-
     .rodata ALIGN(4K): {
         srodata = .;
         *(.rodata .rodata.*)
@@ -32,10 +27,9 @@ SECTIONS
         erodata = .;
     }
 
+    . = ALIGN(4K);
+
     .data ALIGN(4K): {
-        . = ALIGN(4K);
-        *(.data.prepage .data.prepage.*)
-        . = ALIGN(4K);
         _sdata = .;
         *(.data .data.*)
         *(.sdata .sdata.*)
@@ -56,4 +50,7 @@ SECTIONS
     }
 
     PROVIDE(end = .);
+    /DISCARD/ : {
+        *(.comment) *(.note*) *(.eh_frame*) *(.debug*)
+    }
 }

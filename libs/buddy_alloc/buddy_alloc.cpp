@@ -25,7 +25,7 @@ static BuddyLinked buddy_header[MAX_BUDDY_HEADER_BITS] = {0};
  * @param size The size of the allocation
  * @return The index level, 0 is 8 bytes, 1 is 16 bytes...
  */
-__always_inline size_t buddy_header_index(size_t size) {
+inline size_t buddy_header_index(size_t size) {
     size_t index = 0;
     // End when l >= size, so l is the min size available when satisfying the
     // size limit
@@ -40,7 +40,7 @@ __always_inline size_t buddy_header_index(size_t size) {
  * @param addr the memory block will be added
  * @return void
  */
-__always_inline void add_node(size_t index, uintptr_t addr) {
+inline void add_node(size_t index, uintptr_t addr) {
     BuddyLinked *node = (BuddyLinked *)addr;
     // if(buddy_header[index].next == nullptr) {
     //     node->next = nullptr;

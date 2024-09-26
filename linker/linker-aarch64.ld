@@ -7,6 +7,7 @@ SECTIONS
 {
     /* Load the kernel at this address: "." means the current address */
     . = BASE_ADDRESS;
+    _start = .;
     .text ALIGN(4K) : {
         stext = .;
         *(.text .text.*)
@@ -17,10 +18,6 @@ SECTIONS
         __start_init_array = .;
         *(.init_array .init_array.*)
         __stop_init_array = .;
-    }
-
-    .sigtrx ALIGN(4K): {
-        *(.sigtrx .sigtrx.*)
     }
 
     .rodata ALIGN(4K): {
@@ -54,4 +51,7 @@ SECTIONS
     }
 
     PROVIDE(end = .);
+    /DISCARD/ : {
+        *(.comment) *(.note*) *(.eh_frame*)
+    }
 }

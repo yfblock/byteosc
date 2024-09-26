@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
+// #include <string.h>
 #define MAX_BUDDY_HEADER_BITS 32
 
 extern uint8_t heap[HEAP_SIZE];

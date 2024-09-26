@@ -4,8 +4,12 @@
 #include <console.h>
 #include <percpu.h>
 #include <smoldtb.h>
+#include <stddef.h>
 #include <string.h>
 
+/**
+ * Print DTB Nodes for Debugging.
+ */
 void print_node(dtb_node *node, size_t indent) {
     const size_t indent_scale = 2;
     if(node == NULL)
@@ -51,7 +55,7 @@ void test_heap() {
 
     assert(test_alloc != nullptr);
 
-    memset(test_alloc, 3, sizeof(test_alloc));
+    memset(test_alloc, 3, sizeof(char) * 0x201);
 
     // test heap alloc 2
     char *test_alloc1 = new char[0x200];
@@ -59,7 +63,7 @@ void test_heap() {
     assert(test_alloc != nullptr);
     assert((uintptr_t)test_alloc1 % 0x200 == 0);
 
-    memset(test_alloc1, 4, sizeof(test_alloc1));
+    memset(test_alloc1, 4, sizeof(char) * 0x200);
 }
 
 // percpu int test_int = 0;
@@ -70,7 +74,7 @@ CTOR void test_ctor() {
     debug("constructor: %s", __PRETTY_FUNCTION__);
 }
 
-int main(size_t hart_id, uintptr_t dtb) {
+void cmain(size_t hart_id, uintptr_t dtb) {
     // Print Banner
     printf(NEWLINE(R"(  ____        _        ____   _____  )"));
     printf(NEWLINE(R"( |  _ \      | |      / __ \ / ____| )"));

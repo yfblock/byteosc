@@ -1,3 +1,4 @@
+#include <arch.h>
 #include <common.h>
 #include <console.h>
 
@@ -8,6 +9,6 @@ __attribute__((__noreturn__)) void __assert_fail(const char *assertion,
     error("assertion failed: %s, function: %s \n file:%s:%d", assertion,
           function, file, line);
     shutdown();
-    while(true) {
-    }
+    while(true)
+        nop();
 }

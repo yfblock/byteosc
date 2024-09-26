@@ -1,11 +1,11 @@
 #include <common.h>
 #include <console.h>
-#include <riscv.h>
+#include <riscv64.h>
 
 /**
  * Trap handler.
  */
-void trap_handler() {
+EXTERN void trap_handler() {
     trap_exception scause = (trap_exception)read_scause();
     uintptr_t addr = read_stval();
     uintptr_t fault_ip = read_sepc();
