@@ -20,6 +20,7 @@ int printf(const char *__restrict __fmt, ...);
 void log(enum log_level_t level, const char *__restrict __fmt, ...);
 #define debug(fmt, ...) log(LOG_LEVEL_DEBUG, (fmt "\n"), ##__VA_ARGS__)
 #define info(fmt, ...) log(LOG_LEVEL_INFO, (fmt "\n"), ##__VA_ARGS__)
+#define warn(fmt, ...) log(LOG_LEVEL_WARNING, (fmt "\n"), ##__VA_ARGS__)
 #define error(fmt, ...) log(LOG_LEVEL_ERROR, (fmt "\n"), ##__VA_ARGS__)
 
 #ifndef CONFIG_LOG_LEVEL

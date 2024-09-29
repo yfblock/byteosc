@@ -140,3 +140,27 @@ void free(void *ptr, size_t size) {
 
 /* reimplement delete */
 void operator delete(void *ptr, size_t size) {}
+
+/* Support 8 << MAX_BUDDY_HEADER_BITS SIZE, */
+// static BuddyLinked buddy_header[MAX_BUDDY_HEADER_BITS] = {0};
+
+void *alloc_node(size_t size) {
+    size_t node_size = 8;
+    int idx = 0;
+    // Find Proper Buddy Node IDX
+    for(; idx < MAX_BUDDY_HEADER_BITS; idx++) {
+        if(node_size >= size && buddy_header[idx].next != nullptr) {
+            break;
+        }
+        node_size <<= 2;
+    }
+    // Return if not available node.
+    if(idx == MAX_BUDDY_HEADER_BITS) {
+        return nullptr;
+    }
+    // Remove node from header.
+    BuddyLinked *node = buddy_header[idx].next;
+    buddy_header[idx].next = node->next;
+
+    // TODO: delete node and add split areas.
+}

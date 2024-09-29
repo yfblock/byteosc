@@ -46,6 +46,5 @@ EXTERN void drop_to_el1() {
 
     // Ensure the Exception Level before droping is 1.
     assert(el.el == 1);
-
     return;
 }

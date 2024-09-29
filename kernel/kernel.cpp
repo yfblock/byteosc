@@ -122,7 +122,7 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     dtb_node *mnode = dtb_find("/memory");
     if(mnode != nullptr) {
         print_node(mnode, 0);
-        dtb_prop *prop = dtb_get_prop(mnode, 0);
+        dtb_prop *prop = dtb_find_prop(mnode, "reg");
         dtb_pair mrange = {.a = 2, .b = 2};
         dtb_read_prop_pairs(prop, mrange, &mrange);
         printf("Memory Range: 0x%x - 0x%x\n", mrange.a, mrange.a + mrange.b);
@@ -132,8 +132,7 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     // iterator the init_array.
     for_each_init(func) {
         debug("Initial constructors");
-        // (*func)();
-        func[0]();
+        (*func)();
     }
 
     void uart_drv_putchar(char c);
