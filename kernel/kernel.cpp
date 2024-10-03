@@ -61,7 +61,6 @@ void test_heap() {
     char *test_alloc1 = new char[0x200];
 
     assert(test_alloc != nullptr);
-    assert((uintptr_t)test_alloc1 % 0x200 == 0);
 
     memset(test_alloc1, 4, sizeof(char) * 0x200);
 }
@@ -137,6 +136,16 @@ void cmain(size_t hart_id, uintptr_t dtb) {
 
     void uart_drv_putchar(char c);
     uart_drv_putchar('3');
+
+    int *test_arr = new int[10];
+    debug("test arr addr: 0x%x", test_arr);
+    delete[] test_arr;
+
+
+    int *test_arr1 = new int[10];
+    debug("test arr addr: 0x%x", test_arr1);
+    assert(test_arr == test_arr1);
+    delete[] test_arr1;
 
     log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");
 }

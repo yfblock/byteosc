@@ -22,6 +22,8 @@
 
 #define NEWLINE(x) CONCAT(x, "\n")
 #define CPP_VERSION_STR STR(__cplusplus)
+#define ALIGN(x, y) ((x + y - 1) / y * y)
+#define ALIGN_BITS(x, y) ((x & ~((1 << y) - 1)))
 
 #define BIT(x) (1 << (x))
 

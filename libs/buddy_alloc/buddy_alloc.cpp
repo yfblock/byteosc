@@ -1,6 +1,7 @@
 #include <buddy_alloc.h>
 #include <common.h>
 #include <console.h>
+#define HEADER_SIZE sizeof(MemoryHeader)
 
 /* Heap allocator, heap */
 uint8_t heap[HEAP_SIZE] = {0};
@@ -11,6 +12,20 @@ typedef struct _BuddyLinked BuddyLinked;
 struct _BuddyLinked {
     BuddyLinked *next;
 };
+
+struct MemoryHeader {
+    // Ensure that ptr equals to the real raw pointer.
+    void *ptr_verilate;
+    /// @brief Memory size.
+    size_t size;
+};
+
+/**
+ * Get the memory size with memory header.
+ */
+static inline size_t size_with_header(size_t size) {
+    return size + HEADER_SIZE;
+}
 
 /* Static assert or Compiler assert */
 static_assert(
@@ -29,7 +44,7 @@ inline size_t buddy_header_index(size_t size) {
     size_t index = 0;
     // End when l >= size, so l is the min size available when satisfying the
     // size limit
-    for(size_t l = 8; l < size; l <<= 1)
+    for(size_t l = MIN_UNIT_SIZE; l < size; l <<= 1)
         index++;
     return index;
 }
@@ -40,19 +55,17 @@ inline size_t buddy_header_index(size_t size) {
  * @param addr the memory block will be added
  * @return void
  */
-inline void add_node(size_t index, uintptr_t addr) {
+void add_node(size_t index, uintptr_t addr) {
     BuddyLinked *node = (BuddyLinked *)addr;
-    // if(buddy_header[index].next == nullptr) {
-    //     node->next = nullptr;
-    //     buddy_header[index].next = node;
-    //     return;
-    // }
     BuddyLinked *link = &buddy_header[index];
     while(link->next != nullptr && (uintptr_t)link->next < (uintptr_t)node) {
         link = link->next;
     }
     node->next = link->next;
     link->next = node;
+    // TOOD：merge the neighbor memory in the same node.
+    // such as: merge 0x400(8 bytes) and 0x408(bytes), result is 0x400(16
+    // bytes).
 }
 
 /**
@@ -85,6 +98,7 @@ void mem_add(uintptr_t addr, size_t size) {
  * @return The start address of the memory block
  */
 void *malloc(size_t size) {
+    size = size_with_header(size);
     auto index = buddy_header_index(size);
     // alloc buddy node
     auto node = buddy_header[index].next;
@@ -100,7 +114,10 @@ void *malloc(size_t size) {
     if(avaiable != size)
         mem_add(addr + size, avaiable - size);
 
-    return (void *)addr;
+    MemoryHeader *mh = (MemoryHeader *)addr;
+    mh->ptr_verilate = (void *)mh;
+    mh->size = size;
+    return (void *)(addr + HEADER_SIZE);
 }
 
 /**
@@ -118,34 +135,36 @@ void *operator new[](size_t size) {
  * @param size The size of the memory block
  */
 void free(void *ptr, size_t size) {
-    auto index = buddy_header_index(size);
-    // Ensure that ptr is aligned size.
-    assert((uintptr_t)ptr % size == 0);
     // Free memory node
-    // auto node = (BuddyLinked *)ptr;
-    // node->next = buddy_header[index].next;
-    // buddy_header[index].next = node;
-
-    // // merge buddy node
-    // while(index > 0) {
-    //     index--;
-    //     auto left = (BuddyLinked *)((uintptr_t)node - (8 << index));
-    //     auto right = (BuddyLinked *)((uintptr_t)node + (8 << index));
-    //     if(left->next == node && right->next == node) {
-    //         node->next = nullptr;
-    //         mem_add((uintptr_t)node, 8 << (index + 1));
-    //     }
-    // }
+    auto mh = (MemoryHeader *)((uintptr_t)ptr - HEADER_SIZE);
+    assert(mh->ptr_verilate = (void *)mh);
+    if(size == 0) {
+        size = mh->size;
+    } else {
+        assert(size == mh->size);
+    }
+    // Index of memory level.
+    auto index = buddy_header_index(size);
+    add_node(index, (uintptr_t)mh);
 }
 
 /* reimplement delete */
-void operator delete(void *ptr, size_t size) {}
+void operator delete(void *ptr, size_t size) {
+    warn("trying to delete a array: 0x%x, size: %d", ptr, size);
+}
+/**
+ * Delete the memory though memory pointer.
+ */
+void operator delete[](void *ptr) {
+    warn("trying to delete an array: 0x%x", ptr);
+    free(ptr, 0);
+}
 
 /* Support 8 << MAX_BUDDY_HEADER_BITS SIZE, */
 // static BuddyLinked buddy_header[MAX_BUDDY_HEADER_BITS] = {0};
 
 void *alloc_node(size_t size) {
-    size_t node_size = 8;
+    size_t node_size = MIN_UNIT_SIZE;
     int idx = 0;
     // Find Proper Buddy Node IDX
     for(; idx < MAX_BUDDY_HEADER_BITS; idx++) {
@@ -162,5 +181,14 @@ void *alloc_node(size_t size) {
     BuddyLinked *node = buddy_header[idx].next;
     buddy_header[idx].next = node->next;
 
-    // TODO: delete node and add split areas.
+    // assign the memory.
+    size = ALIGN_BITS(size, 3);
+    uintptr_t m_ptr = (uintptr_t)node;
+
+    // store the last memory to the buddy header.
+    uintptr_t last_ptr = m_ptr + size;
+    uintptr_t last_size = (MIN_UNIT_SIZE << idx) - size;
+    mem_add(last_ptr, last_size);
+
+    return (void *)m_ptr;
 }

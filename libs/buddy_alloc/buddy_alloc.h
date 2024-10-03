@@ -8,6 +8,8 @@
 #include <stdint.h>
 // #include <string.h>
 #define MAX_BUDDY_HEADER_BITS 32
+#define MIN_UNIT_BITS 5
+#define MIN_UNIT_SIZE (1 << MIN_UNIT_BITS)
 
 extern uint8_t heap[HEAP_SIZE];
 
