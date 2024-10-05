@@ -7,7 +7,7 @@ enum driver_type {
     DRIVER_SERIAL,
 };
 
-typedef struct driver {
+typedef struct {
     // Compatiable for drivers.
     const char *compatiables;
     // The type of the driver.

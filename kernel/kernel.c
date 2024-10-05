@@ -51,16 +51,16 @@ void print_node(dtb_node *node, size_t indent) {
 void test_heap() {
 
     // test heap alloc 1
-    char *test_alloc = new char[0x201];
+    char *test_alloc = (char *)malloc(sizeof(char) * 0x201);
 
-    assert(test_alloc != nullptr);
+    assert(test_alloc != NULL);
 
     memset(test_alloc, 3, sizeof(char) * 0x201);
 
     // test heap alloc 2
-    char *test_alloc1 = new char[0x200];
+    char *test_alloc1 = (char *)malloc(sizeof(char) * 0x200);
 
-    assert(test_alloc != nullptr);
+    assert(test_alloc != NULL);
 
     memset(test_alloc1, 4, sizeof(char) * 0x200);
 }
@@ -96,20 +96,20 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     info("percpu pointer: 0x%x", percpu_pointer());
 
     info("DTB ADDR: 0x%x", dtb);
-    info("C++ Standard: %s", CPP_VERSION_STR);
+    // info("C++ Standard: %s", __STDC_VERSION__);
     info("Size of boot stack: 0x%x", boot_stack_size());
     // Add heap memory to allocator
     mem_add((uintptr_t)&heap, HEAP_SIZE);
-    debug("add heap 0x%x 0x%x", &heap, HEAP_SIZE);
+    debug("add heap 0x%x - 0x%x", &heap, HEAP_SIZE);
 
     // test Heap allocator
     test_heap();
+    debug("init device tree");
+    dtb_ops dtb_ops_impl = {.malloc = malloc,
+                          .free = free_len,
+                          .on_error = puts};
 
-    dtb_init(dtb, dtb_ops{.malloc = malloc,
-                          .free = free,
-                          .on_error = [](const char *str) -> void {
-                              puts((char *)str);
-                          }});
+    dtb_init(dtb, dtb_ops_impl);
 
     // dtb_node *root = dtb_find("/");
     // printf("root ptr: 0x%x\n", root);
@@ -118,8 +118,9 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     //     print_node(root, 0);
     //     root = dtb_get_sibling(root);
     // }
+    debug("print memory info from device tree");
     dtb_node *mnode = dtb_find("/memory");
-    if(mnode != nullptr) {
+    if(mnode != NULL) {
         print_node(mnode, 0);
         dtb_prop *prop = dtb_find_prop(mnode, "reg");
         dtb_pair mrange = {.a = 2, .b = 2};
@@ -137,15 +138,15 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     void uart_drv_putchar(char c);
     uart_drv_putchar('3');
 
-    int *test_arr = new int[10];
+    int *test_arr = malloc(sizeof(int) * 10);
     debug("test arr addr: 0x%x", test_arr);
-    delete[] test_arr;
+    free(test_arr);
 
 
-    int *test_arr1 = new int[10];
+    int *test_arr1 = malloc(sizeof(int) * 10);
     debug("test arr addr: 0x%x", test_arr1);
     assert(test_arr == test_arr1);
-    delete[] test_arr1;
+    free(test_arr1);
 
     log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");
 }

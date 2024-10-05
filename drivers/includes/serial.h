@@ -5,7 +5,7 @@
 /**
  * Serial Driver Interface
  */
-typedef struct serial_dri {
+typedef struct {
     // Get a character from the serial.
     char (*getchar)();
     // Put a character to the serial.

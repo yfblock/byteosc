@@ -177,7 +177,7 @@ static void free_buffers() {
     size_t buff_size = state.node_alloc_max * sizeof(dtb_node);
     buff_size += state.prop_alloc_max * sizeof(dtb_prop);
     buff_size += state.node_alloc_max * sizeof(void *);
-
+    
     state.ops.free(state.node_buff, buff_size);
     state.node_buff = NULL;
     state.prop_buff = NULL;

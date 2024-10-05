@@ -34,7 +34,7 @@ void print_hex(size_t hex) {
     }
 }
 
-void puts(char *str) {
+void puts(const char *str) {
     for(; *str != '\0'; str++)
         console_putchar(*str);
 }

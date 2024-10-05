@@ -3,18 +3,13 @@
 #include <stdint.h>
 
 #define NAKED __attribute__((naked))
-#ifdef __cplusplus
-#define EXTERN extern "C"
-#else
-#define EXTERN extern
-#endif
 
 void console_putchar(char c);
 void shutdown();
 uintptr_t percpu_pointer();
 
-EXTERN uintptr_t _boot_stack;
-EXTERN uintptr_t _boot_stack_top;
+extern uintptr_t _boot_stack;
+extern uintptr_t _boot_stack_top;
 
 /**
  * Get Boot Stack Size

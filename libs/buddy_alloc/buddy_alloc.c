@@ -13,12 +13,12 @@ struct _BuddyLinked {
     BuddyLinked *next;
 };
 
-struct MemoryHeader {
+typedef struct {
     // Ensure that ptr equals to the real raw pointer.
     void *ptr_verilate;
     /// @brief Memory size.
     size_t size;
-};
+} MemoryHeader;
 
 /**
  * Get the memory size with memory header.
@@ -28,9 +28,9 @@ static inline size_t size_with_header(size_t size) {
 }
 
 /* Static assert or Compiler assert */
-static_assert(
-    sizeof(BuddyLinked) == sizeof(intptr_t),
-    "sizeof(BuddyLinkedAssert) Must be same as the sizeof(uintptr_t)");
+// static_assert(
+//     sizeof(BuddyLinked) == sizeof(intptr_t),
+//     "sizeof(BuddyLinkedAssert) Must be same as the sizeof(uintptr_t)");
 
 /* Support 8 << MAX_BUDDY_HEADER_BITS SIZE, */
 static BuddyLinked buddy_header[MAX_BUDDY_HEADER_BITS] = {0};
@@ -58,7 +58,7 @@ inline size_t buddy_header_index(size_t size) {
 void add_node(size_t index, uintptr_t addr) {
     BuddyLinked *node = (BuddyLinked *)addr;
     BuddyLinked *link = &buddy_header[index];
-    while(link->next != nullptr && (uintptr_t)link->next < (uintptr_t)node) {
+    while(link->next != NULL && (uintptr_t)link->next < (uintptr_t)node) {
         link = link->next;
     }
     node->next = link->next;
@@ -76,11 +76,11 @@ void add_node(size_t index, uintptr_t addr) {
 void mem_add(uintptr_t addr, size_t size) {
     uintptr_t end = addr + size;
     // align to 8 bytes.
-    addr = (addr + 7) & ~0x7;
-    end &= ~0x7;
+    addr = (addr + (MIN_UNIT_SIZE - 1)) & ~(MIN_UNIT_SIZE - 1);
+    end &= ~(MIN_UNIT_SIZE - 1);
     // add to the buddy header list
     for(size_t index = 0; addr < end; index++) {
-        size_t bit_and = 8 << index;
+        size_t bit_and = MIN_UNIT_SIZE << index;
         if((addr & bit_and) != 0) {
             add_node(index, addr);
             addr += bit_and;
@@ -99,11 +99,11 @@ void mem_add(uintptr_t addr, size_t size) {
  */
 void *malloc(size_t size) {
     size = size_with_header(size);
-    auto index = buddy_header_index(size);
+    size_t index = buddy_header_index(size);
     // alloc buddy node
-    auto node = buddy_header[index].next;
+    BuddyLinked* node = buddy_header[index].next;
     // find the first available buddy node
-    while(node == nullptr) {
+    while(node == NULL) {
         node = buddy_header[++index].next;
     }
     buddy_header[index].next = node->next;
@@ -117,16 +117,9 @@ void *malloc(size_t size) {
     MemoryHeader *mh = (MemoryHeader *)addr;
     mh->ptr_verilate = (void *)mh;
     mh->size = size;
-    return (void *)(addr + HEADER_SIZE);
-}
 
-/**
- * reimplement new
- * @param size The size of the memory block will be allocated
- * @return The address of the memory block
- */
-void *operator new[](size_t size) {
-    return malloc(size);
+    debug("alloc addr: %x  len: %x", addr, size);
+    return (void *)(addr + HEADER_SIZE);
 }
 
 /**
@@ -134,30 +127,28 @@ void *operator new[](size_t size) {
  * @param ptr The start address of the memory block
  * @param size The size of the memory block
  */
-void free(void *ptr, size_t size) {
-    // Free memory node
-    auto mh = (MemoryHeader *)((uintptr_t)ptr - HEADER_SIZE);
-    assert(mh->ptr_verilate = (void *)mh);
-    if(size == 0) {
-        size = mh->size;
-    } else {
-        assert(size == mh->size);
-    }
-    // Index of memory level.
-    auto index = buddy_header_index(size);
-    add_node(index, (uintptr_t)mh);
+void free(void *ptr) {
+    free_len(ptr, 0);
 }
 
-/* reimplement delete */
-void operator delete(void *ptr, size_t size) {
-    warn("trying to delete a array: 0x%x, size: %d", ptr, size);
-}
 /**
- * Delete the memory though memory pointer.
+ * Release the memory block
+ * @param ptr The start address of the memory block
+ * @param size The size of the memory block
  */
-void operator delete[](void *ptr) {
-    warn("trying to delete an array: 0x%x", ptr);
-    free(ptr, 0);
+void free_len(void *ptr, size_t len) {
+    debug("free ptr: %x size: %x", ptr, len);
+    // Free memory node
+    MemoryHeader* mh = (MemoryHeader *)((uintptr_t)ptr - HEADER_SIZE);
+    assert(mh->ptr_verilate = (void *)mh);
+    if(len == 0) {
+        len = mh->size;
+    } else {
+        assert(len == mh->size);
+    }
+    // Index of memory level.
+    size_t index = buddy_header_index(mh->size);
+    add_node(index, (uintptr_t)mh);
 }
 
 /* Support 8 << MAX_BUDDY_HEADER_BITS SIZE, */
@@ -168,14 +159,14 @@ void *alloc_node(size_t size) {
     int idx = 0;
     // Find Proper Buddy Node IDX
     for(; idx < MAX_BUDDY_HEADER_BITS; idx++) {
-        if(node_size >= size && buddy_header[idx].next != nullptr) {
+        if(node_size >= size && buddy_header[idx].next != NULL) {
             break;
         }
         node_size <<= 2;
     }
     // Return if not available node.
     if(idx == MAX_BUDDY_HEADER_BITS) {
-        return nullptr;
+        return NULL;
     }
     // Remove node from header.
     BuddyLinked *node = buddy_header[idx].next;

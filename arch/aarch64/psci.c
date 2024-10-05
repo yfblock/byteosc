@@ -1,5 +1,6 @@
 #include <aarch64.h>
 #include <console.h>
+#include <stdbool.h>
 
 const uintptr_t PSCI_0_2_FN_BASE = 0x84000000;
 const uintptr_t PSCI_0_2_FN_CPU_OFF = PSCI_0_2_FN_BASE + 2;

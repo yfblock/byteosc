@@ -4,8 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-EXTERN uintptr_t _boot_stack;
-EXTERN uintptr_t _boot_stack_top;
+extern uintptr_t _boot_stack;
+extern uintptr_t _boot_stack_top;
 void trap_entry();
 
 #define CSRW(reg, value)                                                       \
@@ -56,7 +56,7 @@ static inline uintptr_t read_sepc() {
 /**
  * Trap Exception enum and consts.
  */
-enum trap_exception {
+typedef enum {
     TRAP_EXCEPTION_INS_ADDR_MISALIGNED = 0,
     TRAP_EXCEPTION_INSTRUCTION_ACCESS_FAULT = 1,
     TRAP_EXCEPTION_ILLEGAL_INSTRUCTION = 2,
@@ -68,7 +68,7 @@ enum trap_exception {
     TRAP_EXCEPTION_INS_PAGE_FAULT = 12,
     TRAP_EXCEPTION_LOAD_PAGE_FAULT = 13,
     TRAP_EXCEPTION_STORE_PAGE_FAULT = 15,
-};
+}trap_exception;
 
 /**
  * WFI: Waiting For Interrupt, blocking until an interrupt occurs.

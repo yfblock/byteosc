@@ -30,10 +30,10 @@ char uart_drv_getchar(void) {
     return *UART_REG(THR);
 }
 
-struct serial_dri US16550A {
+static serial_dri_t US16550A = {
     .getchar = uart_drv_getchar, .putchar = uart_drv_putchar
 };
 
-struct driver SERIAL {
+static driver_t SERIAL =  {
     .compatiables = "us16550"
 };

@@ -2,7 +2,7 @@
 
 #include <arch.h>
 // Put string to the console.
-void puts(char *);
+void puts(const char *);
 
 enum log_level_t {
     LOG_LEVEL_TRACE = 0,

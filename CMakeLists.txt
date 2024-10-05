@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(ByteOS C ASM CXX)
+project(ByteOS C ASM)
 
 message(STATUS "==========================")
 message(STATUS "     Compiling ByteOS     ")
@@ -19,7 +19,6 @@ set(CMAKE_SYSTEM_PROCESSOR ${KernelArch})
 
 # Use c11 standard
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_OBJCOPY llvm-objcopy)
 
@@ -27,13 +26,10 @@ set(CMAKE_OBJCOPY llvm-objcopy)
 message(STATUS "TOOLS_PREFIX ${TOOLS_PREFIX}")
 set(CMAKE_ASM_COMPILER ${TOOLS_PREFIX}gcc)
 set(CMAKE_C_COMPILER ${TOOLS_PREFIX}gcc)
-set(CMAKE_CXX_COMPILER ${TOOLS_PREFIX}g++)
 
 # Set compile options
 set(CMAKE_C_FLAGS "")
-set(CMAKE_CXX_FLAGS "-Wno-main ")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_FILE} -nostdlib -nostartfiles -ffreestanding")
-list(REMOVE_ITEM CMAKE_CXX_IMPLICIT_LINK_LIBRARIES stdc++)
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES stdc)
 
 add_compile_options(
@@ -53,6 +49,7 @@ add_compile_options(
     # Compile Options for Machine
     # -------------------------------------------
     -O2
+    -fno-builtin
 )
 
 # Aarch64 options
@@ -83,10 +80,8 @@ include(config.cmake)
 macro(add_source_dir dir_name)
     file(GLOB_RECURSE FUNC_ASM_SOURCES "${CMAKE_SOURCE_DIR}/${dir_name}/*.S")
     file(GLOB_RECURSE FUNC_C_SOURCES "${CMAKE_SOURCE_DIR}/${dir_name}/*.c")
-    file(GLOB_RECURSE FUNC_CPP_SOURCES "${CMAKE_SOURCE_DIR}/${dir_name}/*.cpp")
     list(APPEND ASM_SOURCES ${FUNC_ASM_SOURCES})
     list(APPEND C_SOURCES ${FUNC_C_SOURCES})
-    list(APPEND CPP_SOURCES ${FUNC_CPP_SOURCES})
 endmacro()
 
 # find all source files

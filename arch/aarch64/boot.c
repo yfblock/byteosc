@@ -24,7 +24,7 @@ void cmain(size_t, uintptr_t);
  * @param dtb The pointer of the device tree binary.
  *
  */
-EXTERN void boot_main(size_t hart_id, uintptr_t dtb) {
+void boot_main(size_t hart_id, uintptr_t dtb) {
     puts((char *)"Entering Kernel...\n");
     debug("hart_id: %d  dtb: 0x%x\n", hart_id, dtb);
     // Write the handler of the boot function.
@@ -37,7 +37,7 @@ EXTERN void boot_main(size_t hart_id, uintptr_t dtb) {
 /**
  * Jump to EL1 from EL2
  */
-EXTERN void drop_to_el1() {
+void drop_to_el1() {
     write_sp_el0(0);
     write_spsel(SP_ELx);
     CurrentEL_Reg el = current_el();

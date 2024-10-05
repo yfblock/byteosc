@@ -1,6 +1,7 @@
 #pragma once
 #include <aarch64.h>
 #include <arch.h>
+#include <stdbool.h>
 
 #define MRS_INLINE(x, var)                                                     \
     uint64_t var;                                                              \

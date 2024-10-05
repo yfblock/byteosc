@@ -2,8 +2,8 @@
 
 #include <arch.h>
 
-EXTERN uintptr_t _boot_stack;
-EXTERN uintptr_t _boot_stack_top;
+extern uintptr_t _boot_stack;
+extern uintptr_t _boot_stack_top;
 
 #define MRS(x, reg)                                                            \
     asm volatile("MRS %0, " x                                                  \

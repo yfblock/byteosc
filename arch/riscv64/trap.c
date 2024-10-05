@@ -5,7 +5,7 @@
 /**
  * Trap handler.
  */
-EXTERN void trap_handler() {
+void trap_handler() {
     trap_exception scause = (trap_exception)read_scause();
     uintptr_t addr = read_stval();
     uintptr_t fault_ip = read_sepc();
