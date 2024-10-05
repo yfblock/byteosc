@@ -15,6 +15,7 @@ extern uint8_t heap[HEAP_SIZE];
 
 /* Alloc memory from the buddy system */
 void *malloc(size_t size);
+void *calloc(size_t num, size_t size);
 /* Free memory  */
 void free(void *ptr);
 void free_len(void *ptr, size_t len);

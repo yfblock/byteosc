@@ -1,6 +1,7 @@
 #include <buddy_alloc.h>
 #include <common.h>
 #include <console.h>
+#include <string.h>
 #define HEADER_SIZE sizeof(MemoryHeader)
 
 /* Heap allocator, heap */
@@ -118,8 +119,17 @@ void *malloc(size_t size) {
     mh->ptr_verilate = (void *)mh;
     mh->size = size;
 
-    debug("alloc addr: %x  len: %x", addr, size);
     return (void *)(addr + HEADER_SIZE);
+}
+
+/**
+ * alloc a block of memory that contains number of bytes, 
+ * size of the element is size.
+ */
+void *calloc(size_t num, size_t size) {
+    void* ptr = malloc(size * num);
+    memset(ptr, 0, size * num);
+    return ptr;
 }
 
 /**
@@ -137,7 +147,6 @@ void free(void *ptr) {
  * @param size The size of the memory block
  */
 void free_len(void *ptr, size_t len) {
-    debug("free ptr: %x size: %x", ptr, len);
     // Free memory node
     MemoryHeader* mh = (MemoryHeader *)((uintptr_t)ptr - HEADER_SIZE);
     assert(mh->ptr_verilate = (void *)mh);

@@ -138,12 +138,12 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     void uart_drv_putchar(char c);
     uart_drv_putchar('3');
 
-    int *test_arr = malloc(sizeof(int) * 10);
+    int *test_arr = calloc(10, sizeof(int));
     debug("test arr addr: 0x%x", test_arr);
     free(test_arr);
 
 
-    int *test_arr1 = malloc(sizeof(int) * 10);
+    int *test_arr1 = calloc(10, sizeof(int));
     debug("test arr addr: 0x%x", test_arr1);
     assert(test_arr == test_arr1);
     free(test_arr1);

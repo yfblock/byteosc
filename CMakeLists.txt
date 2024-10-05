@@ -18,12 +18,14 @@ set(LINKER_FILE "${LINKER_SCRIPT_DIR}/linker-${KernelArch}.ld")
 set(CMAKE_SYSTEM_PROCESSOR ${KernelArch})
 
 # Use c11 standard
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 17)
 
 set(CMAKE_OBJCOPY llvm-objcopy)
 
 # set(TOOLS_PREFIX "${KernelArch}-linux-gnu-")
 message(STATUS "TOOLS_PREFIX ${TOOLS_PREFIX}")
+# set(CMAKE_ASM_COMPILER ${TOOLS_PREFIX}gcc)
+# set(CMAKE_C_COMPILER ${TOOLS_PREFIX}gcc)
 set(CMAKE_ASM_COMPILER ${TOOLS_PREFIX}gcc)
 set(CMAKE_C_COMPILER ${TOOLS_PREFIX}gcc)
 
