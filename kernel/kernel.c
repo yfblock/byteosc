@@ -56,13 +56,24 @@ void test_heap() {
     assert(test_alloc != NULL);
 
     memset(test_alloc, 3, sizeof(char) * 0x201);
+    free(test_alloc);
 
     // test heap alloc 2
     char *test_alloc1 = (char *)malloc(sizeof(char) * 0x200);
 
-    assert(test_alloc != NULL);
+    assert(test_alloc1 != NULL);
 
     memset(test_alloc1, 4, sizeof(char) * 0x200);
+    free(test_alloc1);
+
+
+    int *test_arr = calloc(10, sizeof(int));
+    free(test_arr);
+
+
+    int *test_arr1 = calloc(10, sizeof(int));
+    assert(test_arr == test_arr1);
+    free(test_arr1);
 }
 
 // percpu int test_int = 0;
@@ -96,7 +107,7 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     info("percpu pointer: 0x%x", percpu_pointer());
 
     info("DTB ADDR: 0x%x", dtb);
-    // info("C++ Standard: %s", __STDC_VERSION__);
+    info("C Standard: %dL", __STDC_VERSION__);
     info("Size of boot stack: 0x%x", boot_stack_size());
     // Add heap memory to allocator
     mem_add((uintptr_t)&heap, HEAP_SIZE);
@@ -129,6 +140,11 @@ void cmain(size_t hart_id, uintptr_t dtb) {
         // TOOD: Add Memory Range to Frame Allocator.
     }
 
+    mnode = dtb_find("/virtio_mmio");
+    if(mnode != NULL) {
+        print_node(mnode, 0);
+    }
+
     // iterator the init_array.
     for_each_init(func) {
         debug("Initial constructors");
@@ -137,16 +153,6 @@ void cmain(size_t hart_id, uintptr_t dtb) {
 
     void uart_drv_putchar(char c);
     uart_drv_putchar('3');
-
-    int *test_arr = calloc(10, sizeof(int));
-    debug("test arr addr: 0x%x", test_arr);
-    free(test_arr);
-
-
-    int *test_arr1 = calloc(10, sizeof(int));
-    debug("test arr addr: 0x%x", test_arr1);
-    assert(test_arr == test_arr1);
-    free(test_arr1);
 
     log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");
 }

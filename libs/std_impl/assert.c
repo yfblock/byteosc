@@ -1,7 +1,6 @@
 #include <arch.h>
 #include <common.h>
 #include <console.h>
-#include <stdbool.h>
 
 __attribute__((__noreturn__)) void __assert_fail(const char *assertion,
                                                  const char *file,

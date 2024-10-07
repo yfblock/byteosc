@@ -41,7 +41,6 @@ void drop_to_el1() {
     write_sp_el0(0);
     write_spsel(SP_ELx);
     CurrentEL_Reg el = current_el();
-    debug("Current EL: %d", el.raw);
     debug("Current EL: %d", el.el);
 
     // Ensure the Exception Level before droping is 1.

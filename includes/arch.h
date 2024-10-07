@@ -19,13 +19,9 @@ static inline size_t boot_stack_size() {
     return (uintptr_t)&_boot_stack_top - (uintptr_t)&_boot_stack;
 }
 
-#ifndef __INCLUDE_ARCH__
-#define __INCLUDE_ARCH__
+
 #if defined(__riscv)
 #include "riscv64.h"
-#endif
-
-#if defined(__aarch64__) || defined(_M_ARM64)
+#elif defined(__aarch64__) || defined(_M_ARM64)
 #include "aarch64.h"
-#endif
 #endif

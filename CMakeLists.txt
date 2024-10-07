@@ -17,17 +17,18 @@ set(LINKER_FILE "${LINKER_SCRIPT_DIR}/linker-${KernelArch}.ld")
 
 set(CMAKE_SYSTEM_PROCESSOR ${KernelArch})
 
-# Use c11 standard
-set(CMAKE_C_STANDARD 17)
+# Use c23 standard
+set(CMAKE_C_STANDARD 23)
 
 set(CMAKE_OBJCOPY llvm-objcopy)
 
 # set(TOOLS_PREFIX "${KernelArch}-linux-gnu-")
 message(STATUS "TOOLS_PREFIX ${TOOLS_PREFIX}")
-# set(CMAKE_ASM_COMPILER ${TOOLS_PREFIX}gcc)
-# set(CMAKE_C_COMPILER ${TOOLS_PREFIX}gcc)
 set(CMAKE_ASM_COMPILER ${TOOLS_PREFIX}gcc)
 set(CMAKE_C_COMPILER ${TOOLS_PREFIX}gcc)
+# set(CMAKE_ASM_COMPILER clang)
+# set(CMAKE_C_COMPILER clang)
+# set(CMAKE_EXE_LINKER_FLAGS -fuse-ld=lld)
 
 # Set compile options
 set(CMAKE_C_FLAGS "")
@@ -52,6 +53,12 @@ add_compile_options(
     # -------------------------------------------
     -O2
     -fno-builtin
+    -ffreestanding
+
+    # -------------------------------------------
+    # Compile Options for architecture
+    # -------------------------------------------
+    # -target ${KernelArch}-elf
 )
 
 # Aarch64 options
@@ -90,7 +97,10 @@ endmacro()
 add_source_dir("arch/${KernelArch}")
 add_source_dir("drivers")
 add_source_dir("kernel")
-add_source_dir("libs")
+add_source_dir("libs/buddy_alloc")
+add_source_dir("libs/smoldtb")
+add_source_dir("libs/std_impl")
+add_source_dir("libs/virtio")
 
 # Set include folders
 include_directories(
@@ -101,6 +111,8 @@ include_directories(
     libs/memory
     libs/std_impl
     libs/buddy_alloc
+    libs/virtio
+    # libs/lwext4/includes
 )
 
 # --------------------------------------
@@ -137,6 +149,18 @@ add_custom_target(run
     -nographic
     -D qemu.log
     -d in_asm,int,pcall,cpu_reset,guest_errors
+
+    # --------------------------------------
+    # Virtio Devices
+    # --------------------------------------
+    -drive
+    file=mount.img,if=none,format=raw,id=x0
+    -device
+    virtio-blk-device,drive=x0
+
+    # --------------------------------------
+    # Other Arguments
+    # --------------------------------------
     DEPENDS byteos_bin
     COMMENT "Running byteos in QEMU"
     USES_TERMINAL
