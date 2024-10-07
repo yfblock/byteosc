@@ -2,15 +2,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct dtb_node_t dtb_node;
-typedef struct dtb_prop_t dtb_prop;
+typedef struct _dtb_node_t dtb_node_t;
+typedef struct _dtb_prop_t dtb_prop_t;
 
 /* Similar to nodes, properties are stored a singly linked list. */
-struct dtb_prop_t {
+struct _dtb_prop_t {
     const char *name;
     const uint32_t *first_cell;
     size_t length;
-    dtb_prop *next;
+    dtb_prop_t *next;
 };
 
 /* The tree is represented in horizontal slices, where all child nodes are
@@ -22,11 +22,11 @@ struct dtb_prop_t {
  * the parent and then the child pointer and iterate to just before the target.
  * - child: the first child node.
  */
-struct dtb_node_t {
-    dtb_node *parent;
-    dtb_node *sibling;
-    dtb_node *child;
-    dtb_prop *props;
+struct _dtb_node_t {
+    dtb_node_t *parent;
+    dtb_node_t *sibling;
+    dtb_node_t *child;
+    dtb_prop_t *props;
 
     const char *name;
     uint8_t addr_cells;
@@ -66,21 +66,22 @@ typedef struct {
 
 void dtb_init(uintptr_t start, dtb_ops ops);
 
-dtb_node *dtb_find_compatible(dtb_node *node, const char *str);
-dtb_node *dtb_find_phandle(unsigned handle);
-dtb_node *dtb_find(const char *path);
-dtb_node *dtb_find_child(dtb_node *node, const char *name);
-dtb_prop *dtb_find_prop(dtb_node *node, const char *name);
+dtb_node_t *dtb_find_compatible(dtb_node_t *node, const char *str);
+dtb_node_t *dtb_find_phandle(unsigned handle);
+dtb_node_t *dtb_find(const char *path);
+dtb_node_t *dtb_find_child(dtb_node_t *node, const char *name);
+dtb_prop_t *dtb_find_prop(dtb_node_t *node, const char *name);
 
-dtb_node *dtb_get_sibling(dtb_node *node);
-dtb_node *dtb_get_child(dtb_node *node);
-dtb_node *dtb_get_parent(dtb_node *node);
-dtb_prop *dtb_get_prop(dtb_node *node, size_t index);
-void dtb_stat_node(dtb_node *node, dtb_node_stat *stat);
+dtb_node_t *dtb_get_sibling(dtb_node_t *node);
+dtb_node_t *dtb_get_child(dtb_node_t *node);
+dtb_node_t *dtb_get_parent(dtb_node_t *node);
+dtb_prop_t *dtb_get_prop(dtb_node_t *node, size_t index);
+void dtb_stat_node(dtb_node_t *node, dtb_node_stat *stat);
 
-const char *dtb_read_string(dtb_prop *prop, size_t index);
-size_t dtb_read_prop_values(dtb_prop *prop, size_t cell_count, size_t *vals);
-size_t dtb_read_prop_pairs(dtb_prop *prop, dtb_pair layout, dtb_pair *vals);
-size_t dtb_read_prop_triplets(dtb_prop *prop, dtb_triplet layout,
+const char *dtb_read_string(dtb_prop_t *prop, size_t index);
+size_t dtb_read_prop_cell(const uint32_t *cells, size_t count);
+size_t dtb_read_prop_values(dtb_prop_t *prop, size_t cell_count, size_t *vals);
+size_t dtb_read_prop_pairs(dtb_prop_t *prop, dtb_pair layout, dtb_pair *vals);
+size_t dtb_read_prop_triplets(dtb_prop_t *prop, dtb_triplet layout,
                               dtb_triplet *vals);
-size_t dtb_read_prop_quads(dtb_prop *prop, dtb_quad layout, dtb_quad *vals);
+size_t dtb_read_prop_quads(dtb_prop_t *prop, dtb_quad layout, dtb_quad *vals);

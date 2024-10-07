@@ -16,7 +16,7 @@
 #define VIRTIO_DEVICE_ID_BLK 2
 #define VIRTIO_DEVICE_ID_CONSOLE 3
 
-typedef volatile struct __attribute__((packed)) {
+typedef volatile struct {
 	uint32_t MagicValue;
 	uint32_t Version;
 	uint32_t DeviceID;
@@ -94,4 +94,6 @@ struct virtqueue {
 	volatile struct virtqueue_used *used;
 	volatile uint16_t *avail_event;
 	void **desc_virt;
-} __attribute__((packed));
+};
+
+void virtio_block_probe(uintptr_t addr, dtb_node_t *node);

@@ -42,26 +42,33 @@ void puts(const char *str) {
 void vprintf(const char *fmt, va_list args) {
     for(; *fmt != '\0'; fmt++) {
         if(*fmt == '%') {
-            fmt++;
-            switch(*fmt) {
-            case 'c':
-                console_putchar(va_arg(args, int));
+            do {
+                fmt++;
+                switch(*fmt) {
+                case 'c':
+                    console_putchar(va_arg(args, int));
+                    break;
+                case 's':
+                    puts(va_arg(args, char *));
+                    break;
+                case '%':
+                    console_putchar('%');
+                    break;
+                case 'd':
+                    print_number(va_arg(args, size_t));
+                    break;
+                case 'x':
+                case 'p':
+                    print_hex(va_arg(args, size_t));
+                    break;
+                case 'l':
+                    continue;
+                default:
+                    break;
+                }
+                // Break if it is not multi-arg format.
                 break;
-            case 's':
-                puts(va_arg(args, char *));
-                break;
-            case '%':
-                console_putchar('%');
-                break;
-            case 'd':
-                print_number(va_arg(args, size_t));
-                break;
-            case 'x':
-                print_hex(va_arg(args, size_t));
-                break;
-            default:
-                break;
-            }
+            } while (true);
         } else {
             console_putchar(*fmt);
         }

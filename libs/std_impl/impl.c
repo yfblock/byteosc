@@ -32,3 +32,20 @@ void *memset(void *s, int c, size_t n) {
     }
     return (void *)buffer;
 }
+
+/**
+ * @param str1 The first string will be compared
+ * @param str2 The second string will be compared
+ * @return Return 0 if the str1 equals str2. return negative if str1 is
+ *         less than str2, return positive if str1 is bigger than str2.
+ */
+int strcmp(const char *str1, const char *str2) {
+    while (true) {
+        if (*str1 == *str2 && *str1 != '\0') {
+            str1++;
+            str2++;
+            continue;
+        }
+        return *str1 - *str2;
+    }
+}

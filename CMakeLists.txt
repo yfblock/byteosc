@@ -36,7 +36,6 @@ set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_FILE} -nostdlib -nostartfiles -ffreestan
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES stdc)
 
 add_compile_options(
-
     # -------------------------------------------
     # Compile Options for Warnings
     # -------------------------------------------
@@ -82,25 +81,27 @@ add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 include(config.cmake)
 
-# set_source_files_properties(*.asm PROPERTIES LANGUAGE ASM)
-
 # Macro to add source files to Variables
 # WARN: Dont use function to replace macro.
-macro(add_source_dir dir_name)
-    file(GLOB_RECURSE FUNC_ASM_SOURCES "${CMAKE_SOURCE_DIR}/${dir_name}/*.S")
-    file(GLOB_RECURSE FUNC_C_SOURCES "${CMAKE_SOURCE_DIR}/${dir_name}/*.c")
-    list(APPEND ASM_SOURCES ${FUNC_ASM_SOURCES})
-    list(APPEND C_SOURCES ${FUNC_C_SOURCES})
+macro(add_source_directories)
+    FOREACH(dir_name ${SOURCE_DIRS})
+        file(GLOB_RECURSE FUNC_ASM_SOURCES "${CMAKE_SOURCE_DIR}/${dir_name}/*.S")
+        file(GLOB_RECURSE FUNC_C_SOURCES "${CMAKE_SOURCE_DIR}/${dir_name}/*.c")
+        list(APPEND ASM_SOURCES ${FUNC_ASM_SOURCES})
+        list(APPEND C_SOURCES ${FUNC_C_SOURCES})
+    ENDFOREACH()
 endmacro()
 
 # find all source files
-add_source_dir("arch/${KernelArch}")
-add_source_dir("drivers")
-add_source_dir("kernel")
-add_source_dir("libs/buddy_alloc")
-add_source_dir("libs/smoldtb")
-add_source_dir("libs/std_impl")
-add_source_dir("libs/virtio")
+set(SOURCE_DIRS
+    arch/${KernelArch}
+    drivers
+    kernel
+    libs/buddy_alloc
+    libs/smoldtb
+    libs/std_impl
+)
+add_source_directories()
 
 # Set include folders
 include_directories(
@@ -111,7 +112,6 @@ include_directories(
     libs/memory
     libs/std_impl
     libs/buddy_alloc
-    libs/virtio
     # libs/lwext4/includes
 )
 
@@ -119,7 +119,12 @@ include_directories(
 # Generate executable files
 # --------------------------------------
 
-add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES})
+add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES}
+        drivers/driver.c
+        drivers/includes/driver-header.h
+        drivers/rtc/pl031.c
+        drivers/block/virtio-blk.c
+        drivers/virtio.c)
 target_link_libraries(byteos -static)
 # No Stdlib and ignore stdlib headers
 target_compile_options(
@@ -143,12 +148,20 @@ elseif(KernelArch STREQUAL "riscv64")
     list(APPEND QEMU_EXEC -machine virt)
 endif()
 
-add_custom_target(run
-    COMMAND ${QEMU_EXEC}
+set(QEMU_EXEC_CMD ${QEMU_EXEC}
     -kernel ${PROJECT_BINARY_DIR}/byteos.bin
     -nographic
     -D qemu.log
     -d in_asm,int,pcall,cpu_reset,guest_errors
+
+    # --------------------------------------
+    # Machine Config
+    # --------------------------------------
+    -usb
+    -device usb-ehci,id=ehci
+#    -device usb-tablet,bus=usb-bus.0
+    -device usb-host,bus=ehci.0
+#    -device usb-storage,bus=ehci.0,drive=x0
 
     # --------------------------------------
     # Virtio Devices
@@ -157,7 +170,22 @@ add_custom_target(run
     file=mount.img,if=none,format=raw,id=x0
     -device
     virtio-blk-device,drive=x0
+)
 
+add_custom_target(fdt
+    COMMAND ${QEMU_EXEC_CMD}
+        -machine virt,dumpdtb=virt.out
+        &&
+        fdtdump virt.out
+    # --------------------------------------
+    # Other Arguments
+    # --------------------------------------
+    COMMENT "Display Device Tree For the qemu configuration"
+    USES_TERMINAL
+)
+
+add_custom_target(run
+    COMMAND ${QEMU_EXEC_CMD}
     # --------------------------------------
     # Other Arguments
     # --------------------------------------
