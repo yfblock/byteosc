@@ -112,6 +112,7 @@ include_directories(
     libs/memory
     libs/std_impl
     libs/buddy_alloc
+    ${CMAKE_CURRENT_BINARY_DIR}/generated
     # libs/lwext4/includes
 )
 
@@ -124,7 +125,8 @@ add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES}
         drivers/includes/driver-header.h
         drivers/rtc/pl031.c
         drivers/block/virtio-blk.c
-        drivers/virtio.c)
+        drivers/virtio.c
+        drivers/includes/rtc.h)
 target_link_libraries(byteos -static)
 # No Stdlib and ignore stdlib headers
 target_compile_options(
@@ -141,6 +143,8 @@ add_custom_target(byteos_bin
 # QEMU Execution Options
 # --------------------------------------
 set(QEMU_EXEC qemu-system-${CMAKE_SYSTEM_PROCESSOR})
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/arch/arch-include.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/arch-include.h)
 
 if(KernelArch STREQUAL "aarch64")
     list(APPEND QEMU_EXEC -machine virt -cpu cortex-a72)

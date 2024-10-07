@@ -21,7 +21,7 @@ inline void ecall(size_t EID, size_t arg0) {
  * Put a character to console. Uart
  * @param c The character
  */
-void console_putchar(char c) {
+void sbi_putchar(char c) {
     ecall(EID_SBI_CONSOLE_PUTCHAR, c);
 }
 

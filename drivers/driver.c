@@ -1,12 +1,13 @@
-//
-// Created by yfblock on 10/7/24.
-//
+#include <assert.h>
+#include <buddy_alloc.h>
 #include <driver.h>
 #include <string.h>
 #include <console.h>
 #include <smoldtb.h>
 
 driver_link_t *dri_serial = nullptr;
+udevice_t *stdout = nullptr;
+serial_dri_t *stdout_ops = nullptr;
 
 /**
  * @param name the driver compatible will be found.
@@ -63,6 +64,27 @@ void print_node(dtb_node_t *node, size_t indent) {
 }
 
 /**
+ * Find a driver though the given device tree node.
+ * @param node the node will be parsed
+ * @return the driver pointer.
+ */
+driver_t *detect_device(dtb_node_t *node) {
+    dtb_prop_t *compatible_prop = dtb_find_prop(node, "compatible");
+    if (compatible_prop == nullptr) return nullptr;
+    // print_node(dtb_child, 0);
+    for (int i = 0;;i++) {
+        const char *compatible = dtb_read_string(compatible_prop, i);
+        // Break if it not any valid props.
+        if (compatible == nullptr) break;
+        // Find driver for the specified compatible name.
+        driver_t *driver = find_compatible(compatible);
+        if (driver == nullptr) continue;
+        return driver;
+    }
+    return nullptr;
+}
+
+/**
  * This function will be called recursively.
  * @param rnode The root node will be parsed.
  */
@@ -70,22 +92,48 @@ void probe_dtb(dtb_node_t *rnode) {
     auto dtb_child = dtb_get_child(rnode);
     while (dtb_child != nullptr) {
         probe_dtb(dtb_child);
-        dtb_prop_t *compatible_prop = dtb_find_prop(dtb_child, "compatible");
-        if (compatible_prop == nullptr) goto end;
-        // print_node(dtb_child, 0);
-        for (int i = 0;;i++) {
-            const char *compatible = dtb_read_string(compatible_prop, i);
-            // Break if it not any valid props.
-            if (compatible == nullptr) break;
-            // Find driver for the specified compatible name.
-            const driver_t *driver = find_compatible(compatible);
-            if (driver == nullptr) continue;
-            // Init driver if it has a valid init function.
-            if (driver->probe != nullptr) {
-                driver->probe(dtb_child);
+        const driver_t *driver = detect_device(dtb_child);
+        // Init driver if it has a valid init function.
+        if (driver != nullptr && driver->probe != nullptr) {
+            driver->probe(dtb_child);
+        }
+        dtb_child = dtb_get_sibling(dtb_child);
+    }
+}
+
+/**
+ * put a character to the serial.
+ * @param c the char will be puted.
+ */
+void console_putchar(char c) {
+    if (stdout_ops == nullptr) return;
+    stdout_ops->putchar(stdout, c);
+}
+
+/**
+ * Parse chosen device from device tree.
+ * @param dtb_ptr the device tree will be loaded and parsed.
+ */
+void dtb_parse_chosen(uintptr_t dtb_ptr) {
+    dtb_ops dtb_ops_impl = {.malloc = malloc,
+                          .free = free_len,
+                          .on_error = puts};
+    dtb_init(dtb_ptr, dtb_ops_impl);
+
+    dtb_node_t *mnode = dtb_find("/chosen");
+    if (mnode == nullptr) return;
+
+    dtb_prop_t *prop = dtb_find_prop(mnode, "stdout-path");
+    if (prop != nullptr) {
+        dtb_node_t *stdout_node = dtb_find_accurate(dtb_read_string(prop, 0));
+        if (stdout_node != nullptr) {
+            driver_t *driver = detect_device(stdout_node);
+            if (driver != nullptr) {
+                // Initialize the stdout serial.
+                stdout = driver->probe(stdout_node);
+                assert(stdout->driver->ops != nullptr);
+                stdout_ops = stdout->driver->ops;
             }
         }
-    end:
-        dtb_child = dtb_get_sibling(dtb_child);
     }
 }

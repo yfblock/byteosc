@@ -96,4 +96,4 @@ struct virtqueue {
 	void **desc_virt;
 };
 
-void virtio_block_probe(uintptr_t addr, dtb_node_t *node);
+void *virtio_block_probe(virtio_regs *virtio, dtb_node_t *node) ;

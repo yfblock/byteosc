@@ -68,18 +68,13 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     info("DTB ADDR: 0x%x", dtb);
     info("C Standard: %dL", __STDC_VERSION__);
     info("Size of boot stack: 0x%x", boot_stack_size());
-    // Add heap memory to allocator
-    mem_add((uintptr_t)&heap, HEAP_SIZE);
+
     debug("add heap 0x%x - 0x%x", &heap, HEAP_SIZE);
 
     // test Heap allocator
     test_heap();
 
     debug("init device tree");
-    dtb_ops dtb_ops_impl = {.malloc = malloc,
-                          .free = free_len,
-                          .on_error = puts};
-    dtb_init(dtb, dtb_ops_impl);
 
     dtb_node_t *mnode = dtb_find("/memory");
     if(mnode != NULL) {

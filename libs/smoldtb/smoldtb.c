@@ -416,6 +416,24 @@ static dtb_node_t *find_child_internal(dtb_node_t *start, const char *name,
     return NULL;
 }
 
+static dtb_node_t *find_child_internal_accurate(dtb_node_t *start,
+                    const char *name,size_t name_bounds) {
+    dtb_node_t *scan = start->child;
+    while(scan != NULL) {
+        size_t child_name_len = string_len(scan->name);
+        if(child_name_len == -1ul)
+            child_name_len = string_len(scan->name);
+
+        if(child_name_len == name_bounds &&
+           strings_eq_bounded(scan->name, name, name_bounds))
+            return scan;
+
+        scan = scan->sibling;
+    }
+
+    return NULL;
+}
+
 dtb_node_t *dtb_find(const char *name) {
     size_t seg_len;
     dtb_node_t *scan = state.root;
@@ -430,6 +448,26 @@ dtb_node_t *dtb_find(const char *name) {
             return scan;
 
         scan = find_child_internal(scan, name, seg_len);
+        name += seg_len;
+    }
+
+    return NULL;
+}
+
+dtb_node_t *dtb_find_accurate(const char *name) {
+    size_t seg_len;
+    dtb_node_t *scan = state.root;
+    while(scan) {
+        while(name[0] == '/')
+            name++;
+
+        seg_len = string_find_char(name, '/');
+        if(seg_len == -1ul)
+            seg_len = string_len(name);
+        if(seg_len == 0)
+            return scan;
+
+        scan = find_child_internal_accurate(scan, name, seg_len);
         name += seg_len;
     }
 

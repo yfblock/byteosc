@@ -85,3 +85,4 @@ size_t dtb_read_prop_pairs(dtb_prop_t *prop, dtb_pair layout, dtb_pair *vals);
 size_t dtb_read_prop_triplets(dtb_prop_t *prop, dtb_triplet layout,
                               dtb_triplet *vals);
 size_t dtb_read_prop_quads(dtb_prop_t *prop, dtb_quad layout, dtb_quad *vals);
+dtb_node_t *dtb_find_accurate(const char *name);

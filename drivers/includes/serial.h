@@ -1,13 +1,13 @@
 #pragma once
-#include <driver-header.h>
+#include <driver.h>
 #include <interrupt.h>
-#define DEFINE_SERIAL(name) serial_dri_t name
+
 /**
  * Serial Driver Interface
  */
 typedef struct {
     // Get a character from the serial.
-    char (*getchar)();
+    char (*getchar)(udevice_t *);
     // Put a character to the serial.
-    void (*putchar)(char u8);
+    void (*putchar)(udevice_t *, char);
 } serial_dri_t;
