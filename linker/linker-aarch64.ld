@@ -1,7 +1,7 @@
 OUTPUT_ARCH(aarch64)
 ENTRY(_start)
 
-BASE_ADDRESS = 0x40080000;;
+BASE_ADDRESS = 0x40080000;
 
 SECTIONS
 {
@@ -29,8 +29,6 @@ SECTIONS
 
     .data ALIGN(4K): {
         . = ALIGN(4K);
-        *(.data.prepage .data.prepage.*)
-        . = ALIGN(4K);
         _sdata = .;
         *(.data .data.*)
         *(.sdata .sdata.*)
@@ -50,7 +48,8 @@ SECTIONS
         _ebss = .;
     }
 
-    PROVIDE(end = .);
+/*    PROVIDE(kernel_end = .);*/
+    kernel_end = .;
     /DISCARD/ : {
         *(.comment) *(.note*) *(.eh_frame*) *(.debug*)
     }

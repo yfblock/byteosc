@@ -13,7 +13,6 @@ void test_heap() {
     char *test_alloc = (char *)malloc(sizeof(char) * 0x201);
 
     assert(test_alloc != NULL);
-
     memset(test_alloc, 3, sizeof(char) * 0x201);
     free(test_alloc);
 
@@ -25,10 +24,8 @@ void test_heap() {
     memset(test_alloc1, 4, sizeof(char) * 0x200);
     free(test_alloc1);
 
-
     int *test_arr = calloc(10, sizeof(int));
     free(test_arr);
-
 
     int *test_arr1 = calloc(10, sizeof(int));
     assert(test_arr == test_arr1);
@@ -83,7 +80,8 @@ void cmain(size_t hart_id, uintptr_t dtb) {
         dtb_pair mrange = {.a = 2, .b = 2};
         dtb_read_prop_pairs(prop, mrange, &mrange);
         printf("Memory Range: 0x%lx - 0x%lx\n", mrange.a, mrange.a + mrange.b);
-        // TOOD: Add Memory Range to Frame Allocator.
+        // Add Memory Range to Frame Allocator.
+        add_frame_range(mrange.a, mrange.a + mrange.b);
     }
 
     // iterator the init_array.

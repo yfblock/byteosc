@@ -26,6 +26,7 @@
 #define ALIGN_BITS(x, y) ((x & ~((1 << y) - 1)))
 
 #define BIT(x) (1 << (x))
+#define BIT_IS_SET(a, x) (a & (1 << (x)) != 0)
 
 // TODO: use [[gnu::constructor]] instead of __attribute__((constructor))
 #define CTOR __attribute__((constructor))

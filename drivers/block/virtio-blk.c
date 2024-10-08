@@ -14,6 +14,8 @@ void *virtio_block_probe(virtio_regs *virtio, dtb_node_t *node) {
     virtio->Status |= VIRTIO_STATUS_ACK;
     virtio->Status |= VIRTIO_STATUS_DRIVER;
 
+    // Device initialize
+    // https://docs.oasis-open.org/virtio/virtio/v1.1/csprd01/virtio-v1.1-csprd01.html#x1-920001
     uint32_t device_features = virtio->DeviceFeatures;
     device_features &= ~(1 << VIRTIO_BLK_F_RO);
     device_features &= ~(1 << VIRTIO_BLK_F_SCSI);

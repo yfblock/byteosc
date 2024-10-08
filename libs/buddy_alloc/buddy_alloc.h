@@ -17,4 +17,6 @@ void *kalloc(size_t count);
 void free(void *ptr);
 void free_len(void *ptr, size_t len);
 /* Memory add  */
-void mem_add(uintptr_t addr, size_t size);
+void add_heap_range(uintptr_t addr, size_t size);
+
+void add_frame_range(uintptr_t addr_s, uintptr_t addr_e);

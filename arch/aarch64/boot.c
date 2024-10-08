@@ -15,7 +15,7 @@ void cmain(size_t, uintptr_t);
  */
 void boot_main(size_t hart_id, uintptr_t dtb) {
     // Add heap memory to allocator
-    mem_add((uintptr_t)&heap, HEAP_SIZE);
+    add_heap_range((uintptr_t)&heap, HEAP_SIZE);
     dtb_parse_chosen(dtb);
 
     puts((char *)"Entering Kernel...\n");
