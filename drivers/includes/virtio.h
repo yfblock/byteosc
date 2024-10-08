@@ -16,6 +16,15 @@
 #define VIRTIO_DEVICE_ID_BLK 2
 #define VIRTIO_DEVICE_ID_CONSOLE 3
 
+// device feature bits
+#define VIRTIO_BLK_F_RO              5	/* Disk is read-only */
+#define VIRTIO_BLK_F_SCSI            7	/* Supports scsi command passthru */
+#define VIRTIO_BLK_F_CONFIG_WCE     11	/* Writeback mode available in config */
+#define VIRTIO_BLK_F_MQ             12	/* support more than one vq */
+#define VIRTIO_F_ANY_LAYOUT         27
+#define VIRTIO_RING_F_INDIRECT_DESC 28
+#define VIRTIO_RING_F_EVENT_IDX     29
+
 typedef volatile struct {
 	uint32_t MagicValue;
 	uint32_t Version;
@@ -70,7 +79,7 @@ typedef struct {
 		uint32_t opt_io_size;
 	} topology;
 	uint8_t writeback;
-} __attribute__((packed)) virtio_blk_config;
+} virtio_blk_config;
 
 typedef struct {
 	uint32_t type;
@@ -78,7 +87,7 @@ typedef struct {
 	uint64_t sector;
 	uint8_t  data[512];
 	uint8_t  status;
-}virtio_blk_req;
+} virtio_blk_req;
 
 
 struct virtqueue {

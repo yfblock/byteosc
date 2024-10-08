@@ -126,7 +126,8 @@ add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES}
         drivers/rtc/pl031.c
         drivers/block/virtio-blk.c
         drivers/virtio.c
-        drivers/includes/rtc.h)
+        drivers/includes/rtc.h
+)
 target_link_libraries(byteos -static)
 # No Stdlib and ignore stdlib headers
 target_compile_options(
@@ -144,7 +145,10 @@ add_custom_target(byteos_bin
 # --------------------------------------
 set(QEMU_EXEC qemu-system-${CMAKE_SYSTEM_PROCESSOR})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/arch/arch-include.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/arch-include.h)
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/arch/config-include.h.in
+        ${CMAKE_CURRENT_BINARY_DIR}/generated/config-include.h
+)
 
 if(KernelArch STREQUAL "aarch64")
     list(APPEND QEMU_EXEC -machine virt -cpu cortex-a72)
@@ -197,3 +201,11 @@ add_custom_target(run
     COMMENT "Running byteos in QEMU"
     USES_TERMINAL
 )
+
+# TODO: Generate config header from the toml file.
+add_custom_target(gen_config
+    COMMAND ${CMAKE_SOURCE_DIR}/utils/gen_config.py
+        ${CMAKE_SOURCE_DIR}/configs/${CONFIG_FILE}
+        ${CMAKE_BINARY_DIR}/generated/gen_config.h
+)
+add_dependencies(byteos gen_config)

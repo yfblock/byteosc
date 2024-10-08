@@ -19,7 +19,7 @@ static inline size_t boot_stack_size() {
     return (uintptr_t)&_boot_stack_top - (uintptr_t)&_boot_stack;
 }
 
-#include <arch-include.h>
+#include <config-include.h>
 
 #if defined(__riscv)
 #include "riscv64.h"
