@@ -49,7 +49,7 @@ SECTIONS
         _ebss = .;
     }
 
-    PROVIDE(end = .);
+    _end = .;
     /DISCARD/ : {
         *(.comment) *(.note*) *(.eh_frame*) *(.debug*)
     }

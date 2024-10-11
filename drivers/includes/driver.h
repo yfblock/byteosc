@@ -1,8 +1,8 @@
 #pragma once
 #include <driver-header.h>
 #include <serial.h>
-#include <stdint.h>
 #include <smoldtb.h>
+#include <stdint.h>
 
 typedef struct _driver_link_t driver_link_t;
 struct _driver_link_t {
@@ -15,11 +15,10 @@ extern udevice_t *stdout;
 
 extern driver_t __start_drivers[];
 extern driver_t __stop_drivers[];
-#define DEFINE_DRIVER static \
-__attribute__((used,section("drivers")))  driver_t
-#define for_each_compatible(iter, cp_name) \
-    for(driver_t *iter = __start_drivers; iter != __stop_drivers; iter++) \
-        for (const struct udevice_id* cp_name = driver->ids; \
+#define DEFINE_DRIVER static __attribute__((used, section("drivers"))) driver_t
+#define for_each_compatible(iter, cp_name)                                     \
+    for(driver_t *iter = __start_drivers; iter != __stop_drivers; iter++)      \
+        for(const struct udevice_id *cp_name = driver->ids;                    \
             cp_name->compatible != nullptr; cp_name++)
 driver_t *find_compatible(const char *name);
 void probe_dtb(dtb_node_t *rnode);

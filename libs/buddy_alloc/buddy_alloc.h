@@ -1,8 +1,8 @@
 #pragma once
 
+#include <define.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <define.h>
 #define MAX_BUDDY_HEADER_BITS 32
 #define MIN_UNIT_BITS 5
 #define MIN_UNIT_SIZE (1 << MIN_UNIT_BITS)

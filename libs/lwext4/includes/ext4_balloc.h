@@ -50,8 +50,8 @@ extern "C" {
 
 #include <ext4_fs.h>
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /**@brief Compute number of block group from block address.
  * @param s superblock pointer.
@@ -59,7 +59,7 @@ extern "C" {
  * @return Block group index
  */
 uint32_t ext4_balloc_get_bgid_of_block(struct ext4_sblock *s,
-				       ext4_fsblk_t baddr);
+                                       ext4_fsblk_t baddr);
 
 /**@brief Compute the starting block address of a block group
  * @param s   superblock pointer.
@@ -67,23 +67,22 @@ uint32_t ext4_balloc_get_bgid_of_block(struct ext4_sblock *s,
  * @return Block address
  */
 ext4_fsblk_t ext4_balloc_get_block_of_bgid(struct ext4_sblock *s,
-					   uint32_t bgid);
+                                           uint32_t bgid);
 
 /**@brief Calculate and set checksum of block bitmap.
  * @param sb superblock pointer.
  * @param bg block group
  * @param bitmap bitmap buffer
  */
-void ext4_balloc_set_bitmap_csum(struct ext4_sblock *sb,
-				 struct ext4_bgroup *bg,
-				 void *bitmap);
+void ext4_balloc_set_bitmap_csum(struct ext4_sblock *sb, struct ext4_bgroup *bg,
+                                 void *bitmap);
 
 /**@brief   Free block from inode.
  * @param   inode_ref inode reference
  * @param   baddr block address
  * @return  standard error code*/
 int ext4_balloc_free_block(struct ext4_inode_ref *inode_ref,
-			   ext4_fsblk_t baddr);
+                           ext4_fsblk_t baddr);
 
 /**@brief   Free blocks from inode.
  * @param   inode_ref inode reference
@@ -91,15 +90,14 @@ int ext4_balloc_free_block(struct ext4_inode_ref *inode_ref,
  * @param   count block count
  * @return  standard error code*/
 int ext4_balloc_free_blocks(struct ext4_inode_ref *inode_ref,
-			    ext4_fsblk_t first, uint32_t count);
+                            ext4_fsblk_t first, uint32_t count);
 
 /**@brief   Allocate block procedure.
  * @param   inode_ref inode reference
  * @param   baddr allocated block address
  * @return  standard error code*/
-int ext4_balloc_alloc_block(struct ext4_inode_ref *inode_ref,
-			    ext4_fsblk_t goal,
-			    ext4_fsblk_t *baddr);
+int ext4_balloc_alloc_block(struct ext4_inode_ref *inode_ref, ext4_fsblk_t goal,
+                            ext4_fsblk_t *baddr);
 
 /**@brief   Try allocate selected block.
  * @param   inode_ref inode reference
@@ -107,7 +105,7 @@ int ext4_balloc_alloc_block(struct ext4_inode_ref *inode_ref,
  * @param   free if baddr is not allocated
  * @return  standard error code*/
 int ext4_balloc_try_alloc_block(struct ext4_inode_ref *inode_ref,
-				ext4_fsblk_t baddr, bool *free);
+                                ext4_fsblk_t baddr, bool *free);
 
 #ifdef __cplusplus
 }

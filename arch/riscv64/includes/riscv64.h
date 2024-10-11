@@ -68,7 +68,7 @@ typedef enum {
     TRAP_EXCEPTION_INS_PAGE_FAULT = 12,
     TRAP_EXCEPTION_LOAD_PAGE_FAULT = 13,
     TRAP_EXCEPTION_STORE_PAGE_FAULT = 15,
-}trap_exception;
+} trap_exception;
 
 /**
  * WFI: Waiting For Interrupt, blocking until an interrupt occurs.

@@ -48,8 +48,7 @@ SECTIONS
         _ebss = .;
     }
 
-/*    PROVIDE(kernel_end = .);*/
-    kernel_end = .;
+    _end = .;
     /DISCARD/ : {
         *(.comment) *(.note*) *(.eh_frame*) *(.debug*)
     }

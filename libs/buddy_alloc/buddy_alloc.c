@@ -153,8 +153,8 @@ void *alloc_node(buddy_system_t *buddy, size_t size) {
  * @param addr_e the end address of the added range.
  */
 void add_frame_range(uintptr_t addr_s, uintptr_t addr_e) {
-    extern void* kernel_end;
-    const uintptr_t end_addr = (uintptr_t)&kernel_end;
+    extern void* _end;
+    const uintptr_t end_addr = (uintptr_t)&_end;
     if(IN_RANGE(end_addr, addr_s, addr_e)) {
         addr_s = (end_addr + PAGE_MASK) & ~PAGE_MASK;
     }
@@ -227,5 +227,5 @@ void free_len(void *ptr, size_t len) {
         assert(len == mh->size);
     }
     // Add the released node to the buddy header.
-    add_node(&heap_buddy, header_index(&heap_buddy, mh->size), (uintptr_t)mh);
+    add_range(&heap_buddy, (uintptr_t)mh, len);
 }

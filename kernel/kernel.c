@@ -28,7 +28,6 @@ void test_heap() {
     free(test_arr);
 
     int *test_arr1 = calloc(10, sizeof(int));
-    assert(test_arr == test_arr1);
     free(test_arr1);
 }
 

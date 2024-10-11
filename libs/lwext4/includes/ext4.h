@@ -42,14 +42,14 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include <ext4_config.h>
-#include <ext4_types.h>
+#include <ext4_debug.h>
 #include <ext4_errno.h>
 #include <ext4_oflags.h>
-#include <ext4_debug.h>
+#include <ext4_types.h>
 
 #include <ext4_blockdev.h>
 
@@ -58,11 +58,11 @@ extern "C" {
 /**@brief   OS dependent lock interface.*/
 struct ext4_lock {
 
-	/**@brief   Lock access to mount point.*/
-	void (*lock)(void);
+    /**@brief   Lock access to mount point.*/
+    void (*lock)(void);
 
-	/**@brief   Unlock access to mount point.*/
-	void (*unlock)(void);
+    /**@brief   Unlock access to mount point.*/
+    void (*unlock)(void);
 };
 
 /********************************FILE DESCRIPTOR*****************************/
@@ -70,41 +70,41 @@ struct ext4_lock {
 /**@brief   File descriptor. */
 typedef struct ext4_file {
 
-	/**@brief   Mount point handle.*/
-	struct ext4_mountpoint *mp;
+    /**@brief   Mount point handle.*/
+    struct ext4_mountpoint *mp;
 
-	/**@brief   File inode id.*/
-	uint32_t inode;
+    /**@brief   File inode id.*/
+    uint32_t inode;
 
-	/**@brief   Open flags.*/
-	uint32_t flags;
+    /**@brief   Open flags.*/
+    uint32_t flags;
 
-	/**@brief   File size.*/
-	uint64_t fsize;
+    /**@brief   File size.*/
+    uint64_t fsize;
 
-	/**@brief   Actual file position.*/
-	uint64_t fpos;
+    /**@brief   Actual file position.*/
+    uint64_t fpos;
 } ext4_file;
 
 /*****************************DIRECTORY DESCRIPTOR***************************/
 
 /**@brief   Directory entry descriptor. */
 typedef struct ext4_direntry {
-	uint32_t inode;
-	uint16_t entry_length;
-	uint8_t name_length;
-	uint8_t inode_type;
-	uint8_t name[255];
+    uint32_t inode;
+    uint16_t entry_length;
+    uint8_t name_length;
+    uint8_t inode_type;
+    uint8_t name[255];
 } ext4_direntry;
 
 /**@brief   Directory descriptor. */
 typedef struct ext4_dir {
-	/**@brief   File descriptor.*/
-	ext4_file f;
-	/**@brief   Current directory entry.*/
-	ext4_direntry de;
-	/**@brief   Next entry offset.*/
-	uint64_t next_off;
+    /**@brief   File descriptor.*/
+    ext4_file f;
+    /**@brief   Current directory entry.*/
+    ext4_direntry de;
+    /**@brief   Next entry offset.*/
+    uint64_t next_off;
 } ext4_dir;
 
 /********************************MOUNT OPERATIONS****************************/
@@ -115,8 +115,7 @@ typedef struct ext4_dir {
  * @param   dev_name Block device name.
  *
  * @return  Standard error code.*/
-int ext4_device_register(struct ext4_blockdev *bd,
-			 const char *dev_name);
+int ext4_device_register(struct ext4_blockdev *bd, const char *dev_name);
 
 /**@brief   Un-register block device.
  *
@@ -140,9 +139,7 @@ int ext4_device_unregister_all(void);
  * @param   read_only mount as read-only mode.
  *
  * @return Standard error code */
-int ext4_mount(const char *dev_name,
-	       const char *mount_point,
-	       bool read_only);
+int ext4_mount(const char *dev_name, const char *mount_point, bool read_only);
 
 /**@brief   Umount operation.
  *
@@ -184,17 +181,17 @@ int ext4_recover(const char *mount_point);
 
 /**@brief   Some of the filesystem stats. */
 struct ext4_mount_stats {
-	uint32_t inodes_count;
-	uint32_t free_inodes_count;
-	uint64_t blocks_count;
-	uint64_t free_blocks_count;
+    uint32_t inodes_count;
+    uint32_t free_inodes_count;
+    uint64_t blocks_count;
+    uint64_t free_blocks_count;
 
-	uint32_t block_size;
-	uint32_t block_group_count;
-	uint32_t blocks_per_group;
-	uint32_t inodes_per_group;
+    uint32_t block_size;
+    uint32_t block_group_count;
+    uint32_t blocks_per_group;
+    uint32_t inodes_per_group;
 
-	char volume_name[16];
+    char volume_name[16];
 };
 
 /**@brief   Get file mount point stats.
@@ -204,7 +201,7 @@ struct ext4_mount_stats {
  *
  * @return Standard error code. */
 int ext4_mount_point_stats(const char *mount_point,
-			   struct ext4_mount_stats *stats);
+                           struct ext4_mount_stats *stats);
 
 /**@brief   Setup OS lock routines.
  *
@@ -213,7 +210,7 @@ int ext4_mount_point_stats(const char *mount_point,
  *
  * @return Standard error code. */
 int ext4_mount_setup_locks(const char *mount_point,
-			   const struct ext4_lock *locks);
+                           const struct ext4_lock *locks);
 
 /**@brief   Acquire the filesystem superblock pointer of a mp.
  *
@@ -259,7 +256,6 @@ int ext4_get_sblock(const char *mount_point, struct ext4_sblock **sb);
  *
  * @return Standard error code. */
 int ext4_cache_write_back(const char *path, bool on);
-
 
 /**@brief   Force cache flush.
  *
@@ -329,7 +325,6 @@ int ext4_fopen2(ext4_file *file, const char *path, int flags);
  * @return  Standard error code.*/
 int ext4_fclose(ext4_file *file);
 
-
 /**@brief   File truncate function.
  *
  * @param   file File handle.
@@ -384,7 +379,6 @@ uint64_t ext4_ftell(ext4_file *file);
  * @return  File size. */
 uint64_t ext4_fsize(ext4_file *file);
 
-
 /**@brief Get inode of file/directory/link.
  *
  * @param path    Parh to file/dir/link.
@@ -393,7 +387,7 @@ uint64_t ext4_fsize(ext4_file *file);
  *
  * @return  Standard error code.*/
 int ext4_raw_inode_fill(const char *path, uint32_t *ret_ino,
-			struct ext4_inode *inode);
+                        struct ext4_inode *inode);
 
 /**@brief Check if inode exists.
  *
@@ -418,7 +412,6 @@ int ext4_inode_exist(const char *path, int type);
  *
  * @return  Standard error code.*/
 int ext4_mode_set(const char *path, uint32_t mode);
-
 
 /**@brief Get file/directory/link mode bits.
  *
@@ -531,7 +524,7 @@ int ext4_readlink(const char *path, char *buf, size_t bufsize, size_t *rcnt);
  *
  * @return  Standard error code.*/
 int ext4_setxattr(const char *path, const char *name, size_t name_len,
-		  const void *data, size_t data_size);
+                  const void *data, size_t data_size);
 
 /**@brief Get extended attribute.
  *
@@ -543,7 +536,7 @@ int ext4_setxattr(const char *path, const char *name, size_t name_len,
  *
  * @return  Standard error code.*/
 int ext4_getxattr(const char *path, const char *name, size_t name_len,
-		  void *buf, size_t buf_size, size_t *data_size);
+                  void *buf, size_t buf_size, size_t *data_size);
 
 /**@brief List extended attributes.
  *
@@ -563,7 +556,6 @@ int ext4_listxattr(const char *path, char *list, size_t size, size_t *ret_size);
  *
  * @return  Standard error code.*/
 int ext4_removexattr(const char *path, const char *name, size_t name_len);
-
 
 /*********************************DIRECTORY OPERATION***********************/
 
@@ -615,7 +607,6 @@ const ext4_direntry *ext4_dir_entry_next(ext4_dir *dir);
  *
  * @param   dir Directory handle.*/
 void ext4_dir_entry_rewind(ext4_dir *dir);
-
 
 #ifdef __cplusplus
 }

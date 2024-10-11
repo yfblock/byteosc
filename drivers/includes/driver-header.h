@@ -4,12 +4,7 @@
 /**
  * The type of the driver.
  */
-enum uclass_id {
-    UCLASS_BLOCK,
-    UCLASS_RTC,
-    UCLASS_SERIAL,
-    UCLASS_VIRTIO
-};
+enum uclass_id { UCLASS_BLOCK, UCLASS_RTC, UCLASS_SERIAL, UCLASS_VIRTIO };
 
 struct udevice_id {
     // Compatible for drivers.
@@ -23,7 +18,7 @@ typedef struct {
     // device class
     const enum uclass_id uclass;
     // The type of the driver.
-    udevice_t* (*probe)(dtb_node_t *);
+    udevice_t *(*probe)(dtb_node_t *);
     // operations for the driver.
     void *ops;
 } driver_t;

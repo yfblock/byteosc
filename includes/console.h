@@ -22,7 +22,11 @@ void log(enum log_level_t level, const char *__restrict __fmt, ...);
 #define info(fmt, ...) log(LOG_LEVEL_INFO, (fmt "\n"), ##__VA_ARGS__)
 #define warn(fmt, ...) log(LOG_LEVEL_WARNING, (fmt "\n"), ##__VA_ARGS__)
 #define error(fmt, ...) log(LOG_LEVEL_ERROR, (fmt "\n"), ##__VA_ARGS__)
-#define panic(fmt, ...)  do{error(fmt, ##__VA_ARGS__); shutdown();}while(0)
+#define panic(fmt, ...)                                                        \
+    do {                                                                       \
+        error(fmt, ##__VA_ARGS__);                                             \
+        shutdown();                                                            \
+    } while(0)
 
 #ifndef CONFIG_LOG_LEVEL
 #define CONFIG_LOG_LEVEL LOG_LEVEL_DEBUG
