@@ -100,6 +100,7 @@ set(SOURCE_DIRS
     libs/buddy_alloc
     libs/smoldtb
     libs/std_impl
+    libs/lwext4
 )
 add_source_directories()
 
@@ -113,7 +114,7 @@ include_directories(
     libs/std_impl
     libs/buddy_alloc
     ${CMAKE_CURRENT_BINARY_DIR}/generated
-    # libs/lwext4/includes
+    libs/lwext4/includes
 )
 
 # --------------------------------------
@@ -127,6 +128,9 @@ add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES}
         drivers/block/virtio-blk.c
         drivers/virtio.c
         drivers/includes/rtc.h
+        includes/inttypes.h
+        includes/stdio.h
+        includes/stdlib.h
 )
 target_link_libraries(byteos -static)
 # No Stdlib and ignore stdlib headers
@@ -201,6 +205,17 @@ add_custom_target(run
     DEPENDS byteos_bin
     COMMENT "Running byteos in QEMU"
     USES_TERMINAL
+)
+
+file(GLOB_RECURSE FMT_C_FILES "${CMAKE_SOURCE_DIR}/*.c")
+list(FILTER FMT_C_FILES EXCLUDE REGEX ".*/build/.*")
+file(GLOB_RECURSE FMT_HEADER_FILES "${CMAKE_SOURCE_DIR}/*.h" EXCLUDE REGEX ".*/build/.*")
+list(FILTER FMT_HEADER_FILES EXCLUDE REGEX ".*/build/.*")
+add_custom_target(fmt
+    COMMAND clang-format
+        -i
+        ${FMT_C_FILES}
+        ${FUNC_HEADER_FILES}
 )
 
 # TODO: Generate config header from the toml file.

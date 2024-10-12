@@ -12,10 +12,10 @@ inline int32_t psci_hvc_call(uintptr_t func, size_t a0, size_t a1, size_t a2) {
     register size_t x3 asm("x3") = a2;
 
     asm volatile("hvc #0"
-        : "=r"(x0)
-        : "r"(x0), "r"(x1), "r"(x2), "r"(x3)
-        : "memory");
-    
+                 : "=r"(x0)
+                 : "r"(x0), "r"(x1), "r"(x2), "r"(x3)
+                 : "memory");
+
     return (int32_t)x0;
 }
 

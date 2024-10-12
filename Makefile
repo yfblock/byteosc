@@ -1,5 +1,5 @@
 FIND_EXCLUDE_ARG := -not -path './build/*'
-SRC_FILES := $(shell find . -name '*.cpp' $(FIND_EXCLUDE_ARG))
+SRC_FILES := $(shell find . -name '*.c' $(FIND_EXCLUDE_ARG))
 HEADER_FILES := $(shell find . -name '*.h' $(FIND_EXCLUDE_ARG))
 ALL_FILES := $(SRC_FILES) $(HEADER_FILES)
 
@@ -14,7 +14,7 @@ all:
 
 # format all code *.cpp *.h
 fmt:
-	@$(CLANG_FORMAT) -i $(ALL_FILES)
+	@$(CLANG_FORMAT) -i -style=file $(ALL_FILES)
 	@echo "All files have been formatted."
 
 fdt:

@@ -7,7 +7,7 @@
 
 #define UART_REG(base, x) (volatile uint32_t *)((base) + (x))
 
-udevice_t* pl011_init(dtb_node_t *node);
+udevice_t *pl011_init(dtb_node_t *node);
 
 void pl011_putchar(udevice_t *device, char c) {
     while((*UART_REG(device->reg_addr, FR) & (1 << 5)) != 0)
@@ -15,8 +15,9 @@ void pl011_putchar(udevice_t *device, char c) {
     *UART_REG(device->reg_addr, DR) = c;
 }
 
+// clang-format off
 static const struct udevice_id pl011_ids[] = {
-    { .compatible = "arm,pl011" },
+    {.compatible = "arm,pl011"},
     {}
 };
 
@@ -24,14 +25,15 @@ static const serial_dri_t pl011_ops = {
     .putchar = pl011_putchar
 };
 
-DEFINE_DRIVER SERIAL =  {
-    .ids = pl011_ids,
+DEFINE_DRIVER SERIAL = {
+    .ids    = pl011_ids,
     .uclass = UCLASS_SERIAL,
-    .probe = pl011_init,
-    .ops =  (void *)&pl011_ops
+    .probe  = pl011_init,
+    .ops    = (void *)&pl011_ops
 };
+// clang-format on
 
-udevice_t* pl011_init(dtb_node_t *node) {
+udevice_t *pl011_init(dtb_node_t *node) {
     dtb_prop_t *reg_prop = dtb_find_prop(node, "reg");
     udevice_t *device = calloc(1, sizeof(udevice_t));
     device->driver = &SERIAL;

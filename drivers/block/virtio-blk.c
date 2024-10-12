@@ -1,8 +1,8 @@
 #include <arch.h>
 #include <buddy_alloc.h>
+#include <console.h>
 #include <driver.h>
 #include <virtio.h>
-#include <console.h>
 
 static struct disk {
     // a set (not a ring) of DMA descriptors, with which the
@@ -24,8 +24,8 @@ static struct disk {
     struct virtq_used *used;
 
     // our own book-keeping.
-    char free[QUEUE_NUM];  // is a descriptor free?
-    uint16_t used_idx; // we've looked this far in used[2..NUM].
+    char free[QUEUE_NUM]; // is a descriptor free?
+    uint16_t used_idx;    // we've looked this far in used[2..NUM].
 
     // track info about in-flight operations,
     // for use when completion interrupt arrives.
@@ -44,28 +44,39 @@ static struct disk {
 } disk;
 
 void hexdump(uint8_t *buffer, size_t len) {
-    if(buffer == nullptr) return;
+    if(buffer == nullptr)
+        return;
     constexpr size_t LINE_WIDTH = 16;
-    for(size_t i = 0;i < len;i+=LINE_WIDTH) {
+    for(size_t i = 0; i < len; i += LINE_WIDTH) {
         if(i % LINE_WIDTH == 0) {
-            if(i < 0x10) printf("0x000%lx | ", i);
-            else if(i < 0x100) printf("0x00%lx | ",i);
-            else if(i < 0x1000) printf("0x0%lx | ",i);
-            else printf("0x%lx | ", i);
+            if(i < 0x10)
+                printf("0x000%lx | ", i);
+            else if(i < 0x100)
+                printf("0x00%lx | ", i);
+            else if(i < 0x1000)
+                printf("0x0%lx | ", i);
+            else
+                printf("0x%lx | ", i);
         }
-        for(int j = 0;j < LINE_WIDTH; j++) {
-            if(buffer[i+j] == 0) printf("00 ");
-            else if(buffer[i+j] < 0x10) printf("0%x ",buffer[i+j]);
-            else printf("%x ", buffer[i+j]);
+        for(int j = 0; j < LINE_WIDTH; j++) {
+            if(buffer[i + j] == 0)
+                printf("00 ");
+            else if(buffer[i + j] < 0x10)
+                printf("0%x ", buffer[i + j]);
+            else
+                printf("%x ", buffer[i + j]);
 
-            if(i % 8 == 7) printf(" ");
+            if(j % 8 == 7)
+                printf("  ");
         }
 
-        printf(" |");
-        for(int j = 0;j < LINE_WIDTH; j++) {
-            char c = buffer[i+j];
-            if(c > 0x1f && c < 0x7f) printf("%c", c);
-            else printf(".");
+        printf("|");
+        for(int j = 0; j < LINE_WIDTH; j++) {
+            char c = buffer[i + j];
+            if(c > 0x1f && c < 0x7f)
+                printf("%c", c);
+            else
+                printf(".");
         }
         printf("|");
 
@@ -112,7 +123,8 @@ void *virtio_block_probe(virtio_regs *virtio, dtb_node_t *node) {
     if(virtio->QueueReady)
         panic("virtio disk should not be ready");
     uint32_t max = virtio->QueueNumMax;
-    if(max == 0) panic("VIRTIO-BLK queue is empty");
+    if(max == 0)
+        panic("VIRTIO-BLK queue is empty");
     debug("virtio queue max: %d", max);
 
     disk.desc = kalloc(1);
@@ -124,12 +136,12 @@ void *virtio_block_probe(virtio_regs *virtio, dtb_node_t *node) {
     virtio->QueueNum = QUEUE_NUM;
 
     // write physical addresses.
-    virtio->QueueDescLow    = (uint64_t)disk.desc;
-    virtio->QueueDescHigh   = (uint64_t)disk.desc >> 32;
-    virtio->QueueAvailLow   = (uint64_t)disk.avail;
-    virtio->QueueAvailHigh  = (uint64_t)disk.avail >> 32;
-    virtio->QueueUsedLow    = (uint64_t)disk.used;
-    virtio->QueueUsedHigh   = (uint64_t)disk.used >> 32;
+    virtio->QueueDescLow = (uint64_t)disk.desc;
+    virtio->QueueDescHigh = (uint64_t)disk.desc >> 32;
+    virtio->QueueAvailLow = (uint64_t)disk.avail;
+    virtio->QueueAvailHigh = (uint64_t)disk.avail >> 32;
+    virtio->QueueUsedLow = (uint64_t)disk.used;
+    virtio->QueueUsedHigh = (uint64_t)disk.used >> 32;
 
     // Queue is Ready
     virtio->QueueReady = 1;
@@ -161,11 +173,9 @@ void *virtio_block_probe(virtio_regs *virtio, dtb_node_t *node) {
 }
 
 // find a free descriptor, mark it non-free, return its index.
-static int
-alloc_desc()
-{
-    for(int i = 0; i < QUEUE_NUM; i++){
-        if(disk.free[i]){
+static int alloc_desc() {
+    for(int i = 0; i < QUEUE_NUM; i++) {
+        if(disk.free[i]) {
             disk.free[i] = 0;
             return i;
         }
@@ -174,9 +184,7 @@ alloc_desc()
 }
 
 // mark a descriptor as free.
-static void
-free_desc(int i)
-{
+static void free_desc(int i) {
     if(i >= QUEUE_NUM)
         panic("free_desc 1");
     if(disk.free[i])
@@ -190,10 +198,8 @@ free_desc(int i)
 }
 
 // free a chain of descriptors.
-static void
-free_chain(int i)
-{
-    while(1){
+static void free_chain(int i) {
+    while(1) {
         int flag = disk.desc[i].flags;
         int nxt = disk.desc[i].next;
         free_desc(i);
@@ -206,12 +212,10 @@ free_chain(int i)
 
 // allocate three descriptors (they need not be contiguous).
 // disk transfers always use three descriptors.
-static int
-alloc3_desc(int *idx)
-{
-    for(int i = 0; i < 3; i++){
+static int alloc3_desc(int *idx) {
+    for(int i = 0; i < 3; i++) {
         idx[i] = alloc_desc();
-        if(idx[i] < 0){
+        if(idx[i] < 0) {
             for(int j = 0; j < i; j++)
                 free_desc(idx[j]);
             return -1;
@@ -220,17 +224,16 @@ alloc3_desc(int *idx)
     return 0;
 }
 
-void
-virtio_disk_rw(size_t block_no, size_t count, uint8_t *buffer, int write) {
+void virtio_disk_rw(size_t block_no, size_t count, uint8_t *buffer, int write) {
     // the spec's Section 5.2 says that legacy block operations use
     // three descriptors: one for type/reserved/sector, one for the
     // data, one for a 1-byte status result.
 
     // allocate the three descriptors.
     int idx[3];
-    while(1){
+    while(1) {
         if(alloc3_desc(idx) == 0) {
-          break;
+            break;
         }
         // TODO: Sleep to wait empty queue
     }
@@ -246,12 +249,12 @@ virtio_disk_rw(size_t block_no, size_t count, uint8_t *buffer, int write) {
     buf0->reserved = 0;
     buf0->sector = block_no;
 
-    disk.desc[idx[0]].addr = (uint64_t) buf0;
+    disk.desc[idx[0]].addr = (uint64_t)buf0;
     disk.desc[idx[0]].len = sizeof(virtio_blk_req);
     disk.desc[idx[0]].flags = VRING_DESC_F_NEXT;
     disk.desc[idx[0]].next = idx[1];
 
-    disk.desc[idx[1]].addr = (uint64_t) buffer;
+    disk.desc[idx[1]].addr = (uint64_t)buffer;
     disk.desc[idx[1]].len = count * 512;
 
     if(write)
@@ -262,7 +265,7 @@ virtio_disk_rw(size_t block_no, size_t count, uint8_t *buffer, int write) {
     disk.desc[idx[1]].next = idx[2];
 
     disk.info[idx[0]].status = 0xff; // device writes 0 on success
-    disk.desc[idx[2]].addr = (uint64_t) &disk.info[idx[0]].status;
+    disk.desc[idx[2]].addr = (uint64_t)&disk.info[idx[0]].status;
     disk.desc[idx[2]].len = 1;
     disk.desc[idx[2]].flags = VRING_DESC_F_WRITE; // device writes the status
     disk.desc[idx[2]].next = 0;
@@ -288,7 +291,9 @@ virtio_disk_rw(size_t block_no, size_t count, uint8_t *buffer, int write) {
     // // TODO: Sleep to wait empty Queue
     // }
 
-    while(disk.info[idx[0]].status == 0xff) {nop();}
+    while(disk.info[idx[0]].status == 0xff) {
+        nop();
+    }
     disk.virtio->InterruptACK = 1;
 
     disk.info[idx[0]].block_no = 0;

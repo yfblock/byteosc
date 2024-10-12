@@ -32,12 +32,9 @@ char uart_drv_getchar(udevice_t *device) {
     return (char)*UART_REG(device->reg_addr, THR);
 }
 
-static serial_dri_t US16550A = {
-    .getchar = uart_drv_getchar, .putchar = uart_drv_putchar
-};
-
+// clang-format off
 static const struct udevice_id us16550_ids[] = {
-    { .compatible = "ns16550a" },
+    {.compatible = "ns16550a"},
     {}
 };
 
@@ -46,15 +43,16 @@ static const serial_dri_t uart16550_ops = {
     .getchar = uart_drv_getchar
 };
 
-udevice_t* uart16550_init(dtb_node_t *node);
-DEFINE_DRIVER SERIAL =  {
+udevice_t *uart16550_init(dtb_node_t *node);
+DEFINE_DRIVER SERIAL = {
     .ids = us16550_ids,
     .uclass = UCLASS_SERIAL,
     .probe = uart16550_init,
     .ops = (void *)&uart16550_ops
 };
+// clang-format on
 
-udevice_t* uart16550_init(dtb_node_t *node) {
+udevice_t *uart16550_init(dtb_node_t *node) {
     dtb_prop_t *reg_prop = dtb_find_prop(node, "reg");
     udevice_t *device = calloc(1, sizeof(udevice_t));
     device->driver = &SERIAL;

@@ -48,15 +48,11 @@ inline size_t size_with_header(const size_t size) {
 // static buddy_linked_t buddy_header[MAX_BUDDY_HEADER_BITS] = {nullptr};
 // /* Page Allocator Buddy Header */
 // static buddy_linked_t page_header[MAX_BUDDY_HEADER_BITS] = {nullptr};
-static buddy_system_t heap_buddy = {
-    .header = {nullptr},
-    .unit_size = MIN_UNIT_SIZE
-};
+static buddy_system_t heap_buddy = {.header = {nullptr},
+                                    .unit_size = MIN_UNIT_SIZE};
 
-static buddy_system_t page_buddy = {
-    .header = {nullptr},
-    .unit_size = PAGE_SIZE
-};
+static buddy_system_t page_buddy = {.header = {nullptr},
+                                    .unit_size = PAGE_SIZE};
 
 /**
  * Get the index level through the allocation size.
@@ -80,7 +76,7 @@ inline size_t header_index(const buddy_system_t *buddy, const size_t size) {
  * @param addr the memory block will be added
  * @return void
  */
-void add_node(buddy_system_t* buddy, const size_t index, const uintptr_t addr) {
+void add_node(buddy_system_t *buddy, const size_t index, const uintptr_t addr) {
     const auto node = (buddy_linked_t *)addr;
     buddy_linked_t *link = &buddy->header[index];
     while(link->next != NULL && (uintptr_t)link->next < (uintptr_t)node) {
@@ -130,7 +126,7 @@ void *alloc_node(buddy_system_t *buddy, size_t size) {
     size_t index = header_index(buddy, size);
 
     // alloc buddy node
-    buddy_linked_t* node = buddy->header[index].next;
+    buddy_linked_t *node = buddy->header[index].next;
     // find the first available buddy node
     while(node == NULL) {
         node = buddy->header[++index].next;
@@ -153,7 +149,7 @@ void *alloc_node(buddy_system_t *buddy, size_t size) {
  * @param addr_e the end address of the added range.
  */
 void add_frame_range(uintptr_t addr_s, uintptr_t addr_e) {
-    extern void* _end;
+    extern void *_end;
     const uintptr_t end_addr = (uintptr_t)&_end;
     if(IN_RANGE(end_addr, addr_s, addr_e)) {
         addr_s = (end_addr + PAGE_MASK) & ~PAGE_MASK;
@@ -199,7 +195,7 @@ void *malloc(const size_t size) {
  * size of the element is size.
  */
 void *calloc(const size_t num, const size_t size) {
-    void* ptr = malloc(size * num);
+    void *ptr = malloc(size * num);
     memset(ptr, 0, size * num);
     return ptr;
 }

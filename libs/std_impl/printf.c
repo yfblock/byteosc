@@ -68,7 +68,7 @@ void vprintf(const char *fmt, va_list args) {
                 }
                 // Break if it is not multi-arg format.
                 break;
-            } while (true);
+            } while(true);
         } else {
             console_putchar(*fmt);
         }

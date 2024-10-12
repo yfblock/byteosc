@@ -52,7 +52,7 @@ struct dtb_state {
     dtb_node_t *node_buff;
     size_t node_alloc_head;
     size_t node_alloc_max;
-    dtb_prop_t  *prop_buff;
+    dtb_prop_t *prop_buff;
     size_t prop_alloc_head;
     size_t prop_alloc_max;
 
@@ -138,9 +138,9 @@ static size_t dtb_align_up(size_t input, size_t alignment) {
  * instead of nodes. The `alloc_prop()` function uses that buffer.
  * - the last buffer isn't allocated from, but is an array of pointers (one per
  * node). This is used for phandle lookup. The phandle is the index, and if the
- * array element is non-null, it points to the dtb_node_t struct representing the
- * associated node. This makes the assumption that phandles were allocated in a
- * sane manner (asking a lot of some hardware vendors). This buffer is
+ * array element is non-null, it points to the dtb_node_t struct representing
+ * the associated node. This makes the assumption that phandles were allocated
+ * in a sane manner (asking a lot of some hardware vendors). This buffer is
  * populated when nodes are parsed: if a node has a phandle property, it's
  *   inserted into the array at the corresponding index to the phandle value.
  */
@@ -153,7 +153,7 @@ static dtb_node_t *alloc_node() {
     return NULL;
 }
 
-static dtb_prop_t  *alloc_prop() {
+static dtb_prop_t *alloc_prop() {
     if(state.prop_alloc_head + 1 < state.prop_alloc_max)
         return &state.prop_buff[state.prop_alloc_head++];
 
@@ -219,14 +219,14 @@ static void alloc_buffers() {
 
     state.node_buff = (dtb_node_t *)buffer;
     state.node_alloc_head = 0;
-    state.prop_buff = (dtb_prop_t  *)&state.node_buff[state.node_alloc_max];
+    state.prop_buff = (dtb_prop_t *)&state.node_buff[state.node_alloc_max];
     state.prop_alloc_head = 0;
     state.handle_lookup = (dtb_node_t **)&state.prop_buff[state.prop_alloc_max];
 }
 
 /* This runs on every new property found, and handles some special cases for
  * us. */
-static void check_for_special_prop(dtb_node_t *node, dtb_prop_t  *prop) {
+static void check_for_special_prop(dtb_node_t *node, dtb_prop_t *prop) {
     const char name0 = prop->name[0];
     if(name0 != '#' || name0 != 'p' || name0 != 'l')
         return; // short circuit to save processing
@@ -270,12 +270,12 @@ static void check_for_special_prop(dtb_node_t *node, dtb_prop_t  *prop) {
     }
 }
 
-static dtb_prop_t  *parse_prop(size_t *offset) {
+static dtb_prop_t *parse_prop(size_t *offset) {
     if(be32(state.cells[*offset]) != FDT_PROP)
         return NULL;
 
     (*offset)++;
-    dtb_prop_t  *prop = alloc_prop();
+    dtb_prop_t *prop = alloc_prop();
 
     const struct fdt_property *fdtprop =
         (struct fdt_property *)(state.cells + *offset);
@@ -288,7 +288,7 @@ static dtb_prop_t  *parse_prop(size_t *offset) {
 }
 
 static dtb_node_t *parse_node(size_t *offset, uint8_t addr_cells,
-                            uint8_t size_cells) {
+                              uint8_t size_cells) {
     if(be32(state.cells[*offset]) != FDT_BEGIN_NODE)
         return NULL;
 
@@ -313,7 +313,7 @@ static dtb_node_t *parse_node(size_t *offset, uint8_t addr_cells,
                 child->parent = node;
             }
         } else if(test == FDT_PROP) {
-            dtb_prop_t  *prop = parse_prop(offset);
+            dtb_prop_t *prop = parse_prop(offset);
             if(prop) {
                 prop->next = node->props;
                 node->props = prop;
@@ -375,7 +375,7 @@ dtb_node_t *dtb_find_compatible(dtb_node_t *start, const char *str) {
 
     for(size_t i = begin_index; i < state.node_alloc_head; i++) {
         dtb_node_t *node = &state.node_buff[i];
-        dtb_prop_t  *compat = dtb_find_prop(node, "compatible");
+        dtb_prop_t *compat = dtb_find_prop(node, "compatible");
         if(compat == NULL)
             continue;
 
@@ -399,7 +399,7 @@ dtb_node_t *dtb_find_phandle(unsigned handle) {
 }
 
 static dtb_node_t *find_child_internal(dtb_node_t *start, const char *name,
-                                     size_t name_bounds) {
+                                       size_t name_bounds) {
     dtb_node_t *scan = start->child;
     while(scan != NULL) {
         size_t child_name_len = string_find_char(scan->name, '@');
@@ -417,7 +417,8 @@ static dtb_node_t *find_child_internal(dtb_node_t *start, const char *name,
 }
 
 static dtb_node_t *find_child_internal_accurate(dtb_node_t *start,
-                    const char *name,size_t name_bounds) {
+                                                const char *name,
+                                                size_t name_bounds) {
     dtb_node_t *scan = start->child;
     while(scan != NULL) {
         size_t child_name_len = string_len(scan->name);
@@ -481,12 +482,12 @@ dtb_node_t *dtb_find_child(dtb_node_t *start, const char *name) {
     return find_child_internal(start, name, string_len(name));
 }
 
-dtb_prop_t  *dtb_find_prop(dtb_node_t *node, const char *name) {
+dtb_prop_t *dtb_find_prop(dtb_node_t *node, const char *name) {
     if(node == NULL)
         return NULL;
 
     const size_t name_len = string_len(name);
-    dtb_prop_t  *prop = node->props;
+    dtb_prop_t *prop = node->props;
     while(prop) {
         const size_t prop_name_len = string_len(prop->name);
         if(prop_name_len == name_len && strings_eq(prop->name, name))
@@ -515,11 +516,11 @@ dtb_node_t *dtb_get_parent(dtb_node_t *node) {
     return node->parent;
 }
 
-dtb_prop_t  *dtb_get_prop(dtb_node_t *node, size_t index) {
+dtb_prop_t *dtb_get_prop(dtb_node_t *node, size_t index) {
     if(node == NULL)
         return NULL;
 
-    dtb_prop_t  *prop = node->props;
+    dtb_prop_t *prop = node->props;
     while(prop != NULL) {
         if(index == 0)
             return prop;
@@ -538,7 +539,7 @@ void dtb_stat_node(dtb_node_t *node, dtb_node_stat *stat) {
     stat->name = (node == state.root) ? ROOT_NODE_STR : node->name;
 
     stat->prop_count = 0;
-    dtb_prop_t  *prop = node->props;
+    dtb_prop_t *prop = node->props;
     while(prop != NULL) {
         prop = prop->next;
         stat->prop_count++;
@@ -590,7 +591,7 @@ const char *dtb_read_string(dtb_prop_t *prop, size_t index) {
     return NULL;
 }
 
-size_t dtb_read_prop_values(dtb_prop_t  *prop, size_t cell_count, size_t *vals) {
+size_t dtb_read_prop_values(dtb_prop_t *prop, size_t cell_count, size_t *vals) {
     if(prop == NULL || cell_count == 0)
         return 0;
 
@@ -608,7 +609,7 @@ size_t dtb_read_prop_values(dtb_prop_t  *prop, size_t cell_count, size_t *vals) 
     return count;
 }
 
-size_t dtb_read_prop_pairs(dtb_prop_t  *prop, dtb_pair layout, dtb_pair *vals) {
+size_t dtb_read_prop_pairs(dtb_prop_t *prop, dtb_pair layout, dtb_pair *vals) {
     if(prop == NULL || layout.a == 0 || layout.b == 0)
         return 0;
 
@@ -627,7 +628,7 @@ size_t dtb_read_prop_pairs(dtb_prop_t  *prop, dtb_pair layout, dtb_pair *vals) {
     return count;
 }
 
-size_t dtb_read_prop_triplets(dtb_prop_t  *prop, dtb_triplet layout,
+size_t dtb_read_prop_triplets(dtb_prop_t *prop, dtb_triplet layout,
                               dtb_triplet *vals) {
     if(prop == NULL || layout.a == 0 || layout.b == 0 || layout.c == 0)
         return 0;
@@ -648,7 +649,7 @@ size_t dtb_read_prop_triplets(dtb_prop_t  *prop, dtb_triplet layout,
     return count;
 }
 
-size_t dtb_read_prop_quads(dtb_prop_t  *prop, dtb_quad layout, dtb_quad *vals) {
+size_t dtb_read_prop_quads(dtb_prop_t *prop, dtb_quad layout, dtb_quad *vals) {
     if(prop == NULL || layout.a == 0 || layout.b == 0 || layout.c == 0 ||
        layout.d == 0)
         return 0;

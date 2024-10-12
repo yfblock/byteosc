@@ -40,10 +40,10 @@
  */
 
 #include <ext4_config.h>
-#include <ext4_types.h>
-#include <ext4_misc.h>
-#include <ext4_errno.h>
 #include <ext4_debug.h>
+#include <ext4_errno.h>
+#include <ext4_misc.h>
+#include <ext4_types.h>
 
 #include <ext4_block_group.h>
 
@@ -79,14 +79,12 @@ static uint16_t const crc16_tab[256] = {
     0x4540, 0x8701, 0x47C0, 0x4680, 0x8641, 0x8201, 0x42C0, 0x4380, 0x8341,
     0x4100, 0x81C1, 0x8081, 0x4040};
 
-uint16_t ext4_bg_crc16(uint16_t crc, const uint8_t *buffer, size_t len)
-{
-	while (len--)
+uint16_t ext4_bg_crc16(uint16_t crc, const uint8_t *buffer, size_t len) {
+    while(len--)
 
-		crc = (((crc >> 8) & 0xffU) ^
-		       crc16_tab[(crc ^ *buffer++) & 0xffU]) &
-		      0x0000ffffU;
-	return crc;
+        crc = (((crc >> 8) & 0xffU) ^ crc16_tab[(crc ^ *buffer++) & 0xffU]) &
+              0x0000ffffU;
+    return crc;
 }
 
 /**
