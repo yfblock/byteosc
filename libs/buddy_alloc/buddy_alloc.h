@@ -3,6 +3,8 @@
 #include <define.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#define talloc(num, ty) calloc(num, sizeof(ty))
 #define MAX_BUDDY_HEADER_BITS 32
 #define MIN_UNIT_BITS 5
 #define MIN_UNIT_SIZE (1 << MIN_UNIT_BITS)

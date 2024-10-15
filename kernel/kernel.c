@@ -7,6 +7,8 @@
 #include <smoldtb.h>
 #include <stddef.h>
 #include <string.h>
+#include <ext4.h>
+#include <ext4_fs.h>
 
 void test_heap() {
     // test heap alloc 1
@@ -24,10 +26,10 @@ void test_heap() {
     memset(test_alloc1, 4, sizeof(char) * 0x200);
     free(test_alloc1);
 
-    int *test_arr = calloc(10, sizeof(int));
+    int *test_arr = talloc(10, int);
     free(test_arr);
 
-    int *test_arr1 = calloc(10, sizeof(int));
+    int *test_arr1 = talloc(10, int);
     free(test_arr1);
 }
 
@@ -90,6 +92,58 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     }
 
     probe_dtb(dtb_find("/"));
+
+    // Test EXT4, This is a temporary code testcases.
+    struct ext4_fs fs;
+    int r = ext4_mount("ext4_fs", "/", true);
+    if(r != EOK)
+        debug("ext4 mount ret: %d", r);
+
+    r = ext4_recover("/");
+    if(r != EOK)
+        debug("ext4 recover ret: %d", r);
+
+    r = ext4_journal_start("/");
+    if(r != EOK)
+        debug("ext4 journal start ret: %d", r);
+
+    ext4_cache_write_back("/", 1);
+
+    const char* path = "/";
+    char sss[255];
+    ext4_dir d;
+
+    printf("ls %s\n", path);
+
+    r = ext4_dir_open(&d, path);
+    if(r != EOK)
+        debug("ext4 open ret: %d", r);
+
+    const ext4_direntry *de = ext4_dir_entry_next(&d);
+    while (de) {
+        memcpy(sss, de->name, de->name_length);
+        sss[de->name_length] = 0;
+        printf("  [%d] %d %s\n", de->inode_type, de->entry_length, sss);
+        de = ext4_dir_entry_next(&d);
+    }
+    ext4_dir_close(&d);
+
+    ext4_file *file = talloc(1, ext4_file);
+    r = ext4_fopen(file, "/1.log", "r");
+    if(r != EOK)
+        debug("open file failed %d", r);
+
+    char *buffer = talloc(0x1001, char);
+    size_t size = 0;
+    r = ext4_fread(file, buffer, 0x1ff, &size);
+    if(r != EOK)
+        debug("read file %d  size=%x", r, size);
+
+    printf(buffer);
+    ext4_fclose(file);
+
+    free(buffer);
+    free(file);
 
     log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");
 }

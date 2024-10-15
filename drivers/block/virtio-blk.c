@@ -43,6 +43,8 @@ static struct disk {
     virtio_regs *virtio;
 } disk;
 
+virtio_regs *g_virtio;
+
 void hexdump(uint8_t *buffer, size_t len) {
     if(buffer == nullptr)
         return;
@@ -154,6 +156,7 @@ void *virtio_block_probe(virtio_regs *virtio, dtb_node_t *node) {
     virtio->Status = status;
 
     disk.virtio = virtio;
+    g_virtio = virtio;
 
     debug("status after initialize: %d", virtio->Status);
 
@@ -166,8 +169,6 @@ void *virtio_block_probe(virtio_regs *virtio, dtb_node_t *node) {
 
     void virtio_disk_rw(size_t, size_t, uint8_t *, int);
     virtio_disk_rw(0, 1, buffer, 0);
-
-    hexdump(buffer, 1024);
 
     return nullptr;
 }

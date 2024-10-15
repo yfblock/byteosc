@@ -43,6 +43,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <arch.h>
 
 static int ext4_bcache_lba_compare(struct ext4_buf *a, struct ext4_buf *b) {
     if(a->lba > b->lba)
@@ -74,6 +75,13 @@ int ext4_bcache_init_dynamic(struct ext4_bcache *bc, uint32_t cnt,
     bc->cnt = cnt;
     bc->itemsize = itemsize;
     bc->ref_blocks = 0;
+    // FIXME: It will cause align access exception if not nop() here.
+    //   ref_blocks: store 0(4bytes) to 0x0c
+    //   max_ref_blocks: store 0(4bytes) to 0x10
+    //   So......
+    //   It will be merge in a instruction Store 0(8bytes) to 0x0c.
+    //   But access 8bytes @ 0x0c(aligned with 4bytes, but not 8bytes)
+    nop();
     bc->max_ref_blocks = 0;
 
     return EOK;

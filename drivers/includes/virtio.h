@@ -1,5 +1,6 @@
 #pragma once
 #include <common.h>
+#include <smoldtb.h>
 
 #define QUEUE_NUM 8
 

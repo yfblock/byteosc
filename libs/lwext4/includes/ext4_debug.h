@@ -150,8 +150,7 @@ uint32_t ext4_dmask_get(void);
                 printf("%s", ext4_dmask_id2str(m));                            \
                 printf("l: %d   ", __LINE__);                                  \
             }                                                                  \
-            printf(__VA_ARGS__);                                               \
-            fflush(stdout);                                                    \
+            printf(__VA_ARGS__);                                          \
         }                                                                      \
     } while(0)
 #else

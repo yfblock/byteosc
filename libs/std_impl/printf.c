@@ -55,6 +55,7 @@ void vprintf(const char *fmt, va_list args) {
                     console_putchar('%');
                     break;
                 case 'd':
+                case 'u':
                     print_number(va_arg(args, size_t));
                     break;
                 case 'x':

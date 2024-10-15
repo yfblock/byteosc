@@ -131,6 +131,7 @@ add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES}
         includes/inttypes.h
         includes/stdio.h
         includes/stdlib.h
+        libs/lwext4/lwext4.c
 )
 target_link_libraries(byteos -static)
 # No Stdlib and ignore stdlib headers
@@ -206,6 +207,27 @@ add_custom_target(run
     COMMENT "Running byteos in QEMU"
     USES_TERMINAL
 )
+
+add_custom_target(dbg
+        COMMAND ${QEMU_EXEC_CMD} -s -S
+        # --------------------------------------
+        # Other Arguments
+        # --------------------------------------
+        DEPENDS byteos_bin
+        COMMENT "Running byteos in QEMU"
+        USES_TERMINAL
+)
+
+add_custom_target(gdb
+        COMMAND gdb byteos -ex 'target remote localhost:1234' -ex 'disp /16i $pc'
+        # --------------------------------------
+        # Other Arguments
+        # --------------------------------------
+        DEPENDS byteos
+        COMMENT "Debugging byteos through gdb"
+        USES_TERMINAL
+)
+
 
 file(GLOB_RECURSE FMT_C_FILES "${CMAKE_SOURCE_DIR}/*.c")
 list(FILTER FMT_C_FILES EXCLUDE REGEX ".*/build/.*")
