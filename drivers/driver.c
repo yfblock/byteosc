@@ -3,6 +3,7 @@
 #include <console.h>
 #include <driver.h>
 #include <smoldtb.h>
+#include <stdio.h>
 #include <string.h>
 
 driver_link_t *dri_serial = nullptr;

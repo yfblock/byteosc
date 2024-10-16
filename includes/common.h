@@ -37,3 +37,5 @@ extern init_func __stop_init_array[];
 // TODO: implement the CTOR_ITER and use it.
 #define for_each_init(iter)                                                    \
     for(init_func *iter = __start_init_array; iter != __stop_init_array; iter++)
+
+void hexdump(uint8_t *buffer, size_t len);

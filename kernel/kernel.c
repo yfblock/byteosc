@@ -6,9 +6,11 @@
 #include <percpu.h>
 #include <smoldtb.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 #include <ext4.h>
 #include <ext4_fs.h>
+#include <elf_parser.h>
 
 void test_heap() {
     // test heap alloc 1
@@ -144,6 +146,46 @@ void cmain(size_t hart_id, uintptr_t dtb) {
 
     free(buffer);
     free(file);
+
+    ext4_file *elf_file = talloc(1, ext4_file);
+    r = ext4_fopen(elf_file, "/a.out", "r+");
+    if(r != EOK)
+        debug("open a.out file failed %d", r);
+    debug("elf file size: %d", elf_file->fsize);
+    elf64_header_t *elf_header = talloc(0x1000, char);
+    r = ext4_fread(elf_file, elf_header, 0x1000, &size);
+
+    debug("elf fread size: %d", size);
+
+    if(!(elf_header->magic[0] == 0x7f &&
+        strncmp("ELF", elf_header->magic + 1, 3) == 0)) {
+        debug("This is not a valid elf header");
+    }
+
+    debug("elf header: entry offset: %x", elf_header->entry_off);
+
+
+    debug("section offset: %x", elf_header->sht_off);
+    ext4_fseek(elf_file, elf_header->pht_off, 0);
+    char *buf = malloc(elf_header->pht_e_sz * elf_header->pht_e_n);
+    ext4_fread(elf_file, buf, elf_header->pht_e_sz * elf_header->pht_e_n, nullptr);
+
+    for(int i = 0;i < elf_header->pht_e_n;i++) {
+        elf64_ph_t *ph = (elf64_ph_t *) (buf + i * elf_header->pht_e_sz);
+        debug("program header: %x  TYPE: %x", ph->flags, ph->type);
+        debug("ph vaddr: %x paddr: %x memsz: %x", ph->p_vaddr, ph->p_paddr, ph->p_memsz);
+    }
+
+    free(buf);
+    ext4_fseek(elf_file, elf_header->sht_off, 0);
+    buf = malloc(elf_header->sht_e_sz * elf_header->sht_e_n);
+    ext4_fread(elf_file, buf, elf_header->sht_e_sz * elf_header->sht_e_n, nullptr);
+
+    for(int i = 0;i < elf_header->sht_e_n;i++) {
+        elf64_sh_t *sh = (elf64_sh_t *) (buf + i * elf_header->sht_e_sz);
+        debug("section header: %x  TYPE: %x", sh->sh_flags, sh->sh_type);
+        debug("sh vaddr: %08x - %08x ", sh->sh_addr, sh->sh_addr + sh->sh_size);
+    }
 
     log(LOG_LEVEL_WARNING, "Hello %d %s!\n", 35, "World");
 }

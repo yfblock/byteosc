@@ -1,6 +1,6 @@
 #include <arch.h>
 #include <buddy_alloc.h>
-#include <console.h>
+#include <stdio.h>
 #include <driver.h>
 #include <virtio.h>
 

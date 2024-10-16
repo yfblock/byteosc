@@ -9,7 +9,6 @@
 
 extern virtio_regs *g_virtio;
 void virtio_disk_rw(size_t block_no, size_t count, uint8_t *buffer, int write);
-void hexdump(uint8_t *buffer, size_t len);
 static uint8_t _ph_bbuf[(BSIZE)];
 
 static int file_dev_open(struct ext4_blockdev *bdev) {

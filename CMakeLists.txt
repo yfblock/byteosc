@@ -101,6 +101,7 @@ set(SOURCE_DIRS
     libs/smoldtb
     libs/std_impl
     libs/lwext4
+    libs/elf_parser
 )
 add_source_directories()
 
@@ -115,6 +116,7 @@ include_directories(
     libs/buddy_alloc
     ${CMAKE_CURRENT_BINARY_DIR}/generated
     libs/lwext4/includes
+    libs/elf_parser/includes
 )
 
 # --------------------------------------
@@ -132,6 +134,8 @@ add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES}
         includes/stdio.h
         includes/stdlib.h
         libs/lwext4/lwext4.c
+        libs/elf_parser/includes/elf_parser.h
+        libs/std_impl/tinyprintf.c
 )
 target_link_libraries(byteos -static)
 # No Stdlib and ignore stdlib headers
