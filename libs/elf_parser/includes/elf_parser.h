@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <ext4.h>
 
 #define ELF_ISA_NO_SPECIFIC 	0x00
 #define ELF_ISA_SPARC 	        0x02
@@ -104,3 +105,18 @@ typedef struct {
     uint64_t	st_value;
     uint64_t	st_size;
 } Elf64_Sym;
+
+typedef struct {
+    elf64_header_t *header;
+    // Program Header
+    elf64_ph_t *ph;
+    // Section Header
+    elf64_sh_t *sh;
+    // string table
+    char *strtab;
+    // shstrtab
+    char *shstrtab;
+} elf64_file_t;
+
+bool check_elf64(const char *ptr);
+int read_elf_file(ext4_file *f, elf64_file_t *elf);

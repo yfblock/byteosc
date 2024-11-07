@@ -1,3 +1,6 @@
+#include "stdio.h"
+
+
 #include <buddy_alloc.h>
 #include <common.h>
 #include <console.h>
@@ -41,9 +44,8 @@ inline size_t size_with_header(const size_t size) {
 }
 
 /* Static assert or Compiler assert */
-// static_assert(
-//     sizeof(BuddyLinked) == sizeof(intptr_t),
-//     "sizeof(BuddyLinkedAssert) Must be same as the sizeof(uintptr_t)");
+_Static_assert(sizeof(buddy_linked_t) == sizeof(intptr_t),
+     "sizeof(BuddyLinkedAssert) Must be same as the sizeof(uintptr_t)");
 
 // static buddy_linked_t buddy_header[MAX_BUDDY_HEADER_BITS] = {nullptr};
 // /* Page Allocator Buddy Header */
@@ -123,6 +125,8 @@ void add_heap_range(uintptr_t addr, const size_t size) {
 }
 
 void *alloc_node(buddy_system_t *buddy, size_t size) {
+    debug("alloc size: %x", size);
+    dump_heap();
     size_t index = header_index(buddy, size);
 
     // alloc buddy node
@@ -224,4 +228,17 @@ void free_len(void *ptr, size_t len) {
     }
     // Add the released node to the buddy header.
     add_range(&heap_buddy, (uintptr_t)mh, len);
+}
+
+void dump_heap() {
+    for(int i = 0;i < MAX_BUDDY_HEADER_BITS; i++) {
+        printf("BUDDY HEADER LIST: %d \n", i);
+        buddy_linked_t *link = &heap_buddy.header[i];
+        for(int j = 0;link->next != nullptr;j++) {
+            printf("\t%04x ", link->next);
+            link = link->next;
+            if(j % 4 == 0) printf("\n");
+        }
+        printf("\n");
+    }
 }

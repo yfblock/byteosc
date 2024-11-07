@@ -117,6 +117,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/generated
     libs/lwext4/includes
     libs/elf_parser/includes
+    libs/vfs/includes
 )
 
 # --------------------------------------
@@ -136,6 +137,9 @@ add_executable(byteos ${ASM_SOURCES} ${C_SOURCES} ${CPP_SOURCES}
         libs/lwext4/lwext4.c
         libs/elf_parser/includes/elf_parser.h
         libs/std_impl/tinyprintf.c
+        libs/vfs/includes/vfs.h
+        libs/lwext4/fs.c
+        kernel/tests.c
 )
 target_link_libraries(byteos -static)
 # No Stdlib and ignore stdlib headers

@@ -22,3 +22,5 @@ void free_len(void *ptr, size_t len);
 void add_heap_range(uintptr_t addr, size_t size);
 
 void add_frame_range(uintptr_t addr_s, uintptr_t addr_e);
+
+void dump_heap();

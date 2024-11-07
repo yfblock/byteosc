@@ -33,8 +33,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "printf.h"
-
+#include <stdarg.h>
 #include <arch.h>
 
 // 'ntoa' conversion buffer size, this must be big enough to hold one converted
