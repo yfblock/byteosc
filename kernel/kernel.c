@@ -45,14 +45,14 @@ CTOR void test_ctor() {
 
 void cmain(size_t hart_id, uintptr_t dtb) {
     // Print Banner
-    printf(NEWLINE(R"(  ____        _        ____   _____  )"));
-    printf(NEWLINE(R"( |  _ \      | |      / __ \ / ____| )"));
-    printf(NEWLINE(R"( | |_) |_   _| |_ ___| |  | | (___   )"));
-    printf(NEWLINE(R"( |  _ <| | | | __/ _ \ |  | |\___ \  )"));
-    printf(NEWLINE(R"( | |_) | |_| | ||  __/ |__| |____) | )"));
-    printf(NEWLINE(R"( |____/ \__, |\__\___|\____/|_____/  )"));
-    printf(NEWLINE(R"(         __/ |         C Version     )"));
-    printf(NEWLINE(R"(        |___/                        )"));
+    printf(NEWLINE(RAW("(  ____        _        ____   _____  )")));
+    printf(NEWLINE(RAW("( |  _ \      | |      / __ \ / ____| )")));
+    printf(NEWLINE(RAW("( | |_) |_   _| |_ ___| |  | | (___   )")));
+    printf(NEWLINE(RAW("( |  _ <| | | | __/ _ \ |  | |\___ \  )")));
+    printf(NEWLINE(RAW("( | |_) | |_| | ||  __/ |__| |____) | )")));
+    printf(NEWLINE(RAW("( |____/ \__, |\__\___|\____/|_____/  )")));
+    printf(NEWLINE(RAW("(         __/ |         C Version     )")));
+    printf(NEWLINE(RAW("(        |___/                        )")));
     printf("\n");
 
     debug("Hart ID: %d", hart_id);

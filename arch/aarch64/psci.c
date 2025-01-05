@@ -6,12 +6,12 @@ const uintptr_t PSCI_0_2_FN_CPU_OFF = PSCI_0_2_FN_BASE + 2;
 const uintptr_t PSCI_0_2_FN_SYSTEM_OFF = PSCI_0_2_FN_BASE + 8;
 
 inline int32_t psci_hvc_call(uintptr_t func, size_t a0, size_t a1, size_t a2) {
-    register uintptr_t x0 asm("x0") = func;
-    register size_t x1 asm("x1") = a0;
-    register size_t x2 asm("x2") = a1;
-    register size_t x3 asm("x3") = a2;
+    register uintptr_t x0 __asm__("x0") = func;
+    register size_t x1 __asm__("x1") = a0;
+    register size_t x2 __asm__("x2") = a1;
+    register size_t x3 __asm__("x3") = a2;
 
-    asm volatile("hvc #0"
+    __asm__ volatile("hvc #0"
                  : "=r"(x0)
                  : "r"(x0), "r"(x1), "r"(x2), "r"(x3)
                  : "memory");

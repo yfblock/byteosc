@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#define RAW(...) #__VA_ARGS__
+
 int strcmp(const char *str1, const char *str2);
 char *strcpy(char *dest, const char *src);
 void *memset(void *s, int c, size_t n);
