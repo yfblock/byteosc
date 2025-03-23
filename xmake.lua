@@ -1,48 +1,42 @@
+includes("utils/*.lua")
 add_rules("mode.debug", "mode.release")
+set_policy("check.auto_ignore_flags", false);
 
-set_arch("aarch64")
-set_options()
+-- 设置默认的架构信息
+set_plat("cross")
+set_config("arch", "aarch64")
+set_config("cross", "aarch64-linux-gnu-")
 
 target("byteos")
     set_kind("binary")
     set_languages("clatest")
+    add_rules("arch.aarch64")
+    on_load(function () 
+        -- 内置模块和 import 需要在 function() 中使用
+        -- 一般 function 会在 on_xxx before_xxx after_xxx 声明
+        if not is_arch("aarch64", "riscv64") then
+            raise("unsupported arch "..get_config("arch"))
+        end
+        cprint("${green}arch: ${reset}%s", get_config("arch"))
+    end)
 
-    add_cflags(
-        "-Werror",
-        "-Wundef",
-        "-Wpointer-arith",
-        "-Wno-nonnull",
-        "-O2",
-        "-fno-builtin",
-        "-ffreestanding",
-        
-        "-mgeneral-regs-only"
-    )
-
-    add_ldflags(
-        "-T",
-        "linker/linker-aarch64.ld",
-        "-nostdlib",
-        "-nostartfiles",
-        "-ffreestanding"
-    )
-
-    add_options("test", "BOOT_STACK_SIZE", "HEAP_SIZE")
+    if get_config("arch") then 
+        add_includedirs(string.format("arch/%s/includes", get_config("arch")))
+        add_files(string.format("arch/%s/asm/*.S", get_config("arch")))
+        add_files(string.format("arch/%s/*.c", get_config("arch")))
+    end 
 
     add_includedirs(
         "includes",
         "drivers/includes",
-        "arch/aarch64/includes",
         "$(buildir)/config",
-        
+
         "libs/buddy_alloc",
         "libs/elf_parser/includes",
         "libs/lwext4/includes",
         "libs/smoldtb"
     )
 
-    add_files("arch/aarch64/asm/*.S")
-    add_files("arch/aarch64/*.c")
     add_files("kernel/*.c")
     add_files("drivers/*.c")
     add_files("drivers/block/*.c")
@@ -54,59 +48,15 @@ target("byteos")
     add_files("libs/smoldtb/*.c")
     add_files("libs/std_impl/*.c")
 
-    
+
+    set_configvar("BOOT_STACK_SIZE", get_config("BOOT_STACK_SIZE"))
+    set_configvar("HEAP_SIZE", get_config("HEAP_SIZE"))    
     set_configdir("$(buildir)/config")
-    add_configfiles(
-        "arch/config-include.h.xmake.in", { filename = "config-include.h"}
-    )
+    add_configfiles("arch/config-include.h.in")
     after_build(function(target)
         print(target:targetfile())
         os.exec("llvm-objcopy -O binary "..target:targetfile().." build/byteos.bin")
     end)
 
 
-option()
-    after_check(function(option)
-        option:set("configvar", option:name(), option:value(), {quote=false})
-    end)
 
-option("arch")
-    set_default("aarch64")
-
-option("test")
-    set_default(false)
-    set_description("Enable debugging mode")
-
-option("BOOT_STACK_SIZE")
-    set_description("default size of the boot stack")
-    set_default("0x10000")
-
-
-option("HEAP_SIZE")
-    set_description("default size of the heap")
-    set_default("0x200000")
-
-
-task("qemu")
-
-    -- 设置运行脚本
-    on_run(function ()
-        os.exec([[
-            qemu-system-aarch64 -machine virt -cpu cortex-a72 
-            -kernel build/byteos.bin
-            --nographic
-
-            -D qemu.log
-            -d in_asm,int,pcall,cpu_reset,guest_errors
-        ]])
-    end)
-
-    set_menu {
-        usage = "xmake qemu [options]",
-
-        description = "run kernel in the qemu",
-
-        options = {
-
-        }
-    }
