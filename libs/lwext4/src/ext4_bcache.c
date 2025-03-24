@@ -41,9 +41,9 @@
 #include <ext4_errno.h>
 #include <ext4_types.h>
 
+#include <arch.h>
 #include <stdlib.h>
 #include <string.h>
-#include <arch.h>
 
 static int ext4_bcache_lba_compare(struct ext4_buf *a, struct ext4_buf *b) {
     if(a->lba > b->lba)
@@ -72,8 +72,8 @@ int ext4_bcache_init_dynamic(struct ext4_bcache *bc, uint32_t cnt,
 
     memset(bc, 0, sizeof(struct ext4_bcache));
 
-    bc->cnt = cnt;
-    bc->itemsize = itemsize;
+    bc->cnt        = cnt;
+    bc->itemsize   = itemsize;
     bc->ref_blocks = 0;
     // FIXME: It will cause align access exception if not nop() here.
     //   ref_blocks: store 0(4bytes) to 0x0c
@@ -120,7 +120,7 @@ int ext4_bcache_fini_dynamic(struct ext4_bcache *bc) {
  */
 
 static struct ext4_buf *ext4_buf_alloc(struct ext4_bcache *bc, uint64_t lba) {
-    void *data;
+    void            *data;
     struct ext4_buf *buf;
     data = ext4_malloc(bc->itemsize);
     if(!data)
@@ -132,9 +132,9 @@ static struct ext4_buf *ext4_buf_alloc(struct ext4_bcache *bc, uint64_t lba) {
         return NULL;
     }
 
-    buf->lba = lba;
+    buf->lba  = lba;
     buf->data = data;
-    buf->bc = bc;
+    buf->bc   = bc;
     return buf;
 }
 
@@ -174,7 +174,7 @@ void ext4_bcache_drop_buf(struct ext4_bcache *bc, struct ext4_buf *buf) {
 }
 
 void ext4_bcache_invalidate_buf(struct ext4_bcache *bc, struct ext4_buf *buf) {
-    buf->end_write = NULL;
+    buf->end_write     = NULL;
     buf->end_write_arg = NULL;
 
     /* Clear both dirty and up-to-date flags. */
@@ -186,7 +186,7 @@ void ext4_bcache_invalidate_buf(struct ext4_bcache *bc, struct ext4_buf *buf) {
 
 void ext4_bcache_invalidate_lba(struct ext4_bcache *bc, uint64_t from,
                                 uint32_t cnt) {
-    uint64_t end = from + cnt - 1;
+    uint64_t         end = from + cnt - 1;
     struct ext4_buf *tmp = ext4_buf_lookup(bc, from), *buf;
     RB_FOREACH_FROM(buf, ext4_buf_lba, tmp) {
         if(buf->lba > end)
@@ -213,8 +213,8 @@ struct ext4_buf *ext4_bcache_find_get(struct ext4_bcache *bc,
         ext4_bcache_inc_ref(buf);
 
         b->lb_id = lba;
-        b->buf = buf;
-        b->data = buf->data;
+        b->buf   = buf;
+        b->data  = buf->data;
     }
     return buf;
 }
@@ -246,10 +246,10 @@ int ext4_bcache_alloc(struct ext4_bcache *bc, struct ext4_block *b,
      * by 1*/
     buf->lru_id = ++bc->lru_ctr;
 
-    b->buf = buf;
-    b->data = buf->data;
+    b->buf      = buf;
+    b->data     = buf->data;
 
-    *is_new = true;
+    *is_new     = true;
     return EOK;
 }
 
@@ -293,7 +293,7 @@ int ext4_bcache_free(struct ext4_bcache *bc, struct ext4_block *b) {
     }
 
     b->lb_id = 0;
-    b->data = 0;
+    b->data  = 0;
 
     return EOK;
 }

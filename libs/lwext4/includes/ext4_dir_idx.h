@@ -56,7 +56,7 @@ extern "C" {
 #include <stdint.h>
 
 struct ext4_dir_idx_block {
-    struct ext4_block b;
+    struct ext4_block          b;
     struct ext4_dir_idx_entry *entries;
     struct ext4_dir_idx_entry *position;
 };
@@ -98,7 +98,7 @@ int ext4_dir_dx_add_entry(struct ext4_inode_ref *parent,
  * @return Error code
  */
 int ext4_dir_dx_reset_parent_inode(struct ext4_inode_ref *dir,
-                                   uint32_t parent_inode);
+                                   uint32_t               parent_inode);
 
 #ifdef __cplusplus
 }

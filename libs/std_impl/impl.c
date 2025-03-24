@@ -10,7 +10,7 @@
  * @return The length of the string s.
  */
 size_t strlen(const char *s) {
-    register size_t len = 0;
+    register size_t    len    = 0;
     register uintptr_t buffer = (uintptr_t)s;
     for(; *(char *)buffer != '\0'; buffer++)
         len++;
@@ -26,8 +26,8 @@ size_t strlen(const char *s) {
  */
 void *memset(void *s, int c, size_t n) {
     register uintptr_t buffer = (uintptr_t)s;
-    register char value = c;
-    register size_t number = n;
+    register char      value  = c;
+    register size_t    number = n;
     for(; number > 0; buffer++) {
         number--;
         *(char *)buffer = c;
@@ -52,17 +52,17 @@ int strcmp(const char *str1, const char *str2) {
     }
 }
 
-#define UCHAR_MAX 255
-#define ALIGN (sizeof(size_t))
-#define ONES ((size_t) - 1 / UCHAR_MAX)
-#define HIGHS (ONES * (UCHAR_MAX / 2 + 1))
+#define UCHAR_MAX  255
+#define ALIGN      (sizeof(size_t))
+#define ONES       ((size_t)-1 / UCHAR_MAX)
+#define HIGHS      (ONES * (UCHAR_MAX / 2 + 1))
 #define HASZERO(x) (((x) - ONES) & ~(x) & HIGHS)
 
 char *__stpcpy(char *restrict d, const char *restrict s) {
 #ifdef __GNUC__
     typedef size_t __attribute__((__may_alias__)) word;
-    word *wd;
-    const word *ws;
+    word                                         *wd;
+    const word                                   *ws;
     if((uintptr_t)s % ALIGN == (uintptr_t)d % ALIGN) {
         for(; (uintptr_t)s % ALIGN; s++, d++)
             if(!(*d = *s))
@@ -101,7 +101,7 @@ typedef int (*__compar_d_fn_t)(const void *, const void *, void *);
 __attribute__((weak)) void qsort_r(void *base, size_t nel, size_t width,
                                    __compar_d_fn_t comp, void *arg) {
     size_t wgap, i, j, k;
-    char tmp;
+    char   tmp;
 
     if((nel > 1) && (width > 0)) {
         // check for overflow
@@ -114,7 +114,7 @@ __attribute__((weak)) void qsort_r(void *base, size_t nel, size_t width,
         /* From the above, we know that either wgap == 1 < nel or */
         /* ((wgap-1)/3 < (int) ((nel-1)/3) <= (nel-1)/3 ==> wgap <  nel. */
         wgap *= width; /* So this can not overflow if wnel doesn't. */
-        nel *= width;  /* Convert nel to 'wnel' */
+        nel  *= width; /* Convert nel to 'wnel' */
         do {
             i = wgap;
             do {
@@ -124,14 +124,14 @@ __attribute__((weak)) void qsort_r(void *base, size_t nel, size_t width,
                     register char *b;
 
                     j -= wgap;
-                    a = j + ((char *)base);
-                    b = a + wgap;
+                    a  = j + ((char *)base);
+                    b  = a + wgap;
                     if((*comp)(a, b, arg) <= 0) {
                         break;
                     }
                     k = width;
                     do {
-                        tmp = *a;
+                        tmp  = *a;
                         *a++ = *b;
                         *b++ = tmp;
                     } while(--k);
@@ -151,6 +151,7 @@ void *memcpy(void *dest_str, const void *src_str, size_t n) {
     for(int i = 0; i < n; i++) {
         *((char *)dest_str + i) = *((char *)src_str + i);
     }
+    return dest_str;
 }
 
 int memcmp(const void *v1, const void *v2, size_t n) {
@@ -169,7 +170,7 @@ int memcmp(const void *v1, const void *v2, size_t n) {
 
 void *memmove(void *dst, const void *src, size_t n) {
     const char *s;
-    char *d;
+    char       *d;
 
     s = src;
     d = dst;

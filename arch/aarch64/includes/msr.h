@@ -2,8 +2,8 @@
 #include <aarch64.h>
 #include <arch.h>
 
-#define MRS_INLINE(x, var)                                                     \
-    uint64_t var;                                                              \
+#define MRS_INLINE(x, var) \
+    uint64_t var;          \
     MRS(x, var)
 
 /**
@@ -12,9 +12,9 @@
 typedef union {
     uint64_t raw;
     struct {
-        uint64_t reserved2 : 2; // Reserved bits [1: 0]
-        uint64_t el : 2;        // Current Exception Level [3: 2]
-        uint64_t reserved : 60; // Reserved bits [63: 4]
+        uint64_t reserved2 : 2;  // Reserved bits [1: 0]
+        uint64_t el        : 2;  // Current Exception Level [3: 2]
+        uint64_t reserved  : 60; // Reserved bits [63: 4]
     };
 } CurrentEL_Reg;
 
@@ -55,22 +55,22 @@ static inline void write_spsel(size_t value) {
 typedef union {
     uint64_t raw;
     struct {
-        bool EL0PCTEN : 1;
-        bool EL0VCTEN : 1;
-        bool EVNTEN : 1;
-        bool EVNTDIR : 1;
+        bool     EL0PCTEN : 1;
+        bool     EL0VCTEN : 1;
+        bool     EVNTEN   : 1;
+        bool     EVNTDIR  : 1;
         uint64_t reserved : 3;
-        bool EVNTI : 1;
-        bool EL0VTEN : 1;
-        bool EL0PTEN : 1;
-        bool EL1PCTEN : 1;
-        bool EL1PTEN : 1;
-        bool ECV : 1;
-        bool EL1TVT : 1;
-        bool EL1TVCT : 1;
-        bool EL1NVPCT : 1;
-        bool EL1NVVCT : 1;
-        bool EVNTIS : 1;
+        bool     EVNTI    : 1;
+        bool     EL0VTEN  : 1;
+        bool     EL0PTEN  : 1;
+        bool     EL1PCTEN : 1;
+        bool     EL1PTEN  : 1;
+        bool     ECV      : 1;
+        bool     EL1TVT   : 1;
+        bool     EL1TVCT  : 1;
+        bool     EL1NVPCT : 1;
+        bool     EL1NVVCT : 1;
+        bool     EVNTIS   : 1;
     };
 } CNTHCTL_EL2_Reg;
 

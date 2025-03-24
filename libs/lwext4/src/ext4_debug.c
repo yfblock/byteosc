@@ -44,7 +44,7 @@
 
 static uint32_t debug_mask;
 
-void ext4_dmask_set(uint32_t m) {
+void            ext4_dmask_set(uint32_t m) {
     debug_mask |= m;
 }
 

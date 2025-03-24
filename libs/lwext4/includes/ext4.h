@@ -74,16 +74,16 @@ typedef struct ext4_file {
     struct ext4_mountpoint *mp;
 
     /**@brief   File inode id.*/
-    uint32_t inode;
+    uint32_t                inode;
 
     /**@brief   Open flags.*/
-    uint32_t flags;
+    uint32_t                flags;
 
     /**@brief   File size.*/
-    uint64_t fsize;
+    uint64_t                fsize;
 
     /**@brief   Actual file position.*/
-    uint64_t fpos;
+    uint64_t                fpos;
 } ext4_file;
 
 /*****************************DIRECTORY DESCRIPTOR***************************/
@@ -92,19 +92,19 @@ typedef struct ext4_file {
 typedef struct ext4_direntry {
     uint32_t inode;
     uint16_t entry_length;
-    uint8_t name_length;
-    uint8_t inode_type;
-    uint8_t name[255];
+    uint8_t  name_length;
+    uint8_t  inode_type;
+    uint8_t  name[255];
 } ext4_direntry;
 
 /**@brief   Directory descriptor. */
 typedef struct ext4_dir {
     /**@brief   File descriptor.*/
-    ext4_file f;
+    ext4_file     f;
     /**@brief   Current directory entry.*/
     ext4_direntry de;
     /**@brief   Next entry offset.*/
-    uint64_t next_off;
+    uint64_t      next_off;
 } ext4_dir;
 
 /********************************MOUNT OPERATIONS****************************/
@@ -191,7 +191,7 @@ struct ext4_mount_stats {
     uint32_t blocks_per_group;
     uint32_t inodes_per_group;
 
-    char volume_name[16];
+    char     volume_name[16];
 };
 
 /**@brief   Get file mount point stats.
@@ -200,7 +200,7 @@ struct ext4_mount_stats {
  * @param   stats Filesystem stats.
  *
  * @return Standard error code. */
-int ext4_mount_point_stats(const char *mount_point,
+int ext4_mount_point_stats(const char              *mount_point,
                            struct ext4_mount_stats *stats);
 
 /**@brief   Setup OS lock routines.
@@ -209,7 +209,7 @@ int ext4_mount_point_stats(const char *mount_point,
  * @param   locks  Lock and unlock functions
  *
  * @return Standard error code. */
-int ext4_mount_setup_locks(const char *mount_point,
+int ext4_mount_setup_locks(const char             *mount_point,
                            const struct ext4_lock *locks);
 
 /**@brief   Acquire the filesystem superblock pointer of a mp.
@@ -386,8 +386,8 @@ uint64_t ext4_fsize(ext4_file *file);
  * @param inode   Inode internals.
  *
  * @return  Standard error code.*/
-int ext4_raw_inode_fill(const char *path, uint32_t *ret_ino,
-                        struct ext4_inode *inode);
+int      ext4_raw_inode_fill(const char *path, uint32_t *ret_ino,
+                             struct ext4_inode *inode);
 
 /**@brief Check if inode exists.
  *
@@ -403,7 +403,7 @@ int ext4_raw_inode_fill(const char *path, uint32_t *ret_ino,
  *                @ref EXT4_DE_SYMLINK
  *
  * @return  Standard error code.*/
-int ext4_inode_exist(const char *path, int type);
+int      ext4_inode_exist(const char *path, int type);
 
 /**@brief Change file/directory/link mode bits.
  *
@@ -411,7 +411,7 @@ int ext4_inode_exist(const char *path, int type);
  * @param mode New mode bits (for example 0777).
  *
  * @return  Standard error code.*/
-int ext4_mode_set(const char *path, uint32_t mode);
+int      ext4_mode_set(const char *path, uint32_t mode);
 
 /**@brief Get file/directory/link mode bits.
  *
@@ -419,7 +419,7 @@ int ext4_mode_set(const char *path, uint32_t mode);
  * @param mode New mode bits (for example 0777).
  *
  * @return  Standard error code.*/
-int ext4_mode_get(const char *path, uint32_t *mode);
+int      ext4_mode_get(const char *path, uint32_t *mode);
 
 /**@brief Change file owner and group.
  *
@@ -428,7 +428,7 @@ int ext4_mode_get(const char *path, uint32_t *mode);
  * @param gid  Group id.
  *
  * @return  Standard error code.*/
-int ext4_owner_set(const char *path, uint32_t uid, uint32_t gid);
+int      ext4_owner_set(const char *path, uint32_t uid, uint32_t gid);
 
 /**@brief Get file/directory/link owner and group.
  *
@@ -437,7 +437,7 @@ int ext4_owner_set(const char *path, uint32_t uid, uint32_t gid);
  * @param gid  Group id.
  *
  * @return  Standard error code.*/
-int ext4_owner_get(const char *path, uint32_t *uid, uint32_t *gid);
+int      ext4_owner_get(const char *path, uint32_t *uid, uint32_t *gid);
 
 /**@brief Set file/directory/link access time.
  *
@@ -445,7 +445,7 @@ int ext4_owner_get(const char *path, uint32_t *uid, uint32_t *gid);
  * @param atime Access timestamp.
  *
  * @return  Standard error code.*/
-int ext4_atime_set(const char *path, uint32_t atime);
+int      ext4_atime_set(const char *path, uint32_t atime);
 
 /**@brief Set file/directory/link modify time.
  *
@@ -453,7 +453,7 @@ int ext4_atime_set(const char *path, uint32_t atime);
  * @param mtime Modify timestamp.
  *
  * @return  Standard error code.*/
-int ext4_mtime_set(const char *path, uint32_t mtime);
+int      ext4_mtime_set(const char *path, uint32_t mtime);
 
 /**@brief Set file/directory/link change time.
  *
@@ -461,7 +461,7 @@ int ext4_mtime_set(const char *path, uint32_t mtime);
  * @param ctime Change timestamp.
  *
  * @return  Standard error code.*/
-int ext4_ctime_set(const char *path, uint32_t ctime);
+int      ext4_ctime_set(const char *path, uint32_t ctime);
 
 /**@brief Get file/directory/link access time.
  *
@@ -469,7 +469,7 @@ int ext4_ctime_set(const char *path, uint32_t ctime);
  * @param atime Access timestamp.
  *
  * @return  Standard error code.*/
-int ext4_atime_get(const char *path, uint32_t *atime);
+int      ext4_atime_get(const char *path, uint32_t *atime);
 
 /**@brief Get file/directory/link modify time.
  *
@@ -477,7 +477,7 @@ int ext4_atime_get(const char *path, uint32_t *atime);
  * @param mtime Modify timestamp.
  *
  * @return  Standard error code.*/
-int ext4_mtime_get(const char *path, uint32_t *mtime);
+int      ext4_mtime_get(const char *path, uint32_t *mtime);
 
 /**@brief Get file/directory/link change time.
  *
@@ -485,7 +485,7 @@ int ext4_mtime_get(const char *path, uint32_t *mtime);
  * @param ctime Change timestamp.
  *
  * @return  standard error code*/
-int ext4_ctime_get(const char *path, uint32_t *ctime);
+int      ext4_ctime_get(const char *path, uint32_t *ctime);
 
 /**@brief Create symbolic link.
  *
@@ -493,7 +493,7 @@ int ext4_ctime_get(const char *path, uint32_t *ctime);
  * @param path   Source entry path.
  *
  * @return  Standard error code.*/
-int ext4_fsymlink(const char *target, const char *path);
+int      ext4_fsymlink(const char *target, const char *path);
 
 /**@brief Create special file.
  * @param path     Path to new special file.
@@ -502,7 +502,7 @@ int ext4_fsymlink(const char *target, const char *path);
  * @param dev      If filetype is char device or block device,
  * 	           the device number will become the payload in the inode.
  * @return  Standard error code.*/
-int ext4_mknod(const char *path, int filetype, uint32_t dev);
+int      ext4_mknod(const char *path, int filetype, uint32_t dev);
 
 /**@brief Read symbolic link payload.
  *
@@ -606,7 +606,7 @@ const ext4_direntry *ext4_dir_entry_next(ext4_dir *dir);
 /**@brief   Rewine directory entry offset.
  *
  * @param   dir Directory handle.*/
-void ext4_dir_entry_rewind(ext4_dir *dir);
+void                 ext4_dir_entry_rewind(ext4_dir *dir);
 
 #ifdef __cplusplus
 }

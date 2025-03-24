@@ -1,14 +1,14 @@
 #include "smoldtb.h"
 #include <console.h>
 
-#define FDT_MAGIC 0xD00DFEED
+#define FDT_MAGIC      0xD00DFEED
 #define FDT_BEGIN_NODE 1
-#define FDT_END_NODE 2
-#define FDT_PROP 3
-#define FDT_NOP 4
+#define FDT_END_NODE   2
+#define FDT_PROP       3
+#define FDT_NOP        4
 
-#define FDT_CELL_SIZE 4
-#define ROOT_NODE_STR "/"
+#define FDT_CELL_SIZE  4
+#define ROOT_NODE_STR  "/"
 
 /* The 'fdt_*' structs represent data layouts taken directly from the device
  * tree specification. In contrast the 'dtb_*' structs are for the parser.
@@ -44,19 +44,19 @@ struct fdt_property {
 
 struct dtb_state {
     const uint32_t *cells;
-    const char *strings;
-    size_t cell_count;
-    dtb_node_t *root;
+    const char     *strings;
+    size_t          cell_count;
+    dtb_node_t     *root;
 
-    dtb_node_t **handle_lookup;
-    dtb_node_t *node_buff;
-    size_t node_alloc_head;
-    size_t node_alloc_max;
-    dtb_prop_t *prop_buff;
-    size_t prop_alloc_head;
-    size_t prop_alloc_max;
+    dtb_node_t    **handle_lookup;
+    dtb_node_t     *node_buff;
+    size_t          node_alloc_head;
+    size_t          node_alloc_max;
+    dtb_prop_t     *prop_buff;
+    size_t          prop_alloc_head;
+    size_t          prop_alloc_max;
 
-    dtb_ops ops;
+    dtb_ops         ops;
 };
 
 struct dtb_state state;
@@ -70,11 +70,11 @@ static uint32_t be32(uint32_t input) {
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     return input;
 #else
-    uint32_t temp = 0;
-    temp |= (input & 0xFF) << 24;
-    temp |= (input & 0xFF00) << 8;
-    temp |= (input & 0xFF0000) >> 8;
-    temp |= (input & 0xFF000000) >> 24;
+    uint32_t temp  = 0;
+    temp          |= (input & 0xFF) << 24;
+    temp          |= (input & 0xFF00) << 8;
+    temp          |= (input & 0xFF0000) >> 8;
+    temp          |= (input & 0xFF000000) >> 24;
     return temp;
 #endif
 }
@@ -174,14 +174,14 @@ static void free_buffers() {
         return;
     }
 
-    size_t buff_size = state.node_alloc_max * sizeof(dtb_node_t);
-    buff_size += state.prop_alloc_max * sizeof(dtb_prop_t);
-    buff_size += state.node_alloc_max * sizeof(void *);
+    size_t buff_size  = state.node_alloc_max * sizeof(dtb_node_t);
+    buff_size        += state.prop_alloc_max * sizeof(dtb_prop_t);
+    buff_size        += state.node_alloc_max * sizeof(void *);
 
     state.ops.free(state.node_buff, buff_size);
-    state.node_buff = NULL;
-    state.prop_buff = NULL;
-    state.handle_lookup = NULL;
+    state.node_buff      = NULL;
+    state.prop_buff      = NULL;
+    state.handle_lookup  = NULL;
     state.node_alloc_max = state.prop_alloc_max = 0;
 #endif
 }
@@ -196,9 +196,9 @@ static void alloc_buffers() {
             state.prop_alloc_max++;
     }
 
-    size_t total_size = state.node_alloc_max * sizeof(dtb_node_t);
-    total_size += state.prop_alloc_max * sizeof(dtb_prop_t);
-    total_size += state.node_alloc_max *
+    size_t total_size  = state.node_alloc_max * sizeof(dtb_node_t);
+    total_size        += state.prop_alloc_max * sizeof(dtb_prop_t);
+    total_size        += state.node_alloc_max *
                   sizeof(void *); // we assume the worst case and that each
                                   // node has a phandle prop
 
@@ -217,7 +217,7 @@ static void alloc_buffers() {
     for(size_t i = 0; i < total_size; i++)
         buffer[i] = 0;
 
-    state.node_buff = (dtb_node_t *)buffer;
+    state.node_buff       = (dtb_node_t *)buffer;
     state.node_alloc_head = 0;
     state.prop_buff = (dtb_prop_t *)&state.node_buff[state.node_alloc_max];
     state.prop_alloc_head = 0;
@@ -231,9 +231,9 @@ static void check_for_special_prop(dtb_node_t *node, dtb_prop_t *prop) {
     if(name0 != '#' || name0 != 'p' || name0 != 'l')
         return; // short circuit to save processing
 
-    const size_t name_len = string_len(prop->name);
-    const char *name_phandle = "phandle";
-    const size_t len_phandle = string_len(name_phandle);
+    const size_t name_len     = string_len(prop->name);
+    const char  *name_phandle = "phandle";
+    const size_t len_phandle  = string_len(name_phandle);
     if(name_len == len_phandle && strings_eq(prop->name, name_phandle)) {
         size_t handle;
         dtb_read_prop_values(prop, 1, &handle);
@@ -241,8 +241,8 @@ static void check_for_special_prop(dtb_node_t *node, dtb_prop_t *prop) {
         return;
     }
 
-    const char *name_linuxhandle = "linux,phandle";
-    const size_t len_linuxhandle = string_len(name_linuxhandle);
+    const char  *name_linuxhandle = "linux,phandle";
+    const size_t len_linuxhandle  = string_len(name_linuxhandle);
     if(name_len == len_linuxhandle &&
        strings_eq(prop->name, name_linuxhandle)) {
         size_t handle;
@@ -251,8 +251,8 @@ static void check_for_special_prop(dtb_node_t *node, dtb_prop_t *prop) {
         return;
     }
 
-    const char *name_addrcells = "#address-cells";
-    const size_t len_addrcells = string_len(name_addrcells);
+    const char  *name_addrcells = "#address-cells";
+    const size_t len_addrcells  = string_len(name_addrcells);
     if(name_len == len_addrcells && strings_eq(prop->name, name_addrcells)) {
         size_t cells;
         dtb_read_prop_values(prop, 1, &cells);
@@ -260,8 +260,8 @@ static void check_for_special_prop(dtb_node_t *node, dtb_prop_t *prop) {
         return;
     }
 
-    const char *name_sizecells = "#size-cells";
-    const size_t len_sizecells = string_len(name_sizecells);
+    const char  *name_sizecells = "#size-cells";
+    const size_t len_sizecells  = string_len(name_sizecells);
     if(name_len == len_sizecells && strings_eq(prop->name, name_sizecells)) {
         size_t cells;
         dtb_read_prop_values(prop, 1, &cells);
@@ -275,14 +275,14 @@ static dtb_prop_t *parse_prop(size_t *offset) {
         return NULL;
 
     (*offset)++;
-    dtb_prop_t *prop = alloc_prop();
+    dtb_prop_t                *prop = alloc_prop();
 
     const struct fdt_property *fdtprop =
         (struct fdt_property *)(state.cells + *offset);
     prop->name = (const char *)(state.strings + be32(fdtprop->name_offset));
-    prop->first_cell = state.cells + *offset + 2;
-    prop->length = be32(fdtprop->length);
-    (*offset) += (dtb_align_up(be32(fdtprop->length), 4) / 4) + 2;
+    prop->first_cell  = state.cells + *offset + 2;
+    prop->length      = be32(fdtprop->length);
+    (*offset)        += (dtb_align_up(be32(fdtprop->length), 4) / 4) + 2;
 
     return prop;
 }
@@ -292,10 +292,10 @@ static dtb_node_t *parse_node(size_t *offset, uint8_t addr_cells,
     if(be32(state.cells[*offset]) != FDT_BEGIN_NODE)
         return NULL;
 
-    dtb_node_t *node = alloc_node();
-    node->name = (const char *)(state.cells + (*offset) + 1);
-    node->addr_cells = addr_cells;
-    node->size_cells = size_cells;
+    dtb_node_t *node      = alloc_node();
+    node->name            = (const char *)(state.cells + (*offset) + 1);
+    node->addr_cells      = addr_cells;
+    node->size_cells      = size_cells;
 
     const size_t name_len = string_len(node->name);
     *offset += (dtb_align_up(name_len + 1, FDT_CELL_SIZE) / FDT_CELL_SIZE) + 1;
@@ -309,13 +309,13 @@ static dtb_node_t *parse_node(size_t *offset, uint8_t addr_cells,
             dtb_node_t *child = parse_node(offset, addr_cells, size_cells);
             if(child) {
                 child->sibling = node->child;
-                node->child = child;
-                child->parent = node;
+                node->child    = child;
+                child->parent  = node;
             }
         } else if(test == FDT_PROP) {
             dtb_prop_t *prop = parse_prop(offset);
             if(prop) {
-                prop->next = node->props;
+                prop->next  = node->props;
                 node->props = prop;
                 check_for_special_prop(node, prop);
             }
@@ -345,9 +345,9 @@ void dtb_init(uintptr_t start, dtb_ops ops) {
         return;
     }
 
-    state.cells = (const uint32_t *)(start + be32(header->offset_structs));
+    state.cells      = (const uint32_t *)(start + be32(header->offset_structs));
     state.cell_count = be32(header->size_structs) / sizeof(uint32_t);
-    state.strings = (const char *)(start + be32(header->offset_strings));
+    state.strings    = (const char *)(start + be32(header->offset_strings));
 
     if(state.node_buff)
         free_buffers();
@@ -361,7 +361,7 @@ void dtb_init(uintptr_t start, dtb_ops ops) {
         if(sub_root == NULL)
             continue;
         sub_root->sibling = state.root;
-        state.root = sub_root;
+        state.root        = sub_root;
     }
 }
 
@@ -369,12 +369,12 @@ dtb_node_t *dtb_find_compatible(dtb_node_t *start, const char *str) {
     size_t begin_index = 0;
     if(start != NULL) {
         const uintptr_t offset = (uintptr_t)start - (uintptr_t)state.node_buff;
-        begin_index = offset / sizeof(dtb_node_t);
+        begin_index            = offset / sizeof(dtb_node_t);
         begin_index++; // we want to start searching AFTER this node.
     }
 
     for(size_t i = begin_index; i < state.node_alloc_head; i++) {
-        dtb_node_t *node = &state.node_buff[i];
+        dtb_node_t *node   = &state.node_buff[i];
         dtb_prop_t *compat = dtb_find_prop(node, "compatible");
         if(compat == NULL)
             continue;
@@ -418,7 +418,7 @@ static dtb_node_t *find_child_internal(dtb_node_t *start, const char *name,
 
 static dtb_node_t *find_child_internal_accurate(dtb_node_t *start,
                                                 const char *name,
-                                                size_t name_bounds) {
+                                                size_t      name_bounds) {
     dtb_node_t *scan = start->child;
     while(scan != NULL) {
         size_t child_name_len = string_len(scan->name);
@@ -436,7 +436,7 @@ static dtb_node_t *find_child_internal_accurate(dtb_node_t *start,
 }
 
 dtb_node_t *dtb_find(const char *name) {
-    size_t seg_len;
+    size_t      seg_len;
     dtb_node_t *scan = state.root;
     while(scan) {
         while(name[0] == '/')
@@ -448,7 +448,7 @@ dtb_node_t *dtb_find(const char *name) {
         if(seg_len == 0)
             return scan;
 
-        scan = find_child_internal(scan, name, seg_len);
+        scan  = find_child_internal(scan, name, seg_len);
         name += seg_len;
     }
 
@@ -456,7 +456,7 @@ dtb_node_t *dtb_find(const char *name) {
 }
 
 dtb_node_t *dtb_find_accurate(const char *name) {
-    size_t seg_len;
+    size_t      seg_len;
     dtb_node_t *scan = state.root;
     while(scan) {
         while(name[0] == '/')
@@ -468,7 +468,7 @@ dtb_node_t *dtb_find_accurate(const char *name) {
         if(seg_len == 0)
             return scan;
 
-        scan = find_child_internal_accurate(scan, name, seg_len);
+        scan  = find_child_internal_accurate(scan, name, seg_len);
         name += seg_len;
     }
 
@@ -487,7 +487,7 @@ dtb_prop_t *dtb_find_prop(dtb_node_t *node, const char *name) {
         return NULL;
 
     const size_t name_len = string_len(name);
-    dtb_prop_t *prop = node->props;
+    dtb_prop_t  *prop     = node->props;
     while(prop) {
         const size_t prop_name_len = string_len(prop->name);
         if(prop_name_len == name_len && strings_eq(prop->name, name))
@@ -536,7 +536,7 @@ void dtb_stat_node(dtb_node_t *node, dtb_node_stat *stat) {
     if(node == NULL)
         return;
 
-    stat->name = (node == state.root) ? ROOT_NODE_STR : node->name;
+    stat->name       = (node == state.root) ? ROOT_NODE_STR : node->name;
 
     stat->prop_count = 0;
     dtb_prop_t *prop = node->props;
@@ -577,8 +577,8 @@ const char *dtb_read_string(dtb_prop_t *prop, size_t index) {
     if(prop == NULL)
         return NULL;
 
-    const uint8_t *name = (const uint8_t *)prop->first_cell;
-    size_t curr_index = 0;
+    const uint8_t *name       = (const uint8_t *)prop->first_cell;
+    size_t         curr_index = 0;
     for(size_t scan = 0; scan < prop->length * 4; scan++) {
         if(name[scan] == 0) {
             curr_index++;
@@ -603,7 +603,7 @@ size_t dtb_read_prop_values(dtb_prop_t *prop, size_t cell_count, size_t *vals) {
 
     for(size_t i = 0; i < count; i++) {
         const uint32_t *base = prop->first_cell + i * cell_count;
-        vals[i] = extract_cells(base, cell_count);
+        vals[i]              = extract_cells(base, cell_count);
     }
 
     return count;
@@ -622,8 +622,8 @@ size_t dtb_read_prop_pairs(dtb_prop_t *prop, dtb_pair layout, dtb_pair *vals) {
 
     for(size_t i = 0; i < count; i++) {
         const uint32_t *base = prop->first_cell + i * (layout.a + layout.b);
-        vals[i].a = extract_cells(base, layout.a);
-        vals[i].b = extract_cells(base + layout.a, layout.b);
+        vals[i].a            = extract_cells(base, layout.a);
+        vals[i].b            = extract_cells(base + layout.a, layout.b);
     }
     return count;
 }
@@ -636,14 +636,14 @@ size_t dtb_read_prop_triplets(dtb_prop_t *prop, dtb_triplet layout,
     const struct fdt_property *fdtprop =
         (const struct fdt_property *)(prop->first_cell - 2);
     const size_t stride = layout.a + layout.b + layout.c;
-    const size_t count = be32(fdtprop->length) / (stride * FDT_CELL_SIZE);
+    const size_t count  = be32(fdtprop->length) / (stride * FDT_CELL_SIZE);
     if(vals == NULL)
         return count;
 
     for(size_t i = 0; i < count; i++) {
         const uint32_t *base = prop->first_cell + i * stride;
-        vals[i].a = extract_cells(base, layout.a);
-        vals[i].b = extract_cells(base + layout.a, layout.b);
+        vals[i].a            = extract_cells(base, layout.a);
+        vals[i].b            = extract_cells(base + layout.a, layout.b);
         vals[i].c = extract_cells(base + layout.a + layout.b, layout.c);
     }
     return count;
@@ -657,14 +657,14 @@ size_t dtb_read_prop_quads(dtb_prop_t *prop, dtb_quad layout, dtb_quad *vals) {
     const struct fdt_property *fdtprop =
         (const struct fdt_property *)(prop->first_cell - 2);
     const size_t stride = layout.a + layout.b + layout.c + layout.d;
-    const size_t count = be32(fdtprop->length) / (stride * FDT_CELL_SIZE);
+    const size_t count  = be32(fdtprop->length) / (stride * FDT_CELL_SIZE);
     if(vals == NULL)
         return count;
 
     for(size_t i = 0; i < count; i++) {
         const uint32_t *base = prop->first_cell + i * stride;
-        vals[i].a = extract_cells(base, layout.a);
-        vals[i].b = extract_cells(base + layout.a, layout.b);
+        vals[i].a            = extract_cells(base, layout.a);
+        vals[i].b            = extract_cells(base + layout.a, layout.b);
         vals[i].c = extract_cells(base + layout.a + layout.b, layout.c);
         vals[i].d =
             extract_cells(base + layout.a + layout.b + layout.c, layout.d);

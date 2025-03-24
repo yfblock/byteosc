@@ -70,9 +70,9 @@
 #include <string.h>
 
 /* F, G, and H are MD4 functions */
-#define F(x, y, z) (((x) & (y)) | ((~x) & (z)))
-#define G(x, y, z) (((x) & (y)) | ((x) & (z)) | ((y) & (z)))
-#define H(x, y, z) ((x) ^ (y) ^ (z))
+#define F(x, y, z)        (((x) & (y)) | ((~x) & (z)))
+#define G(x, y, z)        (((x) & (y)) | ((x) & (z)) | ((y) & (z)))
+#define H(x, y, z)        ((x) ^ (y) ^ (z))
 
 /* ROTATE_LEFT rotates x left n bits */
 #define ROTATE_LEFT(x, n) (((x) << (n)) | ((x) >> (32 - (n))))
@@ -81,22 +81,22 @@
  * FF, GG, and HH are transformations for rounds 1, 2, and 3.
  * Rotation is separated from addition to prevent recomputation.
  */
-#define FF(a, b, c, d, x, s)                                                   \
-    {                                                                          \
-        (a) += F((b), (c), (d)) + (x);                                         \
-        (a) = ROTATE_LEFT((a), (s));                                           \
+#define FF(a, b, c, d, x, s)           \
+    {                                  \
+        (a) += F((b), (c), (d)) + (x); \
+        (a)  = ROTATE_LEFT((a), (s));  \
     }
 
-#define GG(a, b, c, d, x, s)                                                   \
-    {                                                                          \
-        (a) += G((b), (c), (d)) + (x) + (uint32_t)0x5A827999;                  \
-        (a) = ROTATE_LEFT((a), (s));                                           \
+#define GG(a, b, c, d, x, s)                                  \
+    {                                                         \
+        (a) += G((b), (c), (d)) + (x) + (uint32_t)0x5A827999; \
+        (a)  = ROTATE_LEFT((a), (s));                         \
     }
 
-#define HH(a, b, c, d, x, s)                                                   \
-    {                                                                          \
-        (a) += H((b), (c), (d)) + (x) + (uint32_t)0x6ED9EBA1;                  \
-        (a) = ROTATE_LEFT((a), (s));                                           \
+#define HH(a, b, c, d, x, s)                                  \
+    {                                                         \
+        (a) += H((b), (c), (d)) + (x) + (uint32_t)0x6ED9EBA1; \
+        (a)  = ROTATE_LEFT((a), (s));                         \
     }
 
 /*
@@ -156,13 +156,13 @@ static void ext2_tea(uint32_t hash[4], uint32_t data[8]) {
     uint32_t tea_delta = 0x9E3779B9;
     uint32_t sum;
     uint32_t x = hash[0], y = hash[1];
-    int n = 16;
-    int i = 1;
+    int      n = 16;
+    int      i = 1;
 
     while(n-- > 0) {
-        sum = i * tea_delta;
-        x += ((y << 4) + data[0]) ^ (y + sum) ^ ((y >> 5) + data[1]);
-        y += ((x << 4) + data[2]) ^ (x + sum) ^ ((x >> 5) + data[3]);
+        sum  = i * tea_delta;
+        x   += ((y << 4) + data[0]) ^ (y + sum) ^ ((y >> 5) + data[1]);
+        y   += ((x << 4) + data[2]) ^ (x + sum) ^ ((x >> 5) + data[3]);
         i++;
     }
 
@@ -171,11 +171,11 @@ static void ext2_tea(uint32_t hash[4], uint32_t data[8]) {
 }
 
 static uint32_t ext2_legacy_hash(const char *name, int len, int unsigned_char) {
-    uint32_t h0, h1 = 0x12A3FE2D, h2 = 0x37ABE8F9;
-    uint32_t multi = 0x6D22F5;
+    uint32_t             h0, h1 = 0x12A3FE2D, h2 = 0x37ABE8F9;
+    uint32_t             multi = 0x6D22F5;
     const unsigned char *uname = (const unsigned char *)name;
-    const signed char *sname = (const signed char *)name;
-    int val, i;
+    const signed char   *sname = (const signed char *)name;
+    int                  val, i;
 
     for(i = 0; i < len; i++) {
         if(unsigned_char)
@@ -197,10 +197,10 @@ static void ext2_prep_hashbuf(const char *src, uint32_t slen, uint32_t *dst,
                               int dlen, int unsigned_char) {
     uint32_t padding = slen | (slen << 8) | (slen << 16) | (slen << 24);
     uint32_t buf_val;
-    int len, i;
-    int buf_byte;
+    int      len, i;
+    int      buf_byte;
     const unsigned char *ubuf = (const unsigned char *)src;
-    const signed char *sbuf = (const signed char *)src;
+    const signed char   *sbuf = (const signed char *)src;
 
     if(slen > (uint32_t)dlen)
         len = dlen;
@@ -219,12 +219,12 @@ static void ext2_prep_hashbuf(const char *src, uint32_t slen, uint32_t *dst,
             buf_val = padding;
 
         buf_val <<= 8;
-        buf_val += buf_byte;
+        buf_val  += buf_byte;
 
         if((i % 4) == 3) {
-            *dst++ = buf_val;
-            dlen -= sizeof(uint32_t);
-            buf_val = padding;
+            *dst++   = buf_val;
+            dlen    -= sizeof(uint32_t);
+            buf_val  = padding;
         }
     }
 
@@ -234,8 +234,8 @@ static void ext2_prep_hashbuf(const char *src, uint32_t slen, uint32_t *dst,
 
     dlen -= sizeof(uint32_t);
     while(dlen >= 0) {
-        *dst++ = padding;
-        dlen -= sizeof(uint32_t);
+        *dst++  = padding;
+        dlen   -= sizeof(uint32_t);
     }
 }
 
@@ -245,7 +245,7 @@ int ext2_htree_hash(const char *name, int len, const uint32_t *hash_seed,
     uint32_t hash[4];
     uint32_t data[8];
     uint32_t major = 0, minor = 0;
-    int unsigned_char = 0;
+    int      unsigned_char = 0;
 
     if(!name || !hash_major)
         return (-1);
@@ -269,7 +269,7 @@ int ext2_htree_hash(const char *name, int len, const uint32_t *hash_seed,
         while(len > 0) {
             ext2_prep_hashbuf(name, len, data, 16, unsigned_char);
             ext2_tea(hash, data);
-            len -= 16;
+            len  -= 16;
             name += 16;
         }
         major = hash[0];
@@ -288,7 +288,7 @@ int ext2_htree_hash(const char *name, int len, const uint32_t *hash_seed,
         while(len > 0) {
             ext2_prep_hashbuf(name, len, data, 32, unsigned_char);
             ext2_half_md4(hash, data);
-            len -= 32;
+            len  -= 32;
             name += 32;
         }
         major = hash[1];

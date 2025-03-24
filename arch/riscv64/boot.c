@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-int cmain(size_t, uintptr_t);
+int  cmain(size_t, uintptr_t);
 /**
  * arch specific initialization. Enter the main() after initialization
  * @param hart_id The id of the current hart

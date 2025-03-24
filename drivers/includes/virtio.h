@@ -2,33 +2,33 @@
 #include <common.h>
 #include <smoldtb.h>
 
-#define QUEUE_NUM 8
+#define QUEUE_NUM                   8
 
-#define VIRTIO_MAGIC_VALUE 0x74726976
-#define VIRTIO_VERSION_1 0x1
-#define VIRTIO_VERSION_2 0x2
+#define VIRTIO_MAGIC_VALUE          0x74726976
+#define VIRTIO_VERSION_1            0x1
+#define VIRTIO_VERSION_2            0x2
 
-#define VIRTIO_STATUS_ACK 1
-#define VIRTIO_STATUS_DRIVER 2
-#define VIRTIO_STATUS_FAILED 128
-#define VIRTIO_STATUS_FEATURE_OK 8
-#define VIRTIO_STATUS_DRIVER_OK 4
-#define VIRTIO_STATUS_NEED_RESET 64
+#define VIRTIO_STATUS_ACK           1
+#define VIRTIO_STATUS_DRIVER        2
+#define VIRTIO_STATUS_FAILED        128
+#define VIRTIO_STATUS_FEATURE_OK    8
+#define VIRTIO_STATUS_DRIVER_OK     4
+#define VIRTIO_STATUS_NEED_RESET    64
 
 /* https://docs.oasis-open.org/virtio/virtio/v1.1/csprd01/virtio-v1.1-csprd01.html#x1-1930005
  */
-#define VIRTIO_DEVICE_ID_NET 1
-#define VIRTIO_DEVICE_ID_BLK 2
-#define VIRTIO_DEVICE_ID_CONSOLE 3
+#define VIRTIO_DEVICE_ID_NET        1
+#define VIRTIO_DEVICE_ID_BLK        2
+#define VIRTIO_DEVICE_ID_CONSOLE    3
 
 // device feature bits
-#define VIRTIO_BLK_F_RO 5          /* Disk is read-only */
-#define VIRTIO_BLK_F_SCSI 7        /* Supports scsi command passthru */
-#define VIRTIO_BLK_F_CONFIG_WCE 11 /* Writeback mode available in config */
-#define VIRTIO_BLK_F_MQ 12         /* support more than one vq */
-#define VIRTIO_F_ANY_LAYOUT 27
+#define VIRTIO_BLK_F_RO             5  /* Disk is read-only */
+#define VIRTIO_BLK_F_SCSI           7  /* Supports scsi command passthru */
+#define VIRTIO_BLK_F_CONFIG_WCE     11 /* Writeback mode available in config */
+#define VIRTIO_BLK_F_MQ             12 /* support more than one vq */
+#define VIRTIO_F_ANY_LAYOUT         27
 #define VIRTIO_RING_F_INDIRECT_DESC 28
-#define VIRTIO_RING_F_EVENT_IDX 29
+#define VIRTIO_RING_F_EVENT_IDX     29
 
 typedef volatile struct {
     uint32_t MagicValue;
@@ -73,13 +73,13 @@ typedef struct {
     uint32_t seg_max;
     struct {
         uint16_t cylinders;
-        uint8_t heads;
-        uint8_t sectors;
+        uint8_t  heads;
+        uint8_t  sectors;
     } geometry;
     uint32_t blk_size;
     struct {
-        uint8_t physical_block_exp;
-        uint8_t alignment_offset;
+        uint8_t  physical_block_exp;
+        uint8_t  alignment_offset;
         uint16_t min_io_size;
         uint32_t opt_io_size;
     } topology;
@@ -90,23 +90,23 @@ typedef struct {
     uint32_t type;
     uint32_t reserved;
     uint64_t sector;
-    uint8_t data[512];
-    uint8_t status;
+    uint8_t  data[512];
+    uint8_t  status;
 } virtio_blk_req;
 
 struct virtqueue {
     /* Physical base address of the full data structure. */
-    uint32_t phys;
-    uint32_t len;
-    uint32_t seen_used;
-    uint32_t free_desc;
+    uint32_t                         phys;
+    uint32_t                         len;
+    uint32_t                         seen_used;
+    uint32_t                         free_desc;
 
-    volatile struct virtqueue_desc *desc;
+    volatile struct virtqueue_desc  *desc;
     volatile struct virtqueue_avail *avail;
-    volatile uint16_t *used_event;
-    volatile struct virtqueue_used *used;
-    volatile uint16_t *avail_event;
-    void **desc_virt;
+    volatile uint16_t               *used_event;
+    volatile struct virtqueue_used  *used;
+    volatile uint16_t               *avail_event;
+    void                           **desc_virt;
 };
 
 // a single descriptor, from the spec.
@@ -117,7 +117,7 @@ struct virtq_desc {
     uint16_t next;
 };
 
-#define VRING_DESC_F_NEXT 1  // chained with another descriptor
+#define VRING_DESC_F_NEXT  1 // chained with another descriptor
 #define VRING_DESC_F_WRITE 2 // device writes (vs read)
 
 // the (entire) avail ring, from the spec.
@@ -136,15 +136,15 @@ struct virtq_used_elem {
 };
 
 struct virtq_used {
-    uint16_t flags; // always zero
-    uint16_t idx;   // device increments when it adds a ring[] entry
+    uint16_t               flags; // always zero
+    uint16_t               idx; // device increments when it adds a ring[] entry
     struct virtq_used_elem ring[QUEUE_NUM];
 };
 
 // these are specific to virtio block devices, e.g. disks,
 // described in Section 5.2 of the spec.
 
-#define VIRTIO_BLK_T_IN 0  // read the disk
+#define VIRTIO_BLK_T_IN  0 // read the disk
 #define VIRTIO_BLK_T_OUT 1 // write the disk
 
 // the format of the first descriptor in a disk request.

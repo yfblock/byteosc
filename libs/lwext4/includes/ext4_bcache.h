@@ -53,13 +53,13 @@ extern "C" {
 /**@brief   Single block descriptor*/
 struct ext4_block {
     /**@brief   Logical block ID*/
-    uint64_t lb_id;
+    uint64_t         lb_id;
 
     /**@brief   Buffer */
     struct ext4_buf *buf;
 
     /**@brief   Data buffer.*/
-    uint8_t *data;
+    uint8_t         *data;
 };
 
 struct ext4_bcache;
@@ -67,28 +67,28 @@ struct ext4_bcache;
 /**@brief   Single block descriptor*/
 struct ext4_buf {
     /**@brief   Flags*/
-    int flags;
+    int                 flags;
 
     /**@brief   Logical block address*/
-    uint64_t lba;
+    uint64_t            lba;
 
     /**@brief   Data buffer.*/
-    uint8_t *data;
+    uint8_t            *data;
 
     /**@brief   LRU priority. (unused) */
-    uint32_t lru_prio;
+    uint32_t            lru_prio;
 
     /**@brief   LRU id.*/
-    uint32_t lru_id;
+    uint32_t            lru_id;
 
     /**@brief   Reference count table*/
-    uint32_t refctr;
+    uint32_t            refctr;
 
     /**@brief   The block cache this buffer belongs to. */
     struct ext4_bcache *bc;
 
     /**@brief   Whether or not buffer is on dirty list.*/
-    bool on_dirty_list;
+    bool                on_dirty_list;
 
     /**@brief   LBA tree node*/
     RB_ENTRY(ext4_buf) lba_node;
@@ -104,7 +104,7 @@ struct ext4_buf {
      * @param   buf buffer descriptor
      * @param   standard error code returned by bdev->bwrite()
      * @param   arg argument passed to this routine*/
-    void (*end_write)(struct ext4_bcache *bc, struct ext4_buf *buf, int res,
+    void  (*end_write)(struct ext4_bcache *bc, struct ext4_buf *buf, int res,
                       void *arg);
 
     /**@brief   argument passed to end_write() callback.*/
@@ -115,25 +115,25 @@ struct ext4_buf {
 struct ext4_bcache {
 
     /**@brief   Item count in block cache*/
-    uint32_t cnt;
+    uint32_t              cnt;
 
     /**@brief   Item size in block cache*/
-    uint32_t itemsize;
+    uint32_t              itemsize;
 
     /**@brief   Last recently used counter*/
-    uint32_t lru_ctr;
+    uint32_t              lru_ctr;
 
     /**@brief   Currently referenced datablocks*/
-    uint32_t ref_blocks;
+    uint32_t              ref_blocks;
 
     /**@brief   Maximum referenced datablocks*/
-    uint32_t max_ref_blocks;
+    uint32_t              max_ref_blocks;
 
     /**@brief   The blockdev binded to this block cache*/
     struct ext4_blockdev *bdev;
 
     /**@brief   The cache should not be shaked */
-    bool dont_shake;
+    bool                  dont_shake;
 
     /**@brief   A tree holding all bufs*/
     RB_HEAD(ext4_buf_lba, ext4_buf) lba_root;
@@ -156,11 +156,11 @@ struct ext4_bcache {
  */
 enum bcache_state_bits { BC_UPTODATE, BC_DIRTY, BC_FLUSH, BC_TMP };
 
-#define ext4_bcache_set_flag(buf, b) (buf)->flags |= 1 << (b)
+#define ext4_bcache_set_flag(buf, b)   (buf)->flags |= 1 << (b)
 
 #define ext4_bcache_clear_flag(buf, b) (buf)->flags &= ~(1 << (b))
 
-#define ext4_bcache_test_flag(buf, b) (((buf)->flags & (1 << (b))) >> (b))
+#define ext4_bcache_test_flag(buf, b)  (((buf)->flags & (1 << (b))) >> (b))
 
 static inline void ext4_bcache_set_dirty(struct ext4_buf *buf) {
     ext4_bcache_set_flag(buf, BC_UPTODATE);
@@ -182,7 +182,7 @@ static inline void ext4_bcache_clear_dirty(struct ext4_buf *buf) {
  * @param   bc block cache descriptor
  * @param   buf buffer descriptor */
 static inline void ext4_bcache_insert_dirty_node(struct ext4_bcache *bc,
-                                                 struct ext4_buf *buf) {
+                                                 struct ext4_buf    *buf) {
     if(!buf->on_dirty_list) {
         SLIST_INSERT_HEAD(&bc->dirty_list, buf, dirty_node);
         buf->on_dirty_list = true;
@@ -193,7 +193,7 @@ static inline void ext4_bcache_insert_dirty_node(struct ext4_bcache *bc,
  * @param   bc block cache descriptor
  * @param   buf buffer descriptor */
 static inline void ext4_bcache_remove_dirty_node(struct ext4_bcache *bc,
-                                                 struct ext4_buf *buf) {
+                                                 struct ext4_buf    *buf) {
     if(buf->on_dirty_list) {
         SLIST_REMOVE(&bc->dirty_list, buf, ext4_buf, dirty_node);
         buf->on_dirty_list = false;
@@ -205,17 +205,17 @@ static inline void ext4_bcache_remove_dirty_node(struct ext4_bcache *bc,
  * @param   cnt items count in block cache
  * @param   itemsize single item size (in bytes)
  * @return  standard error code*/
-int ext4_bcache_init_dynamic(struct ext4_bcache *bc, uint32_t cnt,
-                             uint32_t itemsize);
+int              ext4_bcache_init_dynamic(struct ext4_bcache *bc, uint32_t cnt,
+                                          uint32_t itemsize);
 
 /**@brief   Do cleanup works on block cache.
  * @param   bc block cache descriptor.*/
-void ext4_bcache_cleanup(struct ext4_bcache *bc);
+void             ext4_bcache_cleanup(struct ext4_bcache *bc);
 
 /**@brief   Dynamic de-initialization of block cache.
  * @param   bc block cache descriptor
  * @return  standard error code*/
-int ext4_bcache_fini_dynamic(struct ext4_bcache *bc);
+int              ext4_bcache_fini_dynamic(struct ext4_bcache *bc);
 
 /**@brief   Get a buffer with the lowest LRU counter in bcache.
  * @param   bc block cache descriptor
@@ -256,19 +256,19 @@ struct ext4_buf *ext4_bcache_find_get(struct ext4_bcache *bc,
  * @param   b block to alloc
  * @param   is_new block is new (needs to be read)
  * @return  standard error code*/
-int ext4_bcache_alloc(struct ext4_bcache *bc, struct ext4_block *b,
-                      bool *is_new);
+int              ext4_bcache_alloc(struct ext4_bcache *bc, struct ext4_block *b,
+                                   bool *is_new);
 
 /**@brief   Free block from cache memory (decrement reference counter).
  * @param   bc block cache descriptor
  * @param   b block to free
  * @return  standard error code*/
-int ext4_bcache_free(struct ext4_bcache *bc, struct ext4_block *b);
+int              ext4_bcache_free(struct ext4_bcache *bc, struct ext4_block *b);
 
 /**@brief   Return a full status of block cache.
  * @param   bc block cache descriptor
  * @return  full status*/
-bool ext4_bcache_is_full(struct ext4_bcache *bc);
+bool             ext4_bcache_is_full(struct ext4_bcache *bc);
 
 #ifdef __cplusplus
 }

@@ -16,16 +16,16 @@ typedef struct {
     // device ids
     const struct udevice_id *ids;
     // device class
-    const enum uclass_id uclass;
+    const enum uclass_id     uclass;
     // The type of the driver.
-    udevice_t *(*probe)(dtb_node_t *);
+    udevice_t               *(*probe)(dtb_node_t *);
     // operations for the driver.
-    void *ops;
+    void                    *ops;
 } driver_t;
 
 struct _udevice_id_t {
-    driver_t *driver;
+    driver_t      *driver;
     // The final uclass
     enum uclass_id uclass;
-    uintptr_t reg_addr;
+    uintptr_t      reg_addr;
 };

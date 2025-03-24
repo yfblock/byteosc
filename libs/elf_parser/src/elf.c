@@ -12,8 +12,10 @@
  */
 bool check_elf64(const char *ptr) {
     const auto header = (elf64_header_t *)ptr;
-    if(header->magic[0] != 0x7f) return false;
-    if(strncmp("ELF", header->magic + 1, 3) != 0) return false;
+    if(header->magic[0] != 0x7f)
+        return false;
+    if(strncmp("ELF", header->magic + 1, 3) != 0)
+        return false;
     return true;
 }
 
@@ -29,12 +31,13 @@ elf64_sh_t *read_elf64_sh(const elf64_header_t *header) {
 }
 
 int read_elf_file(ext4_file *f, elf64_file_t *elf) {
-    int r = 0;
+    int             r      = 0;
     elf64_header_t *header = talloc(1, elf64_header_t);
     debug("header addr: %x", header);
     ext4_fseek(f, 0, SEEK_SET);
     r = ext4_fread(f, (void *)header, sizeof(elf64_header_t), nullptr);
-    if(r != EOK) return r;
+    if(r != EOK)
+        return r;
 
     elf->header = header;
 

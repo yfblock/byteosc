@@ -59,27 +59,27 @@ extern "C" {
 #define PRId64 "lld"
 #endif
 
-#define DEBUG_BALLOC (1ul << 0)
-#define DEBUG_BCACHE (1ul << 1)
-#define DEBUG_BITMAP (1ul << 2)
+#define DEBUG_BALLOC      (1ul << 0)
+#define DEBUG_BCACHE      (1ul << 1)
+#define DEBUG_BITMAP      (1ul << 2)
 #define DEBUG_BLOCK_GROUP (1ul << 3)
-#define DEBUG_BLOCKDEV (1ul << 4)
-#define DEBUG_DIR_IDX (1ul << 5)
-#define DEBUG_DIR (1ul << 6)
-#define DEBUG_EXTENT (1ul << 7)
-#define DEBUG_FS (1ul << 8)
-#define DEBUG_HASH (1ul << 9)
-#define DEBUG_IALLOC (1ul << 10)
-#define DEBUG_INODE (1ul << 11)
-#define DEBUG_SUPER (1ul << 12)
-#define DEBUG_XATTR (1ul << 13)
-#define DEBUG_MKFS (1ul << 14)
-#define DEBUG_EXT4 (1ul << 15)
-#define DEBUG_JBD (1ul << 16)
-#define DEBUG_MBR (1ul << 17)
+#define DEBUG_BLOCKDEV    (1ul << 4)
+#define DEBUG_DIR_IDX     (1ul << 5)
+#define DEBUG_DIR         (1ul << 6)
+#define DEBUG_EXTENT      (1ul << 7)
+#define DEBUG_FS          (1ul << 8)
+#define DEBUG_HASH        (1ul << 9)
+#define DEBUG_IALLOC      (1ul << 10)
+#define DEBUG_INODE       (1ul << 11)
+#define DEBUG_SUPER       (1ul << 12)
+#define DEBUG_XATTR       (1ul << 13)
+#define DEBUG_MKFS        (1ul << 14)
+#define DEBUG_EXT4        (1ul << 15)
+#define DEBUG_JBD         (1ul << 16)
+#define DEBUG_MBR         (1ul << 17)
 
-#define DEBUG_NOPREFIX (1ul << 31)
-#define DEBUG_ALL (0xFFFFFFFF)
+#define DEBUG_NOPREFIX    (1ul << 31)
+#define DEBUG_ALL         (0xFFFFFFFF)
 
 static inline const char *ext4_dmask_id2str(uint32_t m) {
     switch(m) {
@@ -122,18 +122,18 @@ static inline const char *ext4_dmask_id2str(uint32_t m) {
     }
     return "";
 }
-#define DBG_NONE ""
-#define DBG_INFO "[info]  "
-#define DBG_WARN "[warn]  "
+#define DBG_NONE  ""
+#define DBG_INFO  "[info]  "
+#define DBG_WARN  "[warn]  "
 #define DBG_ERROR "[error] "
 
 /**@brief   Global mask debug set.
  * @param   m new debug mask.*/
-void ext4_dmask_set(uint32_t m);
+void     ext4_dmask_set(uint32_t m);
 
 /**@brief   Global mask debug clear.
  * @param   m new debug mask.*/
-void ext4_dmask_clr(uint32_t m);
+void     ext4_dmask_clr(uint32_t m);
 
 /**@brief   Global debug mask get.
  * @return  debug mask*/
@@ -143,19 +143,19 @@ uint32_t ext4_dmask_get(void);
 #include <stdio.h>
 
 /**@brief   Debug printf.*/
-#define ext4_dbg(m, ...)                                                       \
-    do {                                                                       \
-        if((m) & ext4_dmask_get()) {                                           \
-            if(!((m) & DEBUG_NOPREFIX)) {                                      \
-                printf("%s", ext4_dmask_id2str(m));                            \
-                printf("l: %d   ", __LINE__);                                  \
-            }                                                                  \
-            printf(__VA_ARGS__);                                          \
-        }                                                                      \
+#define ext4_dbg(m, ...)                            \
+    do {                                            \
+        if((m) & ext4_dmask_get()) {                \
+            if(!((m) & DEBUG_NOPREFIX)) {           \
+                printf("%s", ext4_dmask_id2str(m)); \
+                printf("l: %d   ", __LINE__);       \
+            }                                       \
+            printf(__VA_ARGS__);                    \
+        }                                           \
     } while(0)
 #else
-#define ext4_dbg(m, ...)                                                       \
-    do {                                                                       \
+#define ext4_dbg(m, ...) \
+    do {                 \
     } while(0)
 #endif
 
@@ -164,14 +164,14 @@ uint32_t ext4_dmask_get(void);
 #if CONFIG_HAVE_OWN_ASSERT
 #include <stdio.h>
 
-#define ext4_assert(_v)                                                        \
-    do {                                                                       \
-        if(!(_v)) {                                                            \
-            printf("assertion failed:\nfile: %s\nline: %d\n", __FILE__,        \
-                   __LINE__);                                                  \
-            while(1)                                                           \
-                ;                                                              \
-        }                                                                      \
+#define ext4_assert(_v)                                                 \
+    do {                                                                \
+        if(!(_v)) {                                                     \
+            printf("assertion failed:\nfile: %s\nline: %d\n", __FILE__, \
+                   __LINE__);                                           \
+            while(1)                                                    \
+                ;                                                       \
+        }                                                               \
     } while(0)
 #else
 #define ext4_assert(_v) assert(_v)

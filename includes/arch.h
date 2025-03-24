@@ -4,12 +4,12 @@
 
 #define NAKED __attribute__((naked))
 
-void console_putchar(char c);
-void shutdown();
-uintptr_t percpu_pointer();
+void                 console_putchar(char c);
+void                 shutdown();
+uintptr_t            percpu_pointer();
 
-extern uintptr_t _boot_stack;
-extern uintptr_t _boot_stack_top;
+extern uintptr_t     _boot_stack;
+extern uintptr_t     _boot_stack_top;
 
 /**
  * Get Boot Stack Size

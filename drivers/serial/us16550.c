@@ -4,11 +4,11 @@
 #include <driver.h>
 #include <stdint.h>
 
-#define THR 0x0
-#define LSR 0x5
+#define THR               0x0
+#define LSR               0x5
 
-#define LSR_THRE BIT(5)
-#define LSR_RDR BIT(0)
+#define LSR_THRE          BIT(5)
+#define LSR_RDR           BIT(0)
 
 #define UART_REG(base, x) ((volatile uint8_t *)((base) + (x)))
 
@@ -54,9 +54,9 @@ DEFINE_DRIVER SERIAL = {
 
 udevice_t *uart16550_init(dtb_node_t *node) {
     dtb_prop_t *reg_prop = dtb_find_prop(node, "reg");
-    udevice_t *device = calloc(1, sizeof(udevice_t));
-    device->driver = &SERIAL;
-    device->reg_addr = dtb_read_prop_cell(reg_prop->first_cell, 2);
-    device->uclass = SERIAL.uclass;
+    udevice_t  *device   = calloc(1, sizeof(udevice_t));
+    device->driver       = &SERIAL;
+    device->reg_addr     = dtb_read_prop_cell(reg_prop->first_cell, 2);
+    device->uclass       = SERIAL.uclass;
     return device;
 }

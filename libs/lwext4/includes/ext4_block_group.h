@@ -75,7 +75,7 @@ static inline uint64_t ext4_bg_get_block_bitmap(struct ext4_bgroup *bg,
  */
 static inline void ext4_bg_set_block_bitmap(struct ext4_bgroup *bg,
                                             struct ext4_sblock *s,
-                                            uint64_t blk) {
+                                            uint64_t            blk) {
 
     bg->block_bitmap_lo = to_le32((uint32_t)blk);
     if(ext4_sb_get_desc_size(s) > EXT4_MIN_BLOCK_GROUP_DESCRIPTOR_SIZE)
@@ -105,7 +105,7 @@ static inline uint64_t ext4_bg_get_inode_bitmap(struct ext4_bgroup *bg,
  */
 static inline void ext4_bg_set_inode_bitmap(struct ext4_bgroup *bg,
                                             struct ext4_sblock *s,
-                                            uint64_t blk) {
+                                            uint64_t            blk) {
     bg->inode_bitmap_lo = to_le32((uint32_t)blk);
     if(ext4_sb_get_desc_size(s) > EXT4_MIN_BLOCK_GROUP_DESCRIPTOR_SIZE)
         bg->inode_bitmap_hi = to_le32(blk >> 32);
@@ -162,7 +162,7 @@ static inline uint32_t ext4_bg_get_free_blocks_count(struct ext4_bgroup *bg,
  */
 static inline void ext4_bg_set_free_blocks_count(struct ext4_bgroup *bg,
                                                  struct ext4_sblock *s,
-                                                 uint32_t cnt) {
+                                                 uint32_t            cnt) {
     bg->free_blocks_count_lo = to_le16((cnt << 16) >> 16);
     if(ext4_sb_get_desc_size(s) > EXT4_MIN_BLOCK_GROUP_DESCRIPTOR_SIZE)
         bg->free_blocks_count_hi = to_le16(cnt >> 16);
@@ -190,7 +190,7 @@ static inline uint32_t ext4_bg_get_free_inodes_count(struct ext4_bgroup *bg,
  */
 static inline void ext4_bg_set_free_inodes_count(struct ext4_bgroup *bg,
                                                  struct ext4_sblock *s,
-                                                 uint32_t cnt) {
+                                                 uint32_t            cnt) {
     bg->free_inodes_count_lo = to_le16((cnt << 16) >> 16);
     if(ext4_sb_get_desc_size(s) > EXT4_MIN_BLOCK_GROUP_DESCRIPTOR_SIZE)
         bg->free_inodes_count_hi = to_le16(cnt >> 16);
@@ -218,7 +218,7 @@ static inline uint32_t ext4_bg_get_used_dirs_count(struct ext4_bgroup *bg,
  */
 static inline void ext4_bg_set_used_dirs_count(struct ext4_bgroup *bg,
                                                struct ext4_sblock *s,
-                                               uint32_t cnt) {
+                                               uint32_t            cnt) {
     bg->used_dirs_count_lo = to_le16((cnt << 16) >> 16);
     if(ext4_sb_get_desc_size(s) > EXT4_MIN_BLOCK_GROUP_DESCRIPTOR_SIZE)
         bg->used_dirs_count_hi = to_le16(cnt >> 16);
@@ -247,7 +247,7 @@ static inline uint32_t ext4_bg_get_itable_unused(struct ext4_bgroup *bg,
  */
 static inline void ext4_bg_set_itable_unused(struct ext4_bgroup *bg,
                                              struct ext4_sblock *s,
-                                             uint32_t cnt) {
+                                             uint32_t            cnt) {
     bg->itable_unused_lo = to_le16((cnt << 16) >> 16);
     if(ext4_sb_get_desc_size(s) > EXT4_MIN_BLOCK_GROUP_DESCRIPTOR_SIZE)
         bg->itable_unused_hi = to_le16(cnt >> 16);
@@ -275,9 +275,9 @@ static inline bool ext4_bg_has_flag(struct ext4_bgroup *bg, uint32_t f) {
  * @param f Flag to be set
  */
 static inline void ext4_bg_set_flag(struct ext4_bgroup *bg, uint32_t f) {
-    uint16_t flags = to_le16(bg->flags);
-    flags |= f;
-    bg->flags = to_le16(flags);
+    uint16_t flags  = to_le16(bg->flags);
+    flags          |= f;
+    bg->flags       = to_le16(flags);
 }
 
 /**@brief Clear flag of block group.
@@ -285,9 +285,9 @@ static inline void ext4_bg_set_flag(struct ext4_bgroup *bg, uint32_t f) {
  * @param f Flag to be cleared
  */
 static inline void ext4_bg_clear_flag(struct ext4_bgroup *bg, uint32_t f) {
-    uint16_t flags = to_le16(bg->flags);
-    flags &= ~f;
-    bg->flags = to_le16(flags);
+    uint16_t flags  = to_le16(bg->flags);
+    flags          &= ~f;
+    bg->flags       = to_le16(flags);
 }
 
 /**@brief Calculate CRC16 of the block group.

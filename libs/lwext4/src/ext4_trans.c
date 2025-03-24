@@ -47,7 +47,7 @@
 int ext4_trans_set_block_dirty(struct ext4_buf *buf) {
     int r = EOK;
 #if CONFIG_JOURNALING_ENABLE
-    struct ext4_fs *fs = buf->bc->bdev->fs;
+    struct ext4_fs   *fs    = buf->bc->bdev->fs;
     struct ext4_block block = {
         .lb_id = buf->lba, .data = buf->data, .buf = buf};
 
@@ -79,13 +79,13 @@ int ext4_trans_block_get(struct ext4_blockdev *bdev, struct ext4_block *b,
 }
 
 int ext4_trans_try_revoke_block(struct ext4_blockdev *bdev __unused,
-                                uint64_t lba __unused) {
+                                uint64_t lba               __unused) {
     int r = EOK;
 #if CONFIG_JOURNALING_ENABLE
     struct ext4_fs *fs = bdev->fs;
     if(fs->jbd_journal && fs->curr_trans) {
         struct jbd_trans *trans = fs->curr_trans;
-        r = jbd_trans_try_revoke_block(trans, lba);
+        r                       = jbd_trans_try_revoke_block(trans, lba);
     } else if(fs->jbd_journal) {
         r = ext4_block_flush_lba(fs->bdev, lba);
     }

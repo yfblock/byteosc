@@ -47,7 +47,7 @@ extern "C" {
 /**************************************************************/
 
 #define EXT4_DIV_ROUND_UP(x, y) (((x) + (y) - 1) / (y))
-#define EXT4_ALIGN(x, y) ((y) * EXT4_DIV_ROUND_UP((x), (y)))
+#define EXT4_ALIGN(x, y)        ((y) * EXT4_DIV_ROUND_UP((x), (y)))
 
 /****************************Endian conversion*****************/
 
@@ -90,40 +90,40 @@ static inline uint16_t reorder16(uint16_t n) {
 
 #define ext4_get32(s, f) to_le32((s)->f)
 #define ext4_get16(s, f) to_le16((s)->f)
-#define ext4_get8(s, f) (s)->f
+#define ext4_get8(s, f)  (s)->f
 
-#define ext4_set32(s, f, v)                                                    \
-    do {                                                                       \
-        (s)->f = to_le32(v);                                                   \
+#define ext4_set32(s, f, v)  \
+    do {                     \
+        (s)->f = to_le32(v); \
     } while(0)
-#define ext4_set16(s, f, v)                                                    \
-    do {                                                                       \
-        (s)->f = to_le16(v);                                                   \
+#define ext4_set16(s, f, v)  \
+    do {                     \
+        (s)->f = to_le16(v); \
     } while(0)
-#define ext4_set8                                                              \
-    (s, f, v) do {                                                             \
-        (s)->f = (v);                                                          \
-    }                                                                          \
+#define ext4_set8     \
+    (s, f, v) do {    \
+        (s)->f = (v); \
+    }                 \
     while(0)
 
 /****************************Access macros to jbd2 structures*****************/
 
 #define jbd_get32(s, f) to_be32((s)->f)
 #define jbd_get16(s, f) to_be16((s)->f)
-#define jbd_get8(s, f) (s)->f
+#define jbd_get8(s, f)  (s)->f
 
-#define jbd_set32(s, f, v)                                                     \
-    do {                                                                       \
-        (s)->f = to_be32(v);                                                   \
+#define jbd_set32(s, f, v)   \
+    do {                     \
+        (s)->f = to_be32(v); \
     } while(0)
-#define jbd_set16(s, f, v)                                                     \
-    do {                                                                       \
-        (s)->f = to_be16(v);                                                   \
+#define jbd_set16(s, f, v)   \
+    do {                     \
+        (s)->f = to_be16(v); \
     } while(0)
-#define jbd_set8                                                               \
-    (s, f, v) do {                                                             \
-        (s)->f = (v);                                                          \
-    }                                                                          \
+#define jbd_set8      \
+    (s, f, v) do {    \
+        (s)->f = (v); \
+    }                 \
     while(0)
 
 #ifdef __GNUC__

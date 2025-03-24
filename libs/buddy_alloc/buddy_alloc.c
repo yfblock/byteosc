@@ -1,15 +1,14 @@
 #include "stdio.h"
 
-
 #include <buddy_alloc.h>
 #include <common.h>
 #include <console.h>
 #include <string.h>
-#define HEADER_SIZE sizeof(mem_header_t)
+#define HEADER_SIZE         sizeof(mem_header_t)
 #define IN_RANGE(a, rs, re) (((a) >= (rs) && (a) < (re)))
 
 /* Heap allocator, heap */
-uint8_t heap[HEAP_SIZE] = {0};
+uint8_t                     heap[HEAP_SIZE] = {0};
 
 /* Define BuddyLinked Node Type */
 typedef struct buddy_linked buddy_linked_t;
@@ -26,12 +25,12 @@ struct buddy_linked {
  */
 typedef struct {
     buddy_linked_t header[MAX_BUDDY_HEADER_BITS];
-    size_t unit_size;
+    size_t         unit_size;
 } buddy_system_t;
 
 typedef struct {
     /* Unit validate, equals the real raw pointer. */
-    void *ptr_validate;
+    void  *ptr_validate;
     /* Size of this memory unit. */
     size_t size;
 } mem_header_t;
@@ -44,16 +43,17 @@ inline size_t size_with_header(const size_t size) {
 }
 
 /* Static assert or Compiler assert */
-_Static_assert(sizeof(buddy_linked_t) == sizeof(intptr_t),
-     "sizeof(BuddyLinkedAssert) Must be same as the sizeof(uintptr_t)");
+_Static_assert(
+    sizeof(buddy_linked_t) == sizeof(intptr_t),
+    "sizeof(BuddyLinkedAssert) Must be same as the sizeof(uintptr_t)");
 
 // static buddy_linked_t buddy_header[MAX_BUDDY_HEADER_BITS] = {nullptr};
 // /* Page Allocator Buddy Header */
 // static buddy_linked_t page_header[MAX_BUDDY_HEADER_BITS] = {nullptr};
-static buddy_system_t heap_buddy = {.header = {nullptr},
+static buddy_system_t heap_buddy = {.header    = {nullptr},
                                     .unit_size = MIN_UNIT_SIZE};
 
-static buddy_system_t page_buddy = {.header = {nullptr},
+static buddy_system_t page_buddy = {.header    = {nullptr},
                                     .unit_size = PAGE_SIZE};
 
 /**
@@ -79,7 +79,7 @@ inline size_t header_index(const buddy_system_t *buddy, const size_t size) {
  * @return void
  */
 void add_node(buddy_system_t *buddy, const size_t index, const uintptr_t addr) {
-    const auto node = (buddy_linked_t *)addr;
+    const auto      node = (buddy_linked_t *)addr;
     buddy_linked_t *link = &buddy->header[index];
     while(link->next != NULL && (uintptr_t)link->next < (uintptr_t)node) {
         link = link->next;
@@ -97,10 +97,11 @@ void add_node(buddy_system_t *buddy, const size_t index, const uintptr_t addr) {
  * @param size The size of the memory block
  */
 void add_range(buddy_system_t *buddy, uintptr_t addr, const size_t size) {
-    uintptr_t end = addr + size;
+    uintptr_t end  = addr + size;
+
     // align to 8 bytes.
-    addr = (addr + (buddy->unit_size - 1)) & ~(buddy->unit_size - 1);
-    end &= ~(buddy->unit_size - 1);
+    addr           = (addr + (buddy->unit_size - 1)) & ~(buddy->unit_size - 1);
+    end           &= ~(buddy->unit_size - 1);
     // add to the buddy header list
     for(size_t index = 0; addr < end; index++) {
         const size_t bit_and = buddy->unit_size << index;
@@ -127,18 +128,18 @@ void add_heap_range(uintptr_t addr, const size_t size) {
 void *alloc_node(buddy_system_t *buddy, size_t size) {
     debug("alloc size: %x", size);
     dump_heap();
-    size_t index = header_index(buddy, size);
+    size_t          index = header_index(buddy, size);
 
     // alloc buddy node
-    buddy_linked_t *node = buddy->header[index].next;
+    buddy_linked_t *node  = buddy->header[index].next;
     // find the first available buddy node
     while(node == NULL) {
         node = buddy->header[++index].next;
     }
 
     buddy->header[index].next = node->next;
-    uintptr_t addr = (uintptr_t)node;
-    size_t available = buddy->unit_size << index;
+    uintptr_t addr            = (uintptr_t)node;
+    size_t    available       = buddy->unit_size << index;
 
     // add the last bytes to the buddy.
     if(available != size)
@@ -153,7 +154,7 @@ void *alloc_node(buddy_system_t *buddy, size_t size) {
  * @param addr_e the end address of the added range.
  */
 void add_frame_range(uintptr_t addr_s, uintptr_t addr_e) {
-    extern void *_end;
+    extern void    *_end;
     const uintptr_t end_addr = (uintptr_t)&_end;
     if(IN_RANGE(end_addr, addr_s, addr_e)) {
         addr_s = (end_addr + PAGE_MASK) & ~PAGE_MASK;
@@ -188,8 +189,8 @@ void kfree(void *ptr, size_t count) {
 void *malloc(const size_t size) {
     mem_header_t *mh = alloc_node(&heap_buddy, size_with_header(size));
     mh->ptr_validate = (void *)mh;
-    mh->size = size;
-    const auto ptr = (void *)((uintptr_t)mh + HEADER_SIZE);
+    mh->size         = size;
+    const auto ptr   = (void *)((uintptr_t)mh + HEADER_SIZE);
     memset(ptr, 0, size);
     return ptr;
 }
@@ -231,13 +232,14 @@ void free_len(void *ptr, size_t len) {
 }
 
 void dump_heap() {
-    for(int i = 0;i < MAX_BUDDY_HEADER_BITS; i++) {
+    for(int i = 0; i < MAX_BUDDY_HEADER_BITS; i++) {
         printf("BUDDY HEADER LIST: %d \n", i);
         buddy_linked_t *link = &heap_buddy.header[i];
-        for(int j = 0;link->next != nullptr;j++) {
+        for(int j = 0; link->next != nullptr; j++) {
             printf("\t%04x ", link->next);
             link = link->next;
-            if(j % 4 == 0) printf("\n");
+            if(j % 4 == 0)
+                printf("\n");
         }
         printf("\n");
     }

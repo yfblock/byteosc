@@ -6,18 +6,18 @@
 
 extern uintptr_t _boot_stack;
 extern uintptr_t _boot_stack_top;
-void trap_entry();
+void             trap_entry();
 
-#define CSRW(reg, value)                                                       \
-    asm volatile("csrw " reg ", %0\t\n"                                        \
-                 :                                                             \
-                 : "r"(value)                                                  \
-                 :);
-#define CSRR(reg, value)                                                       \
-    asm volatile("csrr %0, " reg "\t\n"                                        \
-                 : "=r"(value)                                                 \
-                 :                                                             \
-                 :);
+#define CSRW(reg, value)                    \
+    __asm__ volatile("csrw " reg ", %0\t\n" \
+                     :                      \
+                     : "r"(value)           \
+                     :);
+#define CSRR(reg, value)                    \
+    __asm__ volatile("csrr %0, " reg "\t\n" \
+                     : "=r"(value)          \
+                     :                      \
+                     :);
 
 /**
  * Set the trap handler for the riscv64 platform.
@@ -57,24 +57,24 @@ static inline uintptr_t read_sepc() {
  * Trap Exception enum and consts.
  */
 typedef enum {
-    TRAP_EXCEPTION_INS_ADDR_MISALIGNED = 0,
+    TRAP_EXCEPTION_INS_ADDR_MISALIGNED      = 0,
     TRAP_EXCEPTION_INSTRUCTION_ACCESS_FAULT = 1,
-    TRAP_EXCEPTION_ILLEGAL_INSTRUCTION = 2,
-    TRAP_EXCEPTION_BREAKPOINT = 3,
-    TRAP_EXCEPTION_LOAD_ACCESS_FAULT = 5,
-    TRAP_EXCEPTION_AMO_ADDR_MISALIGNED = 6,
-    TRAP_EXCEPTION_STORE_ACCESS_FAULT = 7,
-    TRAP_EXCEPTION_ENV_CALL = 8,
-    TRAP_EXCEPTION_INS_PAGE_FAULT = 12,
-    TRAP_EXCEPTION_LOAD_PAGE_FAULT = 13,
-    TRAP_EXCEPTION_STORE_PAGE_FAULT = 15,
+    TRAP_EXCEPTION_ILLEGAL_INSTRUCTION      = 2,
+    TRAP_EXCEPTION_BREAKPOINT               = 3,
+    TRAP_EXCEPTION_LOAD_ACCESS_FAULT        = 5,
+    TRAP_EXCEPTION_AMO_ADDR_MISALIGNED      = 6,
+    TRAP_EXCEPTION_STORE_ACCESS_FAULT       = 7,
+    TRAP_EXCEPTION_ENV_CALL                 = 8,
+    TRAP_EXCEPTION_INS_PAGE_FAULT           = 12,
+    TRAP_EXCEPTION_LOAD_PAGE_FAULT          = 13,
+    TRAP_EXCEPTION_STORE_PAGE_FAULT         = 15,
 } trap_exception;
 
 /**
  * WFI: Waiting For Interrupt, blocking until an interrupt occurs.
  */
 static inline void wfi() {
-    asm volatile("wfi");
+    __asm__ volatile("wfi");
 }
 
 /**
@@ -83,5 +83,5 @@ static inline void wfi() {
  * It can be used as a placeholder or as a delay instruction.
  */
 static inline void nop() {
-    asm volatile("nop");
+    __asm__ volatile("nop");
 }

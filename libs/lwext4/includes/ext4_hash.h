@@ -46,9 +46,9 @@ extern "C" {
 #include <stdint.h>
 
 struct ext4_hash_info {
-    uint32_t hash;
-    uint32_t minor_hash;
-    uint32_t hash_version;
+    uint32_t        hash;
+    uint32_t        minor_hash;
+    uint32_t        hash_version;
     const uint32_t *seed;
 };
 

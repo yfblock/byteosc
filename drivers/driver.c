@@ -7,14 +7,14 @@
 #include <string.h>
 
 driver_link_t *dri_serial = nullptr;
-udevice_t *stdout = nullptr;
-serial_dri_t *stdout_ops = nullptr;
+serial_dri_t  *stdout_ops = nullptr;
+udevice_t     *stdout     = nullptr;
 
 /**
  * @param name the driver compatible will be found.
  * @return the driver related to the specified compatible.
  */
-driver_t *find_compatible(const char *name) {
+driver_t      *find_compatible(const char *name) {
     for_each_compatible(driver, id) {
         if(strcmp(name, id->compatible) == 0) {
             return driver;

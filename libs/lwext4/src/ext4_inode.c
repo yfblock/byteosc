@@ -107,7 +107,7 @@ void ext4_inode_set_size(struct ext4_inode *inode, uint64_t size) {
 
 uint32_t ext4_inode_get_csum(struct ext4_sblock *sb, struct ext4_inode *inode) {
     uint16_t inode_size = ext4_get16(sb, inode_size);
-    uint32_t v = to_le16(inode->osd2.linux2.checksum_lo);
+    uint32_t v          = to_le16(inode->osd2.linux2.checksum_lo);
 
     if(inode_size > EXT4_GOOD_OLD_INODE_SIZE)
         v |= ((uint32_t)to_le16(inode->checksum_hi)) << 16;
@@ -117,7 +117,7 @@ uint32_t ext4_inode_get_csum(struct ext4_sblock *sb, struct ext4_inode *inode) {
 
 void ext4_inode_set_csum(struct ext4_sblock *sb, struct ext4_inode *inode,
                          uint32_t checksum) {
-    uint16_t inode_size = ext4_get16(sb, inode_size);
+    uint16_t inode_size            = ext4_get16(sb, inode_size);
     inode->osd2.linux2.checksum_lo = to_le16((checksum << 16) >> 16);
 
     if(inode_size > EXT4_GOOD_OLD_INODE_SIZE)
@@ -169,7 +169,7 @@ void ext4_inode_set_links_cnt(struct ext4_inode *inode, uint16_t cnt) {
 }
 
 uint64_t ext4_inode_get_blocks_count(struct ext4_sblock *sb,
-                                     struct ext4_inode *inode) {
+                                     struct ext4_inode  *inode) {
     uint64_t cnt = to_le32(inode->blocks_count_lo);
 
     if(ext4_sb_feature_ro_com(sb, EXT4_FRO_COM_HUGE_FILE)) {
@@ -180,7 +180,7 @@ uint64_t ext4_inode_get_blocks_count(struct ext4_sblock *sb,
         if(ext4_inode_has_flag(inode, EXT4_INODE_FLAG_HUGE_FILE)) {
 
             uint32_t block_count = ext4_sb_get_block_size(sb);
-            uint32_t b = ext4_inode_block_bits_count(block_count);
+            uint32_t b           = ext4_inode_block_bits_count(block_count);
             return cnt << (b - 9);
         }
     }
@@ -192,10 +192,10 @@ int ext4_inode_set_blocks_count(struct ext4_sblock *sb,
                                 struct ext4_inode *inode, uint64_t count) {
     /* 32-bit maximum */
     uint64_t max = 0;
-    max = ~max >> 32;
+    max          = ~max >> 32;
 
     if(count <= max) {
-        inode->blocks_count_lo = to_le32((uint32_t)count);
+        inode->blocks_count_lo         = to_le32((uint32_t)count);
         inode->osd2.linux2.blocks_high = 0;
         ext4_inode_clear_flag(inode, EXT4_INODE_FLAG_HUGE_FILE);
 
@@ -211,16 +211,16 @@ int ext4_inode_set_blocks_count(struct ext4_sblock *sb,
     max = ~max >> 16;
 
     if(count <= max) {
-        inode->blocks_count_lo = to_le32((uint32_t)count);
+        inode->blocks_count_lo         = to_le32((uint32_t)count);
         inode->osd2.linux2.blocks_high = to_le16((uint16_t)(count >> 32));
         ext4_inode_clear_flag(inode, EXT4_INODE_FLAG_HUGE_FILE);
     } else {
         uint32_t block_count = ext4_sb_get_block_size(sb);
-        uint32_t block_bits = ext4_inode_block_bits_count(block_count);
+        uint32_t block_bits  = ext4_inode_block_bits_count(block_count);
 
         ext4_inode_set_flag(inode, EXT4_INODE_FLAG_HUGE_FILE);
-        count = count >> (block_bits - 9);
-        inode->blocks_count_lo = to_le32((uint32_t)count);
+        count                          = count >> (block_bits - 9);
+        inode->blocks_count_lo         = to_le32((uint32_t)count);
         inode->osd2.linux2.blocks_high = to_le16((uint16_t)(count >> 32));
     }
 
@@ -242,7 +242,7 @@ void ext4_inode_set_generation(struct ext4_inode *inode, uint32_t gen) {
 }
 
 uint16_t ext4_inode_get_extra_isize(struct ext4_sblock *sb,
-                                    struct ext4_inode *inode) {
+                                    struct ext4_inode  *inode) {
     uint16_t inode_size = ext4_get16(sb, inode_size);
     if(inode_size > EXT4_GOOD_OLD_INODE_SIZE)
         return to_le16(inode->extra_isize);
@@ -257,7 +257,7 @@ void ext4_inode_set_extra_isize(struct ext4_sblock *sb,
         inode->extra_isize = to_le16(size);
 }
 
-uint64_t ext4_inode_get_file_acl(struct ext4_inode *inode,
+uint64_t ext4_inode_get_file_acl(struct ext4_inode  *inode,
                                  struct ext4_sblock *sb) {
     uint64_t v = to_le32(inode->file_acl_lo);
 
@@ -325,13 +325,13 @@ bool ext4_inode_has_flag(struct ext4_inode *inode, uint32_t f) {
 
 void ext4_inode_clear_flag(struct ext4_inode *inode, uint32_t f) {
     uint32_t flags = ext4_inode_get_flags(inode);
-    flags = flags & (~f);
+    flags          = flags & (~f);
     ext4_inode_set_flags(inode, flags);
 }
 
 void ext4_inode_set_flag(struct ext4_inode *inode, uint32_t f) {
     uint32_t flags = ext4_inode_get_flags(inode);
-    flags = flags | f;
+    flags          = flags | f;
     ext4_inode_set_flags(inode, flags);
 }
 

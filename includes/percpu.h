@@ -13,8 +13,8 @@
 //         static percpu T define = value; \
 //         return &define; \
 //     }
-#define percpu_define(T, name, value)                                          \
-    T *percpu_##name() {                                                       \
-        percpu static T define = value;                                        \
-        return &define;                                                        \
+#define percpu_define(T, name, value)   \
+    T *percpu_##name() {                \
+        percpu static T define = value; \
+        return &define;                 \
     }

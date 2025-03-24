@@ -2,14 +2,14 @@
 #include <console.h>
 #include <driver.h>
 // Data Register
-#define DR 0x00
-#define FR 0x18
+#define DR                0x00
+#define FR                0x18
 
 #define UART_REG(base, x) (volatile uint32_t *)((base) + (x))
 
 udevice_t *pl011_init(dtb_node_t *node);
 
-void pl011_putchar(udevice_t *device, char c) {
+void       pl011_putchar(udevice_t *device, char c) {
     while((*UART_REG(device->reg_addr, FR) & (1 << 5)) != 0)
         ;
     *UART_REG(device->reg_addr, DR) = c;
@@ -35,9 +35,9 @@ DEFINE_DRIVER SERIAL = {
 
 udevice_t *pl011_init(dtb_node_t *node) {
     dtb_prop_t *reg_prop = dtb_find_prop(node, "reg");
-    udevice_t *device = calloc(1, sizeof(udevice_t));
-    device->driver = &SERIAL;
-    device->reg_addr = dtb_read_prop_cell(reg_prop->first_cell, 2);
-    device->uclass = SERIAL.uclass;
+    udevice_t  *device   = calloc(1, sizeof(udevice_t));
+    device->driver       = &SERIAL;
+    device->reg_addr     = dtb_read_prop_cell(reg_prop->first_cell, 2);
+    device->uclass       = SERIAL.uclass;
     return device;
 }

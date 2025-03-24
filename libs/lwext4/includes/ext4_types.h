@@ -61,7 +61,7 @@ typedef uint64_t ext4_fsblk_t;
 
 #define EXT4_CHECKSUM_CRC32C 1
 
-#define UUID_SIZE 16
+#define UUID_SIZE            16
 
 #pragma pack(push, 1)
 
@@ -102,34 +102,34 @@ struct ext4_sblock {
     uint32_t features_compatible;    /* Compatible feature set */
     uint32_t features_incompatible;  /* Incompatible feature set */
     uint32_t features_read_only;     /* Readonly-compatible feature set */
-    uint8_t uuid[UUID_SIZE];         /* 128-bit uuid for volume */
-    char volume_name[16];            /* Volume name */
-    char last_mounted[64];           /* Directory where last mounted */
+    uint8_t  uuid[UUID_SIZE];        /* 128-bit uuid for volume */
+    char     volume_name[16];        /* Volume name */
+    char     last_mounted[64];       /* Directory where last mounted */
     uint32_t algorithm_usage_bitmap; /* For compression */
 
     /*
      * Performance hints. Directory preallocation should only
      * happen if the EXT4_FEATURE_COMPAT_DIR_PREALLOC flag is on.
      */
-    uint8_t s_prealloc_blocks;      /* Number of blocks to try to preallocate */
-    uint8_t s_prealloc_dir_blocks;  /* Number to preallocate for dirs */
+    uint8_t  s_prealloc_blocks;     /* Number of blocks to try to preallocate */
+    uint8_t  s_prealloc_dir_blocks; /* Number to preallocate for dirs */
     uint16_t s_reserved_gdt_blocks; /* Per group desc for online growth */
 
     /*
      * Journaling support valid if EXT4_FEATURE_COMPAT_HAS_JOURNAL set.
      */
-    uint8_t journal_uuid[UUID_SIZE]; /* UUID of journal superblock */
-    uint32_t journal_inode_number;   /* Inode number of journal file */
-    uint32_t journal_dev;            /* Device number of journal file */
-    uint32_t last_orphan;            /* Head of list of inodes to delete */
-    uint32_t hash_seed[4];           /* HTREE hash seed */
-    uint8_t default_hash_version;    /* Default hash version to use */
-    uint8_t journal_backup_type;
-    uint16_t desc_size;          /* Size of group descriptor */
-    uint32_t default_mount_opts; /* Default mount options */
-    uint32_t first_meta_bg;      /* First metablock block group */
-    uint32_t mkfs_time;          /* When the filesystem was created */
-    uint32_t journal_blocks[17]; /* Backup of the journal inode */
+    uint8_t  journal_uuid[UUID_SIZE]; /* UUID of journal superblock */
+    uint32_t journal_inode_number;    /* Inode number of journal file */
+    uint32_t journal_dev;             /* Device number of journal file */
+    uint32_t last_orphan;             /* Head of list of inodes to delete */
+    uint32_t hash_seed[4];            /* HTREE hash seed */
+    uint8_t  default_hash_version;    /* Default hash version to use */
+    uint8_t  journal_backup_type;
+    uint16_t desc_size;               /* Size of group descriptor */
+    uint32_t default_mount_opts;      /* Default mount options */
+    uint32_t first_meta_bg;           /* First metablock block group */
+    uint32_t mkfs_time;               /* When the filesystem was created */
+    uint32_t journal_blocks[17];      /* Backup of the journal inode */
 
     /* 64bit support valid if EXT4_FEATURE_COMPAT_64BIT */
     uint32_t blocks_count_hi;          /* Blocks count */
@@ -141,9 +141,9 @@ struct ext4_sblock {
     uint16_t raid_stride;              /* RAID stride */
     uint16_t mmp_interval;             /* # seconds to wait in MMP checking */
     uint64_t mmp_block;                /* Block for multi-mount protection */
-    uint32_t raid_stripe_width;  /* Blocks on all data disks (N * stride) */
-    uint8_t log_groups_per_flex; /* FLEX_BG group size */
-    uint8_t checksum_type;
+    uint32_t raid_stripe_width;   /* Blocks on all data disks (N * stride) */
+    uint8_t  log_groups_per_flex; /* FLEX_BG group size */
+    uint8_t  checksum_type;
     uint16_t reserved_pad;
     uint64_t kbytes_written;          /* Number of lifetime kilobytes written */
     uint32_t snapshot_inum;           /* I-node number of active snapshot */
@@ -153,118 +153,118 @@ struct ext4_sblock {
     uint32_t snapshot_list; /* I-node number of the head of the on-disk snapshot
                        list */
     uint32_t error_count;   /* Number of file system errors */
-    uint32_t first_error_time;    /* First time an error happened */
-    uint32_t first_error_ino;     /* I-node involved in first error */
-    uint64_t first_error_block;   /* Block involved of first error */
-    uint8_t first_error_func[32]; /* Function where the error happened */
-    uint32_t first_error_line;    /* Line number where error happened */
-    uint32_t last_error_time;     /* Most recent time of an error */
-    uint32_t last_error_ino;      /* I-node involved in last error */
-    uint32_t last_error_line;     /* Line number where error happened */
-    uint64_t last_error_block;    /* Block involved of last error */
-    uint8_t last_error_func[32];  /* Function where the error happened */
-    uint8_t mount_opts[64];
-    uint32_t usr_quota_inum;     /* inode for tracking user quota */
-    uint32_t grp_quota_inum;     /* inode for tracking group quota */
-    uint32_t overhead_clusters;  /* overhead blocks/clusters in fs */
-    uint32_t backup_bgs[2];      /* groups with sparse_super2 SBs */
-    uint8_t encrypt_algos[4];    /* Encryption algorithms in use  */
-    uint8_t encrypt_pw_salt[16]; /* Salt used for string2key algorithm */
-    uint32_t lpf_ino;            /* Location of the lost+found inode */
-    uint32_t padding[100];       /* Padding to the end of the block */
-    uint32_t checksum;           /* crc32c(superblock) */
+    uint32_t first_error_time;     /* First time an error happened */
+    uint32_t first_error_ino;      /* I-node involved in first error */
+    uint64_t first_error_block;    /* Block involved of first error */
+    uint8_t  first_error_func[32]; /* Function where the error happened */
+    uint32_t first_error_line;     /* Line number where error happened */
+    uint32_t last_error_time;      /* Most recent time of an error */
+    uint32_t last_error_ino;       /* I-node involved in last error */
+    uint32_t last_error_line;      /* Line number where error happened */
+    uint64_t last_error_block;     /* Block involved of last error */
+    uint8_t  last_error_func[32];  /* Function where the error happened */
+    uint8_t  mount_opts[64];
+    uint32_t usr_quota_inum;       /* inode for tracking user quota */
+    uint32_t grp_quota_inum;       /* inode for tracking group quota */
+    uint32_t overhead_clusters;    /* overhead blocks/clusters in fs */
+    uint32_t backup_bgs[2];        /* groups with sparse_super2 SBs */
+    uint8_t  encrypt_algos[4];     /* Encryption algorithms in use  */
+    uint8_t  encrypt_pw_salt[16];  /* Salt used for string2key algorithm */
+    uint32_t lpf_ino;              /* Location of the lost+found inode */
+    uint32_t padding[100];         /* Padding to the end of the block */
+    uint32_t checksum;             /* crc32c(superblock) */
 };
 
 #pragma pack(pop)
 
-#define EXT4_SUPERBLOCK_MAGIC 0xEF53
-#define EXT4_SUPERBLOCK_SIZE 1024
-#define EXT4_SUPERBLOCK_OFFSET 1024
+#define EXT4_SUPERBLOCK_MAGIC               0xEF53
+#define EXT4_SUPERBLOCK_SIZE                1024
+#define EXT4_SUPERBLOCK_OFFSET              1024
 
-#define EXT4_SUPERBLOCK_OS_LINUX 0
-#define EXT4_SUPERBLOCK_OS_HURD 1
+#define EXT4_SUPERBLOCK_OS_LINUX            0
+#define EXT4_SUPERBLOCK_OS_HURD             1
 
 /*
  * Misc. filesystem flags
  */
-#define EXT4_SUPERBLOCK_FLAGS_SIGNED_HASH 0x0001
+#define EXT4_SUPERBLOCK_FLAGS_SIGNED_HASH   0x0001
 #define EXT4_SUPERBLOCK_FLAGS_UNSIGNED_HASH 0x0002
-#define EXT4_SUPERBLOCK_FLAGS_TEST_FILESYS 0x0004
+#define EXT4_SUPERBLOCK_FLAGS_TEST_FILESYS  0x0004
 /*
  * Filesystem states
  */
-#define EXT4_SUPERBLOCK_STATE_VALID_FS 0x0001  /* Unmounted cleanly */
-#define EXT4_SUPERBLOCK_STATE_ERROR_FS 0x0002  /* Errors detected */
-#define EXT4_SUPERBLOCK_STATE_ORPHAN_FS 0x0004 /* Orphans being recovered */
+#define EXT4_SUPERBLOCK_STATE_VALID_FS      0x0001 /* Unmounted cleanly */
+#define EXT4_SUPERBLOCK_STATE_ERROR_FS      0x0002 /* Errors detected */
+#define EXT4_SUPERBLOCK_STATE_ORPHAN_FS     0x0004 /* Orphans being recovered */
 
 /*
  * Behaviour when errors detected
  */
-#define EXT4_SUPERBLOCK_ERRORS_CONTINUE 1 /* Continue execution */
-#define EXT4_SUPERBLOCK_ERRORS_RO 2       /* Remount fs read-only */
-#define EXT4_SUPERBLOCK_ERRORS_PANIC 3    /* Panic */
-#define EXT4_SUPERBLOCK_ERRORS_DEFAULT EXT4_ERRORS_CONTINUE
+#define EXT4_SUPERBLOCK_ERRORS_CONTINUE     1 /* Continue execution */
+#define EXT4_SUPERBLOCK_ERRORS_RO           2 /* Remount fs read-only */
+#define EXT4_SUPERBLOCK_ERRORS_PANIC        3 /* Panic */
+#define EXT4_SUPERBLOCK_ERRORS_DEFAULT      EXT4_ERRORS_CONTINUE
 
 /*
  * Compatible features
  */
-#define EXT4_FCOM_DIR_PREALLOC 0x0001
-#define EXT4_FCOM_IMAGIC_INODES 0x0002
-#define EXT4_FCOM_HAS_JOURNAL 0x0004
-#define EXT4_FCOM_EXT_ATTR 0x0008
-#define EXT4_FCOM_RESIZE_INODE 0x0010
-#define EXT4_FCOM_DIR_INDEX 0x0020
+#define EXT4_FCOM_DIR_PREALLOC              0x0001
+#define EXT4_FCOM_IMAGIC_INODES             0x0002
+#define EXT4_FCOM_HAS_JOURNAL               0x0004
+#define EXT4_FCOM_EXT_ATTR                  0x0008
+#define EXT4_FCOM_RESIZE_INODE              0x0010
+#define EXT4_FCOM_DIR_INDEX                 0x0020
 
 /*
  * Read-only compatible features
  */
-#define EXT4_FRO_COM_SPARSE_SUPER 0x0001
-#define EXT4_FRO_COM_LARGE_FILE 0x0002
-#define EXT4_FRO_COM_BTREE_DIR 0x0004
-#define EXT4_FRO_COM_HUGE_FILE 0x0008
-#define EXT4_FRO_COM_GDT_CSUM 0x0010
-#define EXT4_FRO_COM_DIR_NLINK 0x0020
-#define EXT4_FRO_COM_EXTRA_ISIZE 0x0040
-#define EXT4_FRO_COM_QUOTA 0x0100
-#define EXT4_FRO_COM_BIGALLOC 0x0200
-#define EXT4_FRO_COM_METADATA_CSUM 0x0400
+#define EXT4_FRO_COM_SPARSE_SUPER           0x0001
+#define EXT4_FRO_COM_LARGE_FILE             0x0002
+#define EXT4_FRO_COM_BTREE_DIR              0x0004
+#define EXT4_FRO_COM_HUGE_FILE              0x0008
+#define EXT4_FRO_COM_GDT_CSUM               0x0010
+#define EXT4_FRO_COM_DIR_NLINK              0x0020
+#define EXT4_FRO_COM_EXTRA_ISIZE            0x0040
+#define EXT4_FRO_COM_QUOTA                  0x0100
+#define EXT4_FRO_COM_BIGALLOC               0x0200
+#define EXT4_FRO_COM_METADATA_CSUM          0x0400
 
 /*
  * Incompatible features
  */
-#define EXT4_FINCOM_COMPRESSION 0x0001
-#define EXT4_FINCOM_FILETYPE 0x0002
-#define EXT4_FINCOM_RECOVER 0x0004     /* Needs recovery */
-#define EXT4_FINCOM_JOURNAL_DEV 0x0008 /* Journal device */
-#define EXT4_FINCOM_META_BG 0x0010
-#define EXT4_FINCOM_EXTENTS 0x0040 /* extents support */
-#define EXT4_FINCOM_64BIT 0x0080
-#define EXT4_FINCOM_MMP 0x0100
-#define EXT4_FINCOM_FLEX_BG 0x0200
-#define EXT4_FINCOM_EA_INODE 0x0400         /* EA in inode */
-#define EXT4_FINCOM_DIRDATA 0x1000          /* data in dirent */
-#define EXT4_FINCOM_BG_USE_META_CSUM 0x2000 /* use crc32c for bg */
-#define EXT4_FINCOM_LARGEDIR 0x4000         /* >2GB or 3-lvl htree */
-#define EXT4_FINCOM_INLINE_DATA 0x8000      /* data in inode */
+#define EXT4_FINCOM_COMPRESSION             0x0001
+#define EXT4_FINCOM_FILETYPE                0x0002
+#define EXT4_FINCOM_RECOVER                 0x0004 /* Needs recovery */
+#define EXT4_FINCOM_JOURNAL_DEV             0x0008 /* Journal device */
+#define EXT4_FINCOM_META_BG                 0x0010
+#define EXT4_FINCOM_EXTENTS                 0x0040 /* extents support */
+#define EXT4_FINCOM_64BIT                   0x0080
+#define EXT4_FINCOM_MMP                     0x0100
+#define EXT4_FINCOM_FLEX_BG                 0x0200
+#define EXT4_FINCOM_EA_INODE                0x0400 /* EA in inode */
+#define EXT4_FINCOM_DIRDATA                 0x1000 /* data in dirent */
+#define EXT4_FINCOM_BG_USE_META_CSUM        0x2000 /* use crc32c for bg */
+#define EXT4_FINCOM_LARGEDIR                0x4000 /* >2GB or 3-lvl htree */
+#define EXT4_FINCOM_INLINE_DATA             0x8000 /* data in inode */
 
 /*
  * EXT2 supported feature set
  */
-#define EXT2_SUPPORTED_FCOM 0x0000
+#define EXT2_SUPPORTED_FCOM                 0x0000
 
-#define EXT2_SUPPORTED_FINCOM (EXT4_FINCOM_FILETYPE | EXT4_FINCOM_META_BG)
+#define EXT2_SUPPORTED_FINCOM               (EXT4_FINCOM_FILETYPE | EXT4_FINCOM_META_BG)
 
-#define EXT2_SUPPORTED_FRO_COM                                                 \
+#define EXT2_SUPPORTED_FRO_COM                            \
     (EXT4_FRO_COM_SPARSE_SUPER | EXT4_FRO_COM_LARGE_FILE)
 
 /*
  * EXT3 supported feature set
  */
-#define EXT3_SUPPORTED_FCOM (EXT4_FCOM_DIR_INDEX)
+#define EXT3_SUPPORTED_FCOM   (EXT4_FCOM_DIR_INDEX)
 
 #define EXT3_SUPPORTED_FINCOM (EXT4_FINCOM_FILETYPE | EXT4_FINCOM_META_BG)
 
-#define EXT3_SUPPORTED_FRO_COM                                                 \
+#define EXT3_SUPPORTED_FRO_COM                            \
     (EXT4_FRO_COM_SPARSE_SUPER | EXT4_FRO_COM_LARGE_FILE)
 
 /*
@@ -272,14 +272,14 @@ struct ext4_sblock {
  */
 #define EXT4_SUPPORTED_FCOM (EXT4_FCOM_DIR_INDEX)
 
-#define EXT4_SUPPORTED_FINCOM                                                  \
-    (EXT4_FINCOM_FILETYPE | EXT4_FINCOM_META_BG | EXT4_FINCOM_EXTENTS |        \
+#define EXT4_SUPPORTED_FINCOM                                           \
+    (EXT4_FINCOM_FILETYPE | EXT4_FINCOM_META_BG | EXT4_FINCOM_EXTENTS | \
      EXT4_FINCOM_FLEX_BG | EXT4_FINCOM_64BIT)
 
-#define EXT4_SUPPORTED_FRO_COM                                                 \
-    (EXT4_FRO_COM_SPARSE_SUPER | EXT4_FRO_COM_METADATA_CSUM |                  \
-     EXT4_FRO_COM_LARGE_FILE | EXT4_FRO_COM_GDT_CSUM |                         \
-     EXT4_FRO_COM_DIR_NLINK | EXT4_FRO_COM_EXTRA_ISIZE |                       \
+#define EXT4_SUPPORTED_FRO_COM                                \
+    (EXT4_FRO_COM_SPARSE_SUPER | EXT4_FRO_COM_METADATA_CSUM | \
+     EXT4_FRO_COM_LARGE_FILE | EXT4_FRO_COM_GDT_CSUM |        \
+     EXT4_FRO_COM_DIR_NLINK | EXT4_FRO_COM_EXTRA_ISIZE |      \
      EXT4_FRO_COM_HUGE_FILE)
 
 /*Ignored features:
@@ -301,9 +301,9 @@ struct ext4_sblock {
 #endif
 
 /* Inode table/bitmap not in use */
-#define EXT4_BLOCK_GROUP_INODE_UNINIT 0x0001
+#define EXT4_BLOCK_GROUP_INODE_UNINIT  0x0001
 /* Block bitmap not in use */
-#define EXT4_BLOCK_GROUP_BLOCK_UNINIT 0x0002
+#define EXT4_BLOCK_GROUP_BLOCK_UNINIT  0x0002
 /* On-disk itable initialized to zero */
 #define EXT4_BLOCK_GROUP_ITABLE_ZEROED 0x0004
 
@@ -340,18 +340,18 @@ struct ext4_bgroup {
 #define EXT4_MIN_BLOCK_GROUP_DESCRIPTOR_SIZE 32
 #define EXT4_MAX_BLOCK_GROUP_DESCRIPTOR_SIZE 64
 
-#define EXT4_MIN_BLOCK_SIZE 1024  /* 1 KiB */
-#define EXT4_MAX_BLOCK_SIZE 65536 /* 64 KiB */
-#define EXT4_REV0_INODE_SIZE 128
+#define EXT4_MIN_BLOCK_SIZE                  1024  /* 1 KiB */
+#define EXT4_MAX_BLOCK_SIZE                  65536 /* 64 KiB */
+#define EXT4_REV0_INODE_SIZE                 128
 
-#define EXT4_INODE_BLOCK_SIZE 512
+#define EXT4_INODE_BLOCK_SIZE                512
 
-#define EXT4_INODE_DIRECT_BLOCK_COUNT 12
-#define EXT4_INODE_INDIRECT_BLOCK EXT4_INODE_DIRECT_BLOCK_COUNT
-#define EXT4_INODE_DOUBLE_INDIRECT_BLOCK (EXT4_INODE_INDIRECT_BLOCK + 1)
-#define EXT4_INODE_TRIPPLE_INDIRECT_BLOCK (EXT4_INODE_DOUBLE_INDIRECT_BLOCK + 1)
-#define EXT4_INODE_BLOCKS (EXT4_INODE_TRIPPLE_INDIRECT_BLOCK + 1)
-#define EXT4_INODE_INDIRECT_BLOCK_COUNT                                        \
+#define EXT4_INODE_DIRECT_BLOCK_COUNT        12
+#define EXT4_INODE_INDIRECT_BLOCK            EXT4_INODE_DIRECT_BLOCK_COUNT
+#define EXT4_INODE_DOUBLE_INDIRECT_BLOCK     (EXT4_INODE_INDIRECT_BLOCK + 1)
+#define EXT4_INODE_TRIPPLE_INDIRECT_BLOCK    (EXT4_INODE_DOUBLE_INDIRECT_BLOCK + 1)
+#define EXT4_INODE_BLOCKS                    (EXT4_INODE_TRIPPLE_INDIRECT_BLOCK + 1)
+#define EXT4_INODE_INDIRECT_BLOCK_COUNT                 \
     (EXT4_INODE_BLOCKS - EXT4_INODE_DIRECT_BLOCK_COUNT)
 
 #pragma pack(push, 1)
@@ -376,7 +376,7 @@ struct ext4_inode {
     uint32_t generation;                /* File version (for NFS) */
     uint32_t file_acl_lo;               /* File ACL */
     uint32_t size_hi;
-    uint32_t obso_faddr; /* Obsoleted fragment address */
+    uint32_t obso_faddr;                /* Obsoleted fragment address */
 
     union {
         struct {
@@ -408,49 +408,49 @@ struct ext4_inode {
 
 #pragma pack(pop)
 
-#define EXT4_INODE_MODE_FIFO 0x1000
-#define EXT4_INODE_MODE_CHARDEV 0x2000
+#define EXT4_INODE_MODE_FIFO      0x1000
+#define EXT4_INODE_MODE_CHARDEV   0x2000
 #define EXT4_INODE_MODE_DIRECTORY 0x4000
-#define EXT4_INODE_MODE_BLOCKDEV 0x6000
-#define EXT4_INODE_MODE_FILE 0x8000
-#define EXT4_INODE_MODE_SOFTLINK 0xA000
-#define EXT4_INODE_MODE_SOCKET 0xC000
+#define EXT4_INODE_MODE_BLOCKDEV  0x6000
+#define EXT4_INODE_MODE_FILE      0x8000
+#define EXT4_INODE_MODE_SOFTLINK  0xA000
+#define EXT4_INODE_MODE_SOCKET    0xC000
 #define EXT4_INODE_MODE_TYPE_MASK 0xF000
 
 /*
  * Inode flags
  */
-#define EXT4_INODE_FLAG_SECRM 0x00000001     /* Secure deletion */
-#define EXT4_INODE_FLAG_UNRM 0x00000002      /* Undelete */
-#define EXT4_INODE_FLAG_COMPR 0x00000004     /* Compress file */
-#define EXT4_INODE_FLAG_SYNC 0x00000008      /* Synchronous updates */
+#define EXT4_INODE_FLAG_SECRM     0x00000001 /* Secure deletion */
+#define EXT4_INODE_FLAG_UNRM      0x00000002 /* Undelete */
+#define EXT4_INODE_FLAG_COMPR     0x00000004 /* Compress file */
+#define EXT4_INODE_FLAG_SYNC      0x00000008 /* Synchronous updates */
 #define EXT4_INODE_FLAG_IMMUTABLE 0x00000010 /* Immutable file */
-#define EXT4_INODE_FLAG_APPEND 0x00000020  /* writes to file may only append */
-#define EXT4_INODE_FLAG_NODUMP 0x00000040  /* do not dump file */
-#define EXT4_INODE_FLAG_NOATIME 0x00000080 /* do not update atime */
+#define EXT4_INODE_FLAG_APPEND    0x00000020 /* writes to file may only append */
+#define EXT4_INODE_FLAG_NODUMP    0x00000040 /* do not dump file */
+#define EXT4_INODE_FLAG_NOATIME   0x00000080 /* do not update atime */
 
 /* Compression flags */
-#define EXT4_INODE_FLAG_DIRTY 0x00000100
-#define EXT4_INODE_FLAG_COMPRBLK                                               \
+#define EXT4_INODE_FLAG_DIRTY     0x00000100
+#define EXT4_INODE_FLAG_COMPRBLK \
     0x00000200                             /* One or more compressed clusters */
 #define EXT4_INODE_FLAG_NOCOMPR 0x00000400 /* Don't compress */
-#define EXT4_INODE_FLAG_ECOMPR 0x00000800  /* Compression error */
+#define EXT4_INODE_FLAG_ECOMPR  0x00000800 /* Compression error */
 
-#define EXT4_INODE_FLAG_INDEX 0x00001000  /* hash-indexed directory */
-#define EXT4_INODE_FLAG_IMAGIC 0x00002000 /* AFS directory */
+#define EXT4_INODE_FLAG_INDEX   0x00001000 /* hash-indexed directory */
+#define EXT4_INODE_FLAG_IMAGIC  0x00002000 /* AFS directory */
 #define EXT4_INODE_FLAG_JOURNAL_DATA                                           \
-    0x00004000                            /* File data should be journaled */
-#define EXT4_INODE_FLAG_NOTAIL 0x00008000 /* File tail should not be merged */
-#define EXT4_INODE_FLAG_DIRSYNC                                                \
+    0x00004000                             /* File data should be journaled */
+#define EXT4_INODE_FLAG_NOTAIL 0x00008000  /* File tail should not be merged */
+#define EXT4_INODE_FLAG_DIRSYNC                           \
     0x00010000 /* Dirsync behaviour (directories only) */
-#define EXT4_INODE_FLAG_TOPDIR 0x00020000    /* Top of directory hierarchies */
-#define EXT4_INODE_FLAG_HUGE_FILE 0x00040000 /* Set to each huge file */
-#define EXT4_INODE_FLAG_EXTENTS 0x00080000   /* Inode uses extents */
-#define EXT4_INODE_FLAG_EA_INODE 0x00200000  /* Inode used for large EA */
-#define EXT4_INODE_FLAG_EOFBLOCKS 0x00400000 /* Blocks allocated beyond EOF */
-#define EXT4_INODE_FLAG_RESERVED 0x80000000  /* reserved for ext4 lib */
+#define EXT4_INODE_FLAG_TOPDIR      0x00020000 /* Top of directory hierarchies */
+#define EXT4_INODE_FLAG_HUGE_FILE   0x00040000 /* Set to each huge file */
+#define EXT4_INODE_FLAG_EXTENTS     0x00080000 /* Inode uses extents */
+#define EXT4_INODE_FLAG_EA_INODE    0x00200000 /* Inode used for large EA */
+#define EXT4_INODE_FLAG_EOFBLOCKS   0x00400000 /* Blocks allocated beyond EOF */
+#define EXT4_INODE_FLAG_RESERVED    0x80000000 /* reserved for ext4 lib */
 
-#define EXT4_INODE_ROOT_INDEX 2
+#define EXT4_INODE_ROOT_INDEX       2
 
 #define EXT4_DIRECTORY_FILENAME_LEN 255
 
@@ -481,10 +481,10 @@ union ext4_dir_en_internal {
 struct ext4_dir_en {
     uint32_t inode;     /* I-node for the entry */
     uint16_t entry_len; /* Distance to the next directory entry */
-    uint8_t name_len;   /* Lower 8 bits of name length */
+    uint8_t  name_len;  /* Lower 8 bits of name length */
 
     union ext4_dir_en_internal in;
-    uint8_t name[]; /* Entry name */
+    uint8_t                    name[]; /* Entry name */
 };
 
 /* Structures for indexed directory */
@@ -497,17 +497,17 @@ struct ext4_dir_idx_climit {
 struct ext4_dir_idx_dot_en {
     uint32_t inode;
     uint16_t entry_length;
-    uint8_t name_length;
-    uint8_t inode_type;
-    uint8_t name[4];
+    uint8_t  name_length;
+    uint8_t  inode_type;
+    uint8_t  name[4];
 };
 
 struct ext4_dir_idx_rinfo {
     uint32_t reserved_zero;
-    uint8_t hash_version;
-    uint8_t info_length;
-    uint8_t indirect_levels;
-    uint8_t unused_flags;
+    uint8_t  hash_version;
+    uint8_t  info_length;
+    uint8_t  indirect_levels;
+    uint8_t  unused_flags;
 };
 
 struct ext4_dir_idx_entry {
@@ -517,20 +517,20 @@ struct ext4_dir_idx_entry {
 
 struct ext4_dir_idx_root {
     struct ext4_dir_idx_dot_en dots[2];
-    struct ext4_dir_idx_rinfo info;
-    struct ext4_dir_idx_entry en[];
+    struct ext4_dir_idx_rinfo  info;
+    struct ext4_dir_idx_entry  en[];
 };
 
 struct ext4_fake_dir_entry {
     uint32_t inode;
     uint16_t entry_length;
-    uint8_t name_length;
-    uint8_t inode_type;
+    uint8_t  name_length;
+    uint8_t  inode_type;
 };
 
 struct ext4_dir_idx_node {
     struct ext4_fake_dir_entry fake;
-    struct ext4_dir_idx_entry entries[];
+    struct ext4_dir_idx_entry  entries[];
 };
 
 /*
@@ -548,46 +548,46 @@ struct ext4_dir_idx_tail {
 struct ext4_dir_entry_tail {
     uint32_t reserved_zero1; /* Pretend to be unused */
     uint16_t rec_len;        /* 12 */
-    uint8_t reserved_zero2;  /* Zero name length */
-    uint8_t reserved_ft;     /* 0xDE, fake file type */
+    uint8_t  reserved_zero2; /* Zero name length */
+    uint8_t  reserved_ft;    /* 0xDE, fake file type */
     uint32_t checksum;       /* crc32c(uuid+inum+dirblock) */
 };
 
 #pragma pack(pop)
 
-#define EXT4_DIRENT_TAIL(block, blocksize)                                     \
-    ((struct ext4_dir_entry_tail *)(((char *)(block)) +                        \
-                                    ((blocksize) -                             \
+#define EXT4_DIRENT_TAIL(block, blocksize)                                 \
+    ((struct ext4_dir_entry_tail *)(((char *)(block)) +                    \
+                                    ((blocksize) -                         \
                                      sizeof(struct ext4_dir_entry_tail))))
 
-#define EXT4_ERR_BAD_DX_DIR (-25000)
+#define EXT4_ERR_BAD_DX_DIR          (-25000)
 
-#define EXT4_LINK_MAX 65000
+#define EXT4_LINK_MAX                65000
 
-#define EXT4_BAD_INO 1
-#define EXT4_ROOT_INO 2
-#define EXT4_BOOT_LOADER_INO 5
-#define EXT4_UNDEL_DIR_INO 6
-#define EXT4_RESIZE_INO 7
-#define EXT4_JOURNAL_INO 8
+#define EXT4_BAD_INO                 1
+#define EXT4_ROOT_INO                2
+#define EXT4_BOOT_LOADER_INO         5
+#define EXT4_UNDEL_DIR_INO           6
+#define EXT4_RESIZE_INO              7
+#define EXT4_JOURNAL_INO             8
 
-#define EXT4_GOOD_OLD_FIRST_INO 11
-#define EXT_MAX_BLOCKS (ext4_lblk_t)(-1)
-#define IN_RANGE(b, first, len) ((b) >= (first) && (b) <= (first) + (len) - 1)
+#define EXT4_GOOD_OLD_FIRST_INO      11
+#define EXT_MAX_BLOCKS               (ext4_lblk_t)(-1)
+#define IN_RANGE(b, first, len)      ((b) >= (first) && (b) <= (first) + (len) - 1)
 
 /******************************************************************************/
 
 /* EXT3 HTree directory indexing */
-#define EXT2_HTREE_LEGACY 0
-#define EXT2_HTREE_HALF_MD4 1
-#define EXT2_HTREE_TEA 2
-#define EXT2_HTREE_LEGACY_UNSIGNED 3
+#define EXT2_HTREE_LEGACY            0
+#define EXT2_HTREE_HALF_MD4          1
+#define EXT2_HTREE_TEA               2
+#define EXT2_HTREE_LEGACY_UNSIGNED   3
 #define EXT2_HTREE_HALF_MD4_UNSIGNED 4
-#define EXT2_HTREE_TEA_UNSIGNED 5
+#define EXT2_HTREE_TEA_UNSIGNED      5
 
-#define EXT2_HTREE_EOF 0x7FFFFFFFUL
+#define EXT2_HTREE_EOF               0x7FFFFFFFUL
 
-#define EXT4_GOOD_OLD_INODE_SIZE 128
+#define EXT4_GOOD_OLD_INODE_SIZE     128
 
 /*****************************************************************************/
 
@@ -595,17 +595,17 @@ struct ext4_dir_entry_tail {
  * JBD stores integers in big endian.
  */
 
-#define JBD_MAGIC_NUMBER 0xc03b3998U /* The first 4 bytes of /dev/random! */
+#define JBD_MAGIC_NUMBER             0xc03b3998U /* The first 4 bytes of /dev/random! */
 
 /*
  * Descriptor block types:
  */
 
-#define JBD_DESCRIPTOR_BLOCK 1
-#define JBD_COMMIT_BLOCK 2
-#define JBD_SUPERBLOCK 3
-#define JBD_SUPERBLOCK_V2 4
-#define JBD_REVOKE_BLOCK 5
+#define JBD_DESCRIPTOR_BLOCK         1
+#define JBD_COMMIT_BLOCK             2
+#define JBD_SUPERBLOCK               3
+#define JBD_SUPERBLOCK_V2            4
+#define JBD_REVOKE_BLOCK             5
 
 #pragma pack(push, 1)
 
@@ -623,14 +623,14 @@ struct jbd_bhdr {
 /*
  * Checksum types.
  */
-#define JBD_CRC32_CHKSUM 1
-#define JBD_MD5_CHKSUM 2
-#define JBD_SHA1_CHKSUM 3
-#define JBD_CRC32C_CHKSUM 4
+#define JBD_CRC32_CHKSUM      1
+#define JBD_MD5_CHKSUM        2
+#define JBD_SHA1_CHKSUM       3
+#define JBD_CRC32C_CHKSUM     4
 
 #define JBD_CRC32_CHKSUM_SIZE 4
 
-#define JBD_CHECKSUM_BYTES (32 / sizeof(uint32_t))
+#define JBD_CHECKSUM_BYTES    (32 / sizeof(uint32_t))
 
 #pragma pack(push, 1)
 
@@ -655,12 +655,12 @@ struct jbd_bhdr {
 
 struct jbd_commit_header {
     struct jbd_bhdr header;
-    uint8_t chksum_type;
-    uint8_t chksum_size;
-    uint8_t padding[2];
-    uint32_t chksum[JBD_CHECKSUM_BYTES];
-    uint64_t commit_sec;
-    uint32_t commit_nsec;
+    uint8_t         chksum_type;
+    uint8_t         chksum_size;
+    uint8_t         padding[2];
+    uint32_t        chksum[JBD_CHECKSUM_BYTES];
+    uint64_t        commit_sec;
+    uint32_t        commit_nsec;
 };
 
 /*
@@ -683,10 +683,10 @@ struct jbd_block_tag {
 #pragma pack(pop)
 
 /* Definitions for the journal tag flags word: */
-#define JBD_FLAG_ESCAPE 1    /* on-disk block is escaped */
+#define JBD_FLAG_ESCAPE    1 /* on-disk block is escaped */
 #define JBD_FLAG_SAME_UUID 2 /* block has same uuid as previous */
-#define JBD_FLAG_DELETED 4   /* block deleted by this transaction */
-#define JBD_FLAG_LAST_TAG 8  /* last tag in this descriptor block */
+#define JBD_FLAG_DELETED   4 /* block deleted by this transaction */
+#define JBD_FLAG_LAST_TAG  8 /* last tag in this descriptor block */
 
 #pragma pack(push, 1)
 
@@ -701,7 +701,7 @@ struct jbd_block_tail {
  */
 struct jbd_revoke_header {
     struct jbd_bhdr header;
-    uint32_t count; /* Count of bytes used in the block */
+    uint32_t        count; /* Count of bytes used in the block */
 };
 
 /* Tail of revoke block, for checksumming */
@@ -711,7 +711,7 @@ struct jbd_revoke_tail {
 
 #pragma pack(pop)
 
-#define JBD_USERS_MAX 48
+#define JBD_USERS_MAX  48
 #define JBD_USERS_SIZE (UUID_SIZE * JBD_USERS_MAX)
 
 #pragma pack(push, 1)
@@ -725,41 +725,41 @@ struct jbd_sb {
 
     /* 0x000C */
     /* Static information describing the journal */
-    uint32_t blocksize; /* journal device blocksize */
-    uint32_t maxlen;    /* total blocks in journal file */
-    uint32_t first;     /* first block of log information */
+    uint32_t        blocksize; /* journal device blocksize */
+    uint32_t        maxlen;    /* total blocks in journal file */
+    uint32_t        first;     /* first block of log information */
 
     /* 0x0018 */
     /* Dynamic information describing the current state of the log */
-    uint32_t sequence; /* first commit ID expected in log */
-    uint32_t start;    /* blocknr of start of log */
+    uint32_t        sequence; /* first commit ID expected in log */
+    uint32_t        start;    /* blocknr of start of log */
 
     /* 0x0020 */
     /* Error value, as set by journal_abort(). */
-    int32_t error_val;
+    int32_t         error_val;
 
     /* 0x0024 */
     /* Remaining fields are only valid in a version-2 superblock */
-    uint32_t feature_compat;    /* compatible feature set */
-    uint32_t feature_incompat;  /* incompatible feature set */
-    uint32_t feature_ro_compat; /* readonly-compatible feature set */
-                                /* 0x0030 */
-    uint8_t uuid[UUID_SIZE];    /* 128-bit uuid for journal */
+    uint32_t        feature_compat;    /* compatible feature set */
+    uint32_t        feature_incompat;  /* incompatible feature set */
+    uint32_t        feature_ro_compat; /* readonly-compatible feature set */
+                                       /* 0x0030 */
+    uint8_t         uuid[UUID_SIZE];   /* 128-bit uuid for journal */
 
     /* 0x0040 */
-    uint32_t nr_users; /* Nr of filesystems sharing log */
+    uint32_t        nr_users; /* Nr of filesystems sharing log */
 
-    uint32_t dynsuper; /* Blocknr of dynamic superblock copy*/
+    uint32_t        dynsuper; /* Blocknr of dynamic superblock copy*/
 
     /* 0x0048 */
-    uint32_t max_transaction; /* Limit of journal blocks per trans.*/
-    uint32_t max_trandata;    /* Limit of data blocks per trans. */
+    uint32_t        max_transaction; /* Limit of journal blocks per trans.*/
+    uint32_t        max_trandata;    /* Limit of data blocks per trans. */
 
     /* 0x0050 */
-    uint8_t checksum_type; /* checksum type */
-    uint8_t padding2[3];
-    uint32_t padding[42];
-    uint32_t checksum; /* crc32c(superblock) */
+    uint8_t         checksum_type; /* checksum type */
+    uint8_t         padding2[3];
+    uint32_t        padding[42];
+    uint32_t        checksum; /* crc32c(superblock) */
 
     /* 0x0100 */
     uint8_t users[JBD_USERS_SIZE]; /* ids of all fs'es sharing the log */
@@ -771,30 +771,30 @@ struct jbd_sb {
 
 #define JBD_SUPERBLOCK_SIZE sizeof(struct jbd_sb)
 
-#define JBD_HAS_COMPAT_FEATURE(jsb, mask)                                      \
-    ((jsb)->header.blocktype >= to_be32(2) &&                                  \
+#define JBD_HAS_COMPAT_FEATURE(jsb, mask)       \
+    ((jsb)->header.blocktype >= to_be32(2) &&   \
      ((jsb)->feature_compat & to_be32((mask))))
-#define JBD_HAS_RO_COMPAT_FEATURE(jsb, mask)                                   \
-    ((jsb)->header.blocktype >= to_be32(2) &&                                  \
+#define JBD_HAS_RO_COMPAT_FEATURE(jsb, mask)       \
+    ((jsb)->header.blocktype >= to_be32(2) &&      \
      ((jsb)->feature_ro_compat & to_be32((mask))))
-#define JBD_HAS_INCOMPAT_FEATURE(jsb, mask)                                    \
-    ((jsb)->header.blocktype >= to_be32(2) &&                                  \
+#define JBD_HAS_INCOMPAT_FEATURE(jsb, mask)       \
+    ((jsb)->header.blocktype >= to_be32(2) &&     \
      ((jsb)->feature_incompat & to_be32((mask))))
 
-#define JBD_FEATURE_COMPAT_CHECKSUM 0x00000001
+#define JBD_FEATURE_COMPAT_CHECKSUM       0x00000001
 
-#define JBD_FEATURE_INCOMPAT_REVOKE 0x00000001
-#define JBD_FEATURE_INCOMPAT_64BIT 0x00000002
+#define JBD_FEATURE_INCOMPAT_REVOKE       0x00000001
+#define JBD_FEATURE_INCOMPAT_64BIT        0x00000002
 #define JBD_FEATURE_INCOMPAT_ASYNC_COMMIT 0x00000004
-#define JBD_FEATURE_INCOMPAT_CSUM_V2 0x00000008
-#define JBD_FEATURE_INCOMPAT_CSUM_V3 0x00000010
+#define JBD_FEATURE_INCOMPAT_CSUM_V2      0x00000008
+#define JBD_FEATURE_INCOMPAT_CSUM_V3      0x00000010
 
 /* Features known to this kernel version: */
-#define JBD_KNOWN_COMPAT_FEATURES 0
-#define JBD_KNOWN_ROCOMPAT_FEATURES 0
-#define JBD_KNOWN_INCOMPAT_FEATURES                                            \
-    (JBD_FEATURE_INCOMPAT_REVOKE | JBD_FEATURE_INCOMPAT_ASYNC_COMMIT |         \
-     JBD_FEATURE_INCOMPAT_64BIT | JBD_FEATURE_INCOMPAT_CSUM_V2 |               \
+#define JBD_KNOWN_COMPAT_FEATURES         0
+#define JBD_KNOWN_ROCOMPAT_FEATURES       0
+#define JBD_KNOWN_INCOMPAT_FEATURES                                    \
+    (JBD_FEATURE_INCOMPAT_REVOKE | JBD_FEATURE_INCOMPAT_ASYNC_COMMIT | \
+     JBD_FEATURE_INCOMPAT_64BIT | JBD_FEATURE_INCOMPAT_CSUM_V2 |       \
      JBD_FEATURE_INCOMPAT_CSUM_V3)
 
 /*****************************************************************************/
@@ -809,17 +809,17 @@ struct jbd_sb {
 
 #if CONFIG_USE_USER_MALLOC
 
-#define ext4_malloc ext4_user_malloc
-#define ext4_calloc ext4_user_calloc
+#define ext4_malloc  ext4_user_malloc
+#define ext4_calloc  ext4_user_calloc
 #define ext4_realloc ext4_user_realloc
-#define ext4_free ext4_user_free
+#define ext4_free    ext4_user_free
 
 #else
 
-#define ext4_malloc malloc
-#define ext4_calloc calloc
+#define ext4_malloc  malloc
+#define ext4_calloc  calloc
 #define ext4_realloc realloc
-#define ext4_free free
+#define ext4_free    free
 
 #endif
 

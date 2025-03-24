@@ -1,17 +1,16 @@
 #include "elf_parser.h"
 
-
 #include <arch.h>
 #include <buddy_alloc.h>
 #include <common.h>
 #include <console.h>
 #include <driver.h>
+#include <ext4.h>
 #include <percpu.h>
 #include <smoldtb.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#include <ext4.h>
 void test_heap() {
     // test heap alloc 1
     char *test_alloc = malloc(sizeof(char) * 0x201);
@@ -79,8 +78,8 @@ void cmain(size_t hart_id, uintptr_t dtb) {
     dtb_node_t *mnode = dtb_find("/memory");
     if(mnode != NULL) {
         print_node(mnode, 0);
-        dtb_prop_t *prop = dtb_find_prop(mnode, "reg");
-        dtb_pair mrange = {.a = 2, .b = 2};
+        dtb_prop_t *prop   = dtb_find_prop(mnode, "reg");
+        dtb_pair    mrange = {.a = 2, .b = 2};
         dtb_read_prop_pairs(prop, mrange, &mrange);
         printf("Memory Range: 0x%lx - 0x%lx\n", mrange.a, mrange.a + mrange.b);
         // Add Memory Range to Frame Allocator.

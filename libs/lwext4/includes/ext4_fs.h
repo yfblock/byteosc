@@ -54,35 +54,35 @@ extern "C" {
 #include <stdint.h>
 
 struct ext4_fs {
-    bool read_only;
+    bool                  read_only;
 
     struct ext4_blockdev *bdev;
-    struct ext4_sblock sb;
+    struct ext4_sblock    sb;
 
-    uint64_t inode_block_limits[4];
-    uint64_t inode_blocks_per_level[4];
+    uint64_t              inode_block_limits[4];
+    uint64_t              inode_blocks_per_level[4];
 
-    uint32_t last_inode_bg_id;
+    uint32_t              last_inode_bg_id;
 
-    struct jbd_fs *jbd_fs;
-    struct jbd_journal *jbd_journal;
-    struct jbd_trans *curr_trans;
+    struct jbd_fs        *jbd_fs;
+    struct jbd_journal   *jbd_journal;
+    struct jbd_trans     *curr_trans;
 };
 
 struct ext4_block_group_ref {
-    struct ext4_block block;
+    struct ext4_block   block;
     struct ext4_bgroup *block_group;
-    struct ext4_fs *fs;
-    uint32_t index;
-    bool dirty;
+    struct ext4_fs     *fs;
+    uint32_t            index;
+    bool                dirty;
 };
 
 struct ext4_inode_ref {
-    struct ext4_block block;
+    struct ext4_block  block;
     struct ext4_inode *inode;
-    struct ext4_fs *fs;
-    uint32_t index;
-    bool dirty;
+    struct ext4_fs    *fs;
+    uint32_t           index;
+    bool               dirty;
 };
 
 /**@brief Convert block address to relative index in block group.
@@ -91,7 +91,7 @@ struct ext4_inode_ref {
  * @return Relative number of block
  */
 static inline uint32_t ext4_fs_addr_to_idx_bg(struct ext4_sblock *s,
-                                              ext4_fsblk_t baddr) {
+                                              ext4_fsblk_t        baddr) {
     if(ext4_get32(s, first_data_block) && baddr)
         baddr--;
 
@@ -114,7 +114,7 @@ ext4_fs_bg_idx_to_addr(struct ext4_sblock *s, uint32_t index, uint32_t bgid) {
 
 /**@brief TODO: */
 static inline ext4_fsblk_t ext4_fs_first_bg_block_no(struct ext4_sblock *s,
-                                                     uint32_t bgid) {
+                                                     uint32_t            bgid) {
     return (uint64_t)bgid * ext4_get32(s, blocks_per_group) +
            ext4_get32(s, first_data_block);
 }
@@ -125,14 +125,14 @@ static inline ext4_fsblk_t ext4_fs_first_bg_block_no(struct ext4_sblock *s,
  * @param read_only Mark the filesystem as read-only.
  * @return Error code
  */
-int ext4_fs_init(struct ext4_fs *fs, struct ext4_blockdev *bdev,
-                 bool read_only);
+int      ext4_fs_init(struct ext4_fs *fs, struct ext4_blockdev *bdev,
+                      bool read_only);
 
 /**@brief Destroy filesystem instance (used by unmount operation).
  * @param fs Filesystem to be destroyed
  * @return Error code
  */
-int ext4_fs_fini(struct ext4_fs *fs);
+int      ext4_fs_fini(struct ext4_fs *fs);
 
 /**@brief Check filesystem's features, if supported by this driver
  * Function can return EOK and set read_only flag. It mean's that
@@ -142,7 +142,7 @@ int ext4_fs_fini(struct ext4_fs *fs);
  * @param read_only Flag if filesystem should be mounted only for reading
  * @return Error code
  */
-int ext4_fs_check_features(struct ext4_fs *fs, bool *read_only);
+int      ext4_fs_check_features(struct ext4_fs *fs, bool *read_only);
 
 /**@brief Get reference to block group specified by index.
  * @param fs   Filesystem to find block group on
@@ -150,14 +150,14 @@ int ext4_fs_check_features(struct ext4_fs *fs, bool *read_only);
  * @param ref  Output pointer for reference
  * @return Error code
  */
-int ext4_fs_get_block_group_ref(struct ext4_fs *fs, uint32_t bgid,
-                                struct ext4_block_group_ref *ref);
+int      ext4_fs_get_block_group_ref(struct ext4_fs *fs, uint32_t bgid,
+                                     struct ext4_block_group_ref *ref);
 
 /**@brief Put reference to block group.
  * @param ref Pointer for reference to be put back
  * @return Error code
  */
-int ext4_fs_put_block_group_ref(struct ext4_block_group_ref *ref);
+int      ext4_fs_put_block_group_ref(struct ext4_block_group_ref *ref);
 
 /**@brief Get reference to i-node specified by index.
  * @param fs    Filesystem to find i-node on
@@ -165,21 +165,21 @@ int ext4_fs_put_block_group_ref(struct ext4_block_group_ref *ref);
  * @param ref   Output pointer for reference
  * @return Error code
  */
-int ext4_fs_get_inode_ref(struct ext4_fs *fs, uint32_t index,
-                          struct ext4_inode_ref *ref);
+int      ext4_fs_get_inode_ref(struct ext4_fs *fs, uint32_t index,
+                               struct ext4_inode_ref *ref);
 
 /**@brief Reset blocks field of i-node.
  * @param fs        Filesystem to reset blocks field of i-inode on
  * @param inode_ref ref Pointer for inode to be operated on
  */
-void ext4_fs_inode_blocks_init(struct ext4_fs *fs,
-                               struct ext4_inode_ref *inode_ref);
+void     ext4_fs_inode_blocks_init(struct ext4_fs        *fs,
+                                   struct ext4_inode_ref *inode_ref);
 
 /**@brief Put reference to i-node.
  * @param ref Pointer for reference to be put back
  * @return Error code
  */
-int ext4_fs_put_inode_ref(struct ext4_inode_ref *ref);
+int      ext4_fs_put_inode_ref(struct ext4_inode_ref *ref);
 
 /**@brief Convert filetype to inode mode.
  * @param filetype File type
@@ -219,8 +219,8 @@ ext4_fsblk_t ext4_fs_inode_to_goal_block(struct ext4_inode_ref *inode_ref);
  * @param inode_ref Reference to inode, to allocate block for
  * @return error code
  */
-int ext4_fs_indirect_find_goal(struct ext4_inode_ref *inode_ref,
-                               ext4_fsblk_t *goal);
+int          ext4_fs_indirect_find_goal(struct ext4_inode_ref *inode_ref,
+                                        ext4_fsblk_t          *goal);
 
 /**@brief Get physical block address by logical index of the block.
  * @param inode_ref I-node to read block address from
@@ -231,9 +231,9 @@ int ext4_fs_indirect_find_goal(struct ext4_inode_ref *inode_ref,
  *                          is supported under the current context
  * @return Error code
  */
-int ext4_fs_get_inode_dblk_idx(struct ext4_inode_ref *inode_ref,
-                               ext4_lblk_t iblock, ext4_fsblk_t *fblock,
-                               bool support_unwritten);
+int          ext4_fs_get_inode_dblk_idx(struct ext4_inode_ref *inode_ref,
+                                        ext4_lblk_t iblock, ext4_fsblk_t *fblock,
+                                        bool support_unwritten);
 
 /**@brief Initialize a part of unwritten range of the inode.
  * @param inode_ref I-node to proceed on.
@@ -241,8 +241,8 @@ int ext4_fs_get_inode_dblk_idx(struct ext4_inode_ref *inode_ref,
  * @param fblock    Output pointer for return physical block address
  * @return Error code
  */
-int ext4_fs_init_inode_dblk_idx(struct ext4_inode_ref *inode_ref,
-                                ext4_lblk_t iblock, ext4_fsblk_t *fblock);
+int          ext4_fs_init_inode_dblk_idx(struct ext4_inode_ref *inode_ref,
+                                         ext4_lblk_t iblock, ext4_fsblk_t *fblock);
 
 /**@brief Append following logical block to the i-node.
  * @param inode_ref I-node to append block to
@@ -250,18 +250,18 @@ int ext4_fs_init_inode_dblk_idx(struct ext4_inode_ref *inode_ref,
  * @param iblock    Output logical number of newly allocated block
  * @return Error code
  */
-int ext4_fs_append_inode_dblk(struct ext4_inode_ref *inode_ref,
-                              ext4_fsblk_t *fblock, ext4_lblk_t *iblock);
+int          ext4_fs_append_inode_dblk(struct ext4_inode_ref *inode_ref,
+                                       ext4_fsblk_t *fblock, ext4_lblk_t *iblock);
 
 /**@brief   Increment inode link count.
  * @param   inode_ref none handle
  */
-void ext4_fs_inode_links_count_inc(struct ext4_inode_ref *inode_ref);
+void         ext4_fs_inode_links_count_inc(struct ext4_inode_ref *inode_ref);
 
 /**@brief   Decrement inode link count.
  * @param   inode_ref none handle
  */
-void ext4_fs_inode_links_count_dec(struct ext4_inode_ref *inode_ref);
+void         ext4_fs_inode_links_count_dec(struct ext4_inode_ref *inode_ref);
 
 #ifdef __cplusplus
 }
