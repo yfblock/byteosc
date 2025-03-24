@@ -94,7 +94,7 @@ driver_t *detect_device(dtb_node_t *node) {
  * @param rnode The root node will be parsed.
  */
 void probe_dtb(dtb_node_t *rnode) {
-    auto dtb_child = dtb_get_child(rnode);
+    dtb_node_t *dtb_child = dtb_get_child(rnode);
     while(dtb_child != nullptr) {
         probe_dtb(dtb_child);
         const driver_t *driver = detect_device(dtb_child);

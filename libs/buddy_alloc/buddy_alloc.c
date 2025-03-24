@@ -79,7 +79,7 @@ inline size_t header_index(const buddy_system_t *buddy, const size_t size) {
  * @return void
  */
 void add_node(buddy_system_t *buddy, const size_t index, const uintptr_t addr) {
-    const auto      node = (buddy_linked_t *)addr;
+    buddy_linked_t *node = (buddy_linked_t *)addr;
     buddy_linked_t *link = &buddy->header[index];
     while(link->next != NULL && (uintptr_t)link->next < (uintptr_t)node) {
         link = link->next;
@@ -190,7 +190,7 @@ void *malloc(const size_t size) {
     mem_header_t *mh = alloc_node(&heap_buddy, size_with_header(size));
     mh->ptr_validate = (void *)mh;
     mh->size         = size;
-    const auto ptr   = (void *)((uintptr_t)mh + HEADER_SIZE);
+    void *ptr        = (void *)((uintptr_t)mh + HEADER_SIZE);
     memset(ptr, 0, size);
     return ptr;
 }
@@ -220,7 +220,7 @@ void free(void *ptr) {
  */
 void free_len(void *ptr, size_t len) {
     // Free memory node
-    const auto mh = (mem_header_t *)((uintptr_t)ptr - HEADER_SIZE);
+    const mem_header_t *mh = (mem_header_t *)((uintptr_t)ptr - HEADER_SIZE);
     assert(mh->ptr_validate == (void *)mh);
     if(len == 0) {
         len = mh->size;

@@ -12,9 +12,9 @@ void virtio_disk_rw(size_t block_no, size_t count, uint8_t *buffer, int write);
 static uint8_t _ph_bbuf[(BSIZE)];
 
 static int     file_dev_open(struct ext4_blockdev *bdev) {
-    auto blk_cfg      = (virtio_blk_config *)g_virtio->Config;
-    bdev->part_offset = 0;
-    bdev->part_size   = blk_cfg->capacity * DEV_BLK_SIZE;
+    virtio_blk_config *blk_cfg = (virtio_blk_config *)g_virtio->Config;
+    bdev->part_offset          = 0;
+    bdev->part_size            = blk_cfg->capacity * DEV_BLK_SIZE;
     return EOK;
 };
 

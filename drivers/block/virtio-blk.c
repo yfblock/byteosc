@@ -48,7 +48,7 @@ virtio_regs *g_virtio;
 void         hexdump(uint8_t *buffer, size_t len) {
     if(buffer == nullptr)
         return;
-    constexpr size_t LINE_WIDTH = 16;
+    const size_t LINE_WIDTH = 16;
     for(size_t i = 0; i < len; i += LINE_WIDTH) {
         if(i % LINE_WIDTH == 0) {
             if(i < 0x10)

@@ -11,7 +11,7 @@
  * @return if it is a valid elf64 file.
  */
 bool check_elf64(const char *ptr) {
-    const auto header = (elf64_header_t *)ptr;
+    const elf64_header_t *header = (elf64_header_t *)ptr;
     if(header->magic[0] != 0x7f)
         return false;
     if(strncmp("ELF", header->magic + 1, 3) != 0)
