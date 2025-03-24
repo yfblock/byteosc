@@ -16,8 +16,16 @@ rule("arch.aarch64")
         target:add(
             "ldflags",
             "-T linker/linker-aarch64.ld",
+            "-static",
             "-nostdlib",
             "-nostartfiles",
             "-ffreestanding"
         )
+    end)
+
+rule("clang")
+    on_load(function(target) 
+        target:add("ldflags", "-fuse-ld=lld", "-target "..get_config("arch").."-linux-gnu")
+        target:add("asflags", "-target "..get_config("arch").."-linux-gnu")
+        target:add("cflags", "-target "..get_config("arch").."-linux-gnu")
     end)
