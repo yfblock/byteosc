@@ -50,11 +50,10 @@ _Static_assert(
 // static buddy_linked_t buddy_header[MAX_BUDDY_HEADER_BITS] = {nullptr};
 // /* Page Allocator Buddy Header */
 // static buddy_linked_t page_header[MAX_BUDDY_HEADER_BITS] = {nullptr};
-static buddy_system_t heap_buddy = {.header    = {nullptr},
+static buddy_system_t heap_buddy = {.header    = {NULL},
                                     .unit_size = MIN_UNIT_SIZE};
 
-static buddy_system_t page_buddy = {.header    = {nullptr},
-                                    .unit_size = PAGE_SIZE};
+static buddy_system_t page_buddy = {.header = {NULL}, .unit_size = PAGE_SIZE};
 
 /**
  * Get the index level through the allocation size.
@@ -235,7 +234,7 @@ void dump_heap() {
     for(int i = 0; i < MAX_BUDDY_HEADER_BITS; i++) {
         printf("BUDDY HEADER LIST: %d \n", i);
         buddy_linked_t *link = &heap_buddy.header[i];
-        for(int j = 0; link->next != nullptr; j++) {
+        for(int j = 0; link->next != NULL; j++) {
             printf("\t%04x ", link->next);
             link = link->next;
             if(j % 4 == 0)
