@@ -1,17 +1,15 @@
+includes("utils/*.lua")
 add_rules("mode.debug", "mode.release")
 set_policy("check.auto_ignore_flags", false);
 
 -- 设置默认的架构信息
 set_plat("cross")
 set_config("arch", "aarch64")
--- set_config("cross", "aarch64-linux-gnu-")
-includes("utils/*.lua")
-
 
 target("byteos")
     set_kind("binary")
     set_languages("clatest")
-    add_rules("arch.aarch64", "clang")
+    add_rules("clang")
     set_toolchains("clang")
 
     on_run(function()
@@ -20,26 +18,21 @@ target("byteos")
         task.run("qemu")
     end)
 
-    on_load(function () 
-        -- 内置模块和 import 需要在 function() 中使用
-        -- 一般 function 会在 on_xxx before_xxx after_xxx 声明
-        if not is_arch("aarch64", "riscv64") then
-            raise("unsupported arch "..get_config("arch"))
-        end
-        cprint("${green}arch: ${reset}%s", get_config("arch"))
-    end)
+    -- Check the architecture supported
+    on_load(check_arch)
 
+    -- Include the architecture specific files
     if get_config("arch") then 
         add_includedirs(string.format("arch/%s/includes", get_config("arch")))
         add_files(string.format("arch/%s/asm/*.S", get_config("arch")))
         add_files(string.format("arch/%s/*.c", get_config("arch")))
     end 
 
+    -- Include the module files
     add_includedirs(
         "includes",
         "drivers/includes",
         "$(buildir)/config",
-
         "libs/buddy_alloc",
         "libs/elf_parser/includes",
         "libs/lwext4/includes",
@@ -57,7 +50,7 @@ target("byteos")
     add_files("libs/smoldtb/*.c")
     add_files("libs/std_impl/*.c")
 
-
+    -- Generate the header that contains the VARIABLES
     set_configvar("BOOT_STACK_SIZE", get_config("BOOT_STACK_SIZE"))
     set_configvar("HEAP_SIZE", get_config("HEAP_SIZE"))    
     set_configdir("$(buildir)/config")

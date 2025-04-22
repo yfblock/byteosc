@@ -1,7 +1,8 @@
 #include <define.h>
+#include <asm/linkage.h>
+
 .section .text
-.global _start
-_start:
+FUNC_START(_start)
     # STORE ARGUMENTS
     mv      s0, a0
     mv      s1, a1
@@ -17,17 +18,17 @@ _start:
     # LOAD BOOT STACK
     lla     sp, _boot_stack_top
 
-    #       JUMP TO MAIN ENTRY
+    # JUMP TO MAIN ENTRY
     mv      a0, s0
     mv      a1, s1
     lla     s0, boot_main
     jalr    s0
     wfi
+FUNC_END(_start)
 
 # Set Boot Stack
 .section .bss
-.global _boot_stack
-.global _boot_stack_top
-_boot_stack:
+DATA_START(_boot_stack)
     .space BOOT_STACK_SIZE
-_boot_stack_top:
+DATA_END(_boot_stack)
+SYMBOL(_boot_stack_top)
