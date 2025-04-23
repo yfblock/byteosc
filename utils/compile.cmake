@@ -1,20 +1,21 @@
+set(CMAKE_C_FLAGS "")
+# Set Linker script
+set(LINKER_SCRIPT_DIR "${PROJECT_SOURCE_DIR}/linker")
+set(LINKER_FILE "${LINKER_SCRIPT_DIR}/linker-${KernelArch}.ld")
 
 # set(TOOLS_PREFIX "${KernelArch}-linux-gnu-")
 # message(STATUS "TOOLS_PREFIX ${TOOLS_PREFIX}")
 # set(CMAKE_ASM_COMPILER ${TOOLS_PREFIX}gcc)
 # set(CMAKE_C_COMPILER ${TOOLS_PREFIX}gcc)
+
+# --------------------------------------
+# Set Compiler Clang
+# --------------------------------------
 set(CMAKE_ASM_COMPILER clang)
 set(CMAKE_C_COMPILER clang)
-set(CMAKE_EXE_LINKER_FLAGS -fuse-ld=lld)
-set(CMAKE_C_COMPILER_TARGET ${KernelArch}-elf)
-set(CMAKE_ASM_COMPILER_TARGET ${KernelArch}-elf)
-
-# Set Linker script
-set(LINKER_SCRIPT_DIR "${PROJECT_SOURCE_DIR}/linker")
-set(LINKER_FILE "${LINKER_SCRIPT_DIR}/linker-${KernelArch}.ld")
-
-# Set compile options
-set(CMAKE_C_FLAGS "")
+set(CMAKE_LINKER "ld.lld")
+add_compile_options(--target=${KernelArch}-linux-gnu)
+set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> <FLAGS> <CMAKE_C_LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES> -T ${LINKER_FILE}")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_FILE} -nostdlib -nostartfiles -ffreestanding")
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES stdc)
 
@@ -38,13 +39,6 @@ add_compile_options(
     -ffreestanding
     -fno-stack-protector
 )
-
-if(CMAKE_C_COMPILER STREQUAL "clang")
-    add_compile_options(
-        --target=${KernelArch}-elf
-    )
-endif()
-
 
 # Aarch64 options
 if(KernelArch STREQUAL "aarch64")
