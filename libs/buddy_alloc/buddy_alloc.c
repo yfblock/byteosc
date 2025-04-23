@@ -125,6 +125,8 @@ void add_heap_range(uintptr_t addr, const size_t size) {
 }
 
 void *alloc_node(buddy_system_t *buddy, size_t size) {
+    size_t lvl = __builtin_clz(size - 1);
+    size       = (1 << (64 - lvl));
     debug("alloc size: %x", size);
     dump_heap();
     size_t          index = header_index(buddy, size);

@@ -1,7 +1,0 @@
-name = "test1"
-test-num = 0x123
-
-[dtb]
-
-[heap]
-size = 0x20_0000

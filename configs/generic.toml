@@ -1,6 +1,0 @@
-
-[heap]
-size = 0x20_0000
-
-[stack]
-boot = 0x1_0000

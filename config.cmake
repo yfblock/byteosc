@@ -11,4 +11,3 @@ add_definitions(-DCONFIG_LOG_LEVEL=1)
 
 set(BOOT_STACK_SIZE "0x10000" CACHE STRING "the size of the boot stack")
 set(HEAP_SIZE "0x200000" CACHE STRING "the size of the heap")
-set(CONFIG_FILE "generic.toml" CACHE STRING "the config file will be used in building step")

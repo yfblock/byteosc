@@ -1,4 +1,4 @@
 #pragma once
 
-#define BOOT_STACK_SIZE ${BOOT_STACK_SIZE}
-#define HEAP_SIZE ${HEAP_SIZE}
+#define BOOT_STACK_SIZE @BOOT_STACK_SIZE@
+#define HEAP_SIZE @HEAP_SIZE@
