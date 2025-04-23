@@ -108,10 +108,10 @@ void cmain(size_t hart_id, uintptr_t dtb) {
 
     ext4_cache_write_back("/", 1);
 
-    ext4_file ext4_file;
-    ext4_fopen(&ext4_file, "/a.out", "r+");
-    elf64_file_t elf_file;
-    read_elf_file(&ext4_file, &elf_file);
+    // ext4_file ext4_file;
+    // ext4_fopen(&ext4_file, "/a.out", "r+");
+    // elf64_file_t elf_file;
+    // read_elf_file(&ext4_file, &elf_file);
 
     dump_heap();
 

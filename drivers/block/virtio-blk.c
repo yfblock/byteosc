@@ -46,7 +46,7 @@ static struct disk {
 virtio_regs *g_virtio;
 
 void         hexdump(uint8_t *buffer, size_t len) {
-    if(buffer == nullptr)
+    if(buffer == NULL)
         return;
     const size_t LINE_WIDTH = 16;
     for(size_t i = 0; i < len; i += LINE_WIDTH) {
@@ -170,7 +170,7 @@ void *virtio_block_probe(virtio_regs *virtio, dtb_node_t *node) {
     void     virtio_disk_rw(size_t, size_t, uint8_t *, int);
     virtio_disk_rw(0, 1, buffer, 0);
 
-    return nullptr;
+    return NULL;
 }
 
 // find a free descriptor, mark it non-free, return its index.
@@ -298,6 +298,6 @@ void virtio_disk_rw(size_t block_no, size_t count, uint8_t *buffer, int write) {
     disk.virtio->InterruptACK  = 1;
 
     disk.info[idx[0]].block_no = 0;
-    disk.info[idx[0]].buffer   = nullptr;
+    disk.info[idx[0]].buffer   = NULL;
     free_chain(idx[0]);
 }

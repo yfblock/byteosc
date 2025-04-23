@@ -5,6 +5,7 @@
 #include <console.h>
 #include <string.h>
 #define HEADER_SIZE         sizeof(mem_header_t)
+#define WITH_HEADER(x)      (x + HEADER_SIZE)
 #define IN_RANGE(a, rs, re) (((a) >= (rs) && (a) < (re)))
 
 /* Heap allocator, heap */
@@ -34,13 +35,6 @@ typedef struct {
     /* Size of this memory unit. */
     size_t size;
 } mem_header_t;
-
-/**
- * Get the memory size with memory header.
- */
-inline size_t size_with_header(const size_t size) {
-    return size + HEADER_SIZE;
-}
 
 /* Static assert or Compiler assert */
 _Static_assert(
@@ -125,14 +119,16 @@ void add_heap_range(uintptr_t addr, const size_t size) {
 }
 
 void *alloc_node(buddy_system_t *buddy, size_t size) {
-    size_t lvl = __builtin_clz(size - 1);
-    size       = (1 << (64 - lvl));
-    debug("alloc size: %x", size);
+    size_t lvl   = 64 - __builtin_clzll(size - 1);
+    size         = (1 << lvl);
+    // size_t index = header_index(buddy, size);
+    size_t index = lvl - 3;
+    debug("alloc size: %x lvl: %d  test: %d  index: %d", size, lvl,
+          __builtin_clzll(size - 1), index);
     dump_heap();
-    size_t          index = header_index(buddy, size);
 
     // alloc buddy node
-    buddy_linked_t *node  = buddy->header[index].next;
+    buddy_linked_t *node = buddy->header[index].next;
     // find the first available buddy node
     while(node == NULL) {
         node = buddy->header[++index].next;
@@ -188,7 +184,7 @@ void kfree(void *ptr, size_t count) {
  * @return The start address of the memory block
  */
 void *malloc(const size_t size) {
-    mem_header_t *mh = alloc_node(&heap_buddy, size_with_header(size));
+    mem_header_t *mh = alloc_node(&heap_buddy, WITH_HEADER(size));
     mh->ptr_validate = (void *)mh;
     mh->size         = size;
     void *ptr        = (void *)((uintptr_t)mh + HEADER_SIZE);

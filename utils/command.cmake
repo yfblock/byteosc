@@ -32,11 +32,11 @@ set(QEMU_EXEC_CMD ${QEMU_EXEC}
     # --------------------------------------
     # Virtio Devices
     # --------------------------------------
-    # -global virtio-mmio.force-legacy=false
-    # -drive
-    # file=mount.img,if=none,format=raw,id=x0
-    # -device
-    # virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+    -global virtio-mmio.force-legacy=false
+    -drive
+    file=${CMAKE_CURRENT_BINARY_DIR}/mount.img,if=none,format=raw,id=x0
+    -device
+    virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 )
 
 add_custom_target(fdt

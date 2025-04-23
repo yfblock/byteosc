@@ -50,22 +50,23 @@ void test_fs() {
     // ========= Test Read File ===========
 
     // ========= Test Read ELF ============
-    ext4_file *elf_file = talloc(1, ext4_file);
-    r                   = ext4_fopen(elf_file, "/a.out", "r+");
-    if(r != EOK)
-        debug("open a.out file failed %d", r);
-    debug("elf file size: %d", elf_file->fsize);
+    // ext4_file *elf_file = talloc(1, ext4_file);
+    // r                   = ext4_fopen(elf_file, "/a.out", "r+");
+    // if(r != EOK)
+    //     debug("open a.out file failed %d", r);
+    // debug("elf file size: %d", elf_file->fsize);
 
-    debug("elf file content");
-    elf64_file_t *elf;
-    read_elf_file(elf_file, elf);
+    // debug("elf file content");
+    // elf64_file_t *elf;
+    // read_elf_file(elf_file, elf);
 
-    debug("sh addr: %x", elf->sh);
-    for(int i = 0; i < elf->header->sht_e_n; i++) {
-        elf64_sh_t *sh =
-            (elf64_sh_t *)((char *)elf->sh + i * elf->header->sht_e_sz);
-        debug("vaddr sh: %x", sh);
-        debug("section header: %x  TYPE: %x", sh->sh_flags, sh->sh_type);
-        debug("sh vaddr: %08x - %08x ", sh->sh_addr, sh->sh_addr + sh->sh_size);
-    }
+    // debug("sh addr: %x", elf->sh);
+    // for(int i = 0; i < elf->header->sht_e_n; i++) {
+    //     elf64_sh_t *sh =
+    //         (elf64_sh_t *)((char *)elf->sh + i * elf->header->sht_e_sz);
+    //     debug("vaddr sh: %x", sh);
+    //     debug("section header: %x  TYPE: %x", sh->sh_flags, sh->sh_type);
+    //     debug("sh vaddr: %08x - %08x ", sh->sh_addr, sh->sh_addr +
+    //     sh->sh_size);
+    // }
 }
