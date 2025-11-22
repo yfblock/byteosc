@@ -13,6 +13,7 @@ CFLAGS += -std=c23 -O2 -fno-builtin -ffreestanding -Wundef \
     -Wpointer-arith \
     -Wno-nonnull \
 	-nostdlib \
+	-nostdinc \
 	-nostartfiles
 
 # Add includes folders to compiler flags
@@ -22,6 +23,13 @@ CFLAGS += $(INCLUDE_FLAGS)
 
 # Find files for fmt
 CLANG_FORMAT := clang-format
+
+# 自动检测 CPU 核心
+ifeq ($(origin JOBS), undefined)
+	JOBS := $(shell nproc)
+endif
+# 使用 .DEFAULT_GOAL = all 结合 make -j
+MAKEFLAGS += -j$(JOBS)
 
 all: build
 

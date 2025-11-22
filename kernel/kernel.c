@@ -11,6 +11,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+
 void test_heap() {
     // test heap alloc 1
     char *test_alloc = malloc(sizeof(char) * 0x201);
@@ -44,14 +45,14 @@ CTOR void test_ctor() {
 
 void cmain(size_t hart_id, uintptr_t dtb) {
     // Print Banner
-    printf(NEWLINE(RAW("(  ____        _        ____   _____  )")));
-    printf(NEWLINE(RAW("( |  _ \      | |      / __ \ / ____| )")));
-    printf(NEWLINE(RAW("( | |_) |_   _| |_ ___| |  | | (___   )")));
-    printf(NEWLINE(RAW("( |  _ <| | | | __/ _ \ |  | |\___ \  )")));
-    printf(NEWLINE(RAW("( | |_) | |_| | ||  __/ |__| |____) | )")));
-    printf(NEWLINE(RAW("( |____/ \__, |\__\___|\____/|_____/  )")));
-    printf(NEWLINE(RAW("(         __/ |         C Version     )")));
-    printf(NEWLINE(RAW("(        |___/                        )")));
+    printf(NEWLINE(RAW("  ____        _        ____   _____  ")));
+    printf(NEWLINE(RAW(" |  _ \      | |      / __ \ / ____| ")));
+    printf(NEWLINE(RAW(" | |_) |_   _| |_ ___| |  | | (___   ")));
+    printf(NEWLINE(RAW(" |  _ <| | | | __/ _ \ |  | |\___ \  ")));
+    printf(NEWLINE(RAW(" | |_) | |_| | ||  __/ |__| |____) | ")));
+    printf(NEWLINE(RAW(" |____/ \__, |\__\___|\____/|_____/  ")));
+    printf(NEWLINE(RAW("         __/ |         C Version     ")));
+    printf(NEWLINE(RAW("        |___/                        ")));
     printf("\n");
 
     debug("Hart ID: %d", hart_id);
