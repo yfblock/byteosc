@@ -1,5 +1,4 @@
 ARCH := aarch64
-
 PREFIX := $(ARCH)-linux-gnu-
 CC := $(PREFIX)gcc
 
@@ -10,13 +9,11 @@ ALL_ASM_FILES := $(shell find . -name *.S -not -path './arch/*' | sed 's|^\./||'
 O_FILES := $(patsubst %.S,build/%.o,$(ALL_ASM_FILES)) $(patsubst %.c,build/%.o,$(ALL_C_FILES))
 
 CFLAGS := -mgeneral-regs-only -Tlinker/linker-$(ARCH).ld
-
 CFLAGS += -std=c23 -O2 -fno-builtin -ffreestanding -Wundef \
     -Wpointer-arith \
     -Wno-nonnull \
 	-nostdlib \
 	-nostartfiles
-
 
 # Add includes folders to compiler flags
 INCLUDE_DIRS := $(shell find . -name includes | sed 's|^\./||')
@@ -25,7 +22,6 @@ CFLAGS += $(INCLUDE_FLAGS)
 
 # Find files for fmt
 CLANG_FORMAT := clang-format
-
 
 all: build
 
